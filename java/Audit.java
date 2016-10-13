@@ -48,9 +48,8 @@ public class Audit {
 					break;
                         	}
                 	}
-			if (!isMatch) {
+			if (!isMatch)
 				System.out.println("JVM/Tomcat7 version cannot be found.");
-			}
 			p.destroy();
 		} catch (Exception e) {
                		System.out.println("JVM/Tomcat7 version error: " + e);
@@ -59,7 +58,7 @@ public class Audit {
 	
         /*
         * TODO: 
-        * - Check to see that this command will always work
+        * - Check to see that this command will always work (similar to Ubuntu version)
         */
 	private static void mysqlVersion() {
 		String s;
@@ -87,6 +86,8 @@ public class Audit {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
 			boolean isMatch = false;
 			while ((s = br.readLine()) != null) {
+				//if (line is a comment)
+				//	continue;
 				isMatch = Pattern.matches(pattern, s);
 				if (isMatch) {
 					System.out.println("Build and version: " + s.substring(9));
@@ -135,6 +136,12 @@ public class Audit {
 					}
 				}
                         }
+			//if (!isMatch1)
+			//	System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");
+			//if (!isMatch2)
+			//	System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");
+			//if (!isMatch3)
+			//	System.out.println("\"TMP_DIR\" tag not configured properly.");
                 } catch (Exception e) {
                         System.out.println("Oscar verification error: " + e);
                 }
@@ -180,6 +187,14 @@ public class Audit {
 						System.out.println(s);
 					}
 				}
+				//if (!isMatch1)
+                        	//      System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");
+                        	//if (!isMatch2)
+                        	//      System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");
+                        	//if (!isMatch3)
+                        	//      System.out.println("\"TMP_DIR\" tag not configured properly.");
+				//if (!isMatch4)
+				// 	System.out.println("\"Blabla\" tag not configured properly.");
                         }
                 } catch (Exception e) {
                         System.out.println("Drugref verification error: " + e);
