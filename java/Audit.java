@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 /*
 * MASTER TODO:
 * - Proper error handling (all methods)
-* - Fix regular expressions (all methods)
 * - OS compatible
+* - Do tags have to be capitalized?
 */
 public class Audit {
 
@@ -17,16 +17,38 @@ public class Audit {
 	* - Check to see that this command will always work
 	*/
 	private static void serverVersion() {
-		String s;
         	try {
-        		Process p = Runtime.getRuntime().exec("lsb_release -r");
-                	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                	while ((s = br.readLine()) != null)
-                		System.out.println("Ubuntu server version: " + s.substring(9));
-                	p.destroy();
+			boolean check = checkLSB();
+			if (!check)
+				installLSB();
+			else {
+				String s;
+        			Process p = Runtime.getRuntime().exec("lsb_release -r");
+                		BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                		while ((s = br.readLine()) != null)
+                			System.out.println("Ubuntu server version: " + s.substring(9));
+                		p.destroy();
+			}
         	} catch (Exception e) {
                 	System.out.println("Server version error: " + e);
          	}
+	}
+
+	/*
+	* Check to see if "lsb release" command exists.
+	*/	
+	private static boolean checkLSB() {
+		return false;
+	}
+
+	private static void installLSB() {
+		try {	
+			System.out.println("Currently installing \"lsb release\" command for Ubuntu...");
+			Process install = Runtime.getRuntime().exec("sudo apt-get install lsb-release");
+			install.destroy();
+		} catch (Exception e) {
+			System.out.println("Could not install \"lsb release\" command for Ubuntu: " + e);
+		}
 	}
 
         /*
@@ -35,14 +57,13 @@ public class Audit {
         */
 	private static void JVMTomcat7() {
 		String s;
-        	String pattern = ".*JVM Version:.*";
         	String cmd = new String("/usr/share/tomcat7/bin/version.sh");
         	try {
         		Process p = Runtime.getRuntime().exec(cmd);
                 	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			boolean isMatch = false;
                 	while ((s = br.readLine()) != null) {
-                		isMatch = Pattern.matches(pattern, s);
+				isMatch = Pattern.matches("^(JVM Version:).*", s);
                         	if (isMatch) {
                         		System.out.println(s);
 					break;
@@ -76,19 +97,17 @@ public class Audit {
         /*
         * TODO: 
         * - Check to see where this file is located (and what it could be named)
-	* - Ignore commented lines
         */
 	private static void oscarBuild() {
 		String s;
-		String pattern = ".*buildtag=.*";
 		File oscar = new File("/usr/share/tomcat7/oscar.properties");
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
 			boolean isMatch = false;
 			while ((s = br.readLine()) != null) {
-				//if (line is a comment)
-				//	continue;
-				isMatch = Pattern.matches(pattern, s);
+				if (Pattern.matches("^(#).*", s))
+					continue;
+				isMatch = Pattern.matches("^(buildtag=).*", s);
 				if (isMatch) {
 					System.out.println("Build and version: " + s.substring(9));
 					break;
@@ -105,43 +124,51 @@ public class Audit {
         /*
         * TODO: 
         * - Check to see where this file is located (and what it could be named)
-	* - Proper breaks out of loop
-	* - Ignore commented lines
         */
 	private static void verifyOscar() {
 		String s;
-                String pattern1 = ".*HL7TEXT_LABS=.*";
-		String pattern2 = ".*SINGLE_PAGE_CHART=.*";
-		String pattern3 = ".*TMP_DIR=.*";
                 File oscar = new File("/usr/share/tomcat7/oscar.properties");
                 try {
                         BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
+			boolean isMatch1 = false;
+			boolean isMatch2 = false;
+			boolean isMatch3 = false;
+			boolean flag1 = false;
+			boolean flag2 = false;
+			boolean flag3 = false;
                         while ((s = br.readLine()) != null) {
-                                boolean isMatch1 = Pattern.matches(pattern1, s);
-				boolean isMatch2 = Pattern.matches(pattern2, s);
-				boolean isMatch3 = Pattern.matches(pattern3, s);
+				if (Pattern.matches("^(#).*", s))
+                                        continue;
+				isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", s);
+                                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", s);
+				isMatch3 = Pattern.matches("^(TMP_DIR=).*", s);
                                 if (isMatch1) {
 					if (s.substring(13).toLowerCase().equals("yes")) {
+						flag1 = true;
 						System.out.println(s);
 					}
                                 }
 				if (isMatch2) {
 					if (s.substring(18).toLowerCase().equals("true")) {
+						flag2 = true;
 						System.out.println(s);
 					}
 				}
 				if (isMatch3) {
 					if (!s.substring(8).equals("")) {
+						flag3 = true;
 						System.out.println(s);
 					}
 				}
+				if (isMatch1 && isMatch2 && isMatch3)
+					break;
                         }
-			//if (!isMatch1)
-			//	System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");
-			//if (!isMatch2)
-			//	System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");
-			//if (!isMatch3)
-			//	System.out.println("\"TMP_DIR\" tag not configured properly.");
+			if (!flag1)
+				System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");        
+			if (!flag2)
+				System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");    
+			if (!flag3)
+				System.out.println("\"TMP_DIR\" tag not configured properly.");              
                 } catch (Exception e) {
                         System.out.println("Oscar verification error: " + e);
                 }
@@ -151,51 +178,62 @@ public class Audit {
         * TODO: 
         * - Check to see where this file is located (and what it could be named)
 	* - Remove hard code for port number (use guest port)
-	* - Ignore commented lines
         */
 	private static void verifyDrugref() {
                 String s;
-                String pattern1 = ".*db_user=.*";
-                String pattern2 = ".*db_url=.*";
-                String pattern3 = ".*db_driver=.*";
-		String pattern4 = ".*drugref_url=.*";
                 File drugref = new File("/usr/share/tomcat7/drugref2.properties");
                 try {
                         BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
+			boolean isMatch1 = false;
+			boolean isMatch2 = false;
+			boolean isMatch3 = false;
+			boolean isMatch4 = false;
+			boolean flag1 = false;
+			boolean flag2 = false;
+			boolean flag3 = false;
+			boolean flag4 = false;
                         while ((s = br.readLine()) != null) {
-                                boolean isMatch1 = Pattern.matches(pattern1, s);
-                                boolean isMatch2 = Pattern.matches(pattern2, s);
-                                boolean isMatch3 = Pattern.matches(pattern3, s);
-				boolean isMatch4 = Pattern.matches(pattern4, s);
+                                if (Pattern.matches("^(#).*", s))
+                                        continue;
+                                isMatch1 = Pattern.matches("^(db_user=).*", s);
+                                isMatch2 = Pattern.matches("^(db_url=).*", s);
+                                isMatch3 = Pattern.matches("^(db_driver=).*", s);
+				isMatch4 = Pattern.matches("^(drugref_url=).*", s);
                                 if (isMatch1) {
                                         if (!s.substring(8).equals("")) {
+						flag1 = true;
                                                 System.out.println(s);
                                         }
                                 }
                                 if (isMatch2) {
-                                        if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) {
-                                                System.out.println(s);
+                                        if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) { // will port value &
+	                                        flag2 = true;        							  // drugref always be
+						System.out.println(s);							  // these values?
                                         }
                                 }
                                 if (isMatch3) {
                                         if (s.substring(10).toLowerCase().equals("com.mysql.jdbc.driver")) {
-                                                System.out.println(s);
+                                                flag3 = true;
+						System.out.println(s);
                                         }
                                 }
 				if (isMatch4) {
-					if (s.substring(12).toLowerCase().equals("http://127.0.0.1:8080/drugref2/drugrefservice")) {
+					if (!s.substring(12).toLowerCase().equals("")) { 
+						flag4 = true;
 						System.out.println(s);
 					}
 				}
-				//if (!isMatch1)
-                        	//      System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");
-                        	//if (!isMatch2)
-                        	//      System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");
-                        	//if (!isMatch3)
-                        	//      System.out.println("\"TMP_DIR\" tag not configured properly.");
-				//if (!isMatch4)
-				// 	System.out.println("\"Blabla\" tag not configured properly.");
-                        }
+				if (isMatch1 && isMatch2 && isMatch3 && isMatch4)
+					break;
+			}
+			if (!flag1)
+         		        System.out.println("\"db_user\" tag not configured properly."); 	
+                       	if (!flag2)
+                        	System.out.println("\"db_url\" tag not configured properly.");          
+                       	if (!flag3)
+                        	System.out.println("\"db_driver\" tag not configured properly.");       
+			if (!flag4)
+				System.out.println("\"drugref_url\" tag not configured properly.");     
                 } catch (Exception e) {
                         System.out.println("Drugref verification error: " + e);
                 }
@@ -204,17 +242,17 @@ public class Audit {
         /*
         * TODO: 
         * - Check to see that this command will always work
-	* - Ignore commented lines
 	* - Figure out how to check for increased memory resources
         */
 	private static void verifyTomcat() {
 	        String s;
-                String pattern = ".*JAVA_OPTS=.*";
                 File tomcat = new File("/etc/default/tomcat7");
                 try {
                         BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(tomcat)));
                         while ((s = br.readLine()) != null) {
-                                boolean isMatch = Pattern.matches(pattern, s);
+                                if (Pattern.matches("^(#).*", s))
+                                        continue;
+                                boolean isMatch = Pattern.matches("^(JAVA_OPTS=).*", s);
                                 if (isMatch) {
 					if (!s.substring(10).equals("")) {
                                         	System.out.println(s);
@@ -239,9 +277,9 @@ public class Audit {
 			verifyOscar();
 			verifyDrugref();
 			verifyTomcat();
-		} else if (false) {
+		} else if (os.toLowerCase().equals("windows")) { // fix me to RE
 
-		} else {
+		} else { // unix
 
 		}
 	}
