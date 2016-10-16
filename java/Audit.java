@@ -12,25 +12,21 @@ import java.util.regex.Pattern;
 */
 public class Audit {
 
-	/*
-	* TODO: 
-	* - Check to see that this command will always work
+	/* 
+	*  Run "lsb_release -r" command and extract
+	*  release value.
 	*/
 	private static void serverVersion() {
         	try {
-			boolean check = checkLSB();
-			if (!check)
-				installLSB();
-			else {
-				String s;
-        			Process p = Runtime.getRuntime().exec("lsb_release -r");
-                		BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                		while ((s = br.readLine()) != null)
-                			System.out.println("Ubuntu server version: " + s.substring(9));
-                		p.destroy();
-			}
+			String s;
+        		Process p = Runtime.getRuntime().exec("lsb_release -r");
+                	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                	while ((s = br.readLine()) != null)
+                		System.out.println("Ubuntu server version: " + s.substring(9));
+                	p.destroy();
         	} catch (Exception e) {
-                	System.out.println("Server version error: " + e);
+                	System.out.println("Could not detect sever version.");
+			System.out.println("Error: " + e);
          	}
 	}
 
@@ -38,19 +34,36 @@ public class Audit {
 	* Check to see if "lsb release" command exists.
 	*/	
 	private static boolean checkLSB() {
-		return false;
+		try {
+			String str;
+			Process p = Runtime.getRuntime().exec("which lsb_release");
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			while ((str = br.readLine()) != null) {
+				return true;
+			}
+			return false;
+		}
+		catch (Exception e) {
+			System.out.println("command -v lsb_release don't work!?!?: " + e);
+			return false;
+		}		
 	}
 
+	/* CANNOT EDIT SYSTEM WHILE AUDITING
 	private static void installLSB() {
 		try {	
+			Process install = null;
 			System.out.println("Currently installing \"lsb release\" command for Ubuntu...");
-			Process install = Runtime.getRuntime().exec("sudo apt-get install lsb-release");
+			install = Runtime.getRuntime().exec("sudo apt-get install lsb-release");
+			install.getOutput().write("y\n".getBytes());
 			install.destroy();
+			System.out.println("\"lsb release\" install successful.");
 		} catch (Exception e) {
 			System.out.println("Could not install \"lsb release\" command for Ubuntu: " + e);
 		}
 	}
-
+	*/
+	
         /*
         * TODO: 
         * - Check to see where this bash script is located (and what it could be named)
@@ -241,7 +254,7 @@ public class Audit {
 
         /*
         * TODO: 
-        * - Check to see that this command will always work
+        * - Check to see where this file is located (and what it could be named)
 	* - Figure out how to check for increased memory resources
         */
 	private static void verifyTomcat() {
