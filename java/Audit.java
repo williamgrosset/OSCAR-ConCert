@@ -163,6 +163,7 @@ public class Audit {
 	}
 	
 	/*
+	*  - Search for CATALINA HOME directory using command: ps -ef | grep tomcat7 (search for tag)
 	*  - Read/sort through all files that have "pattern" in name
         *  - Take the highest version value (i.e read "oscar15.properties" vs. "oscar2.properties")
 	*/
