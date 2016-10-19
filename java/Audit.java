@@ -52,21 +52,6 @@ public class Audit {
 		}		
 	}
 
-	/* CANNOT EDIT SYSTEM WHILE AUDITING
-	private static void installLSB() {
-		try {	
-			Process install = null;
-			System.out.println("Currently installing \"lsb release\" command for Ubuntu...");
-			install = Runtime.getRuntime().exec("sudo apt-get install lsb-release");
-			install.getOutput().write("y\n".getBytes());
-			install.destroy();
-			System.out.println("\"lsb release\" install successful.");
-		} catch (Exception e) {
-			System.out.println("Could not install \"lsb release\" command for Ubuntu: " + e);
-		}
-	}
-	*/
-	
     /*
     * TODO: 
     * - Check to see where this bash script is located (and what it could be named)
@@ -89,7 +74,7 @@ public class Audit {
                 System.out.println("JVM/Tomcat7 version cannot be found.");
             p.destroy();
         } catch (Exception e) {
-                System.out.println("JVM/Tomcat7 version error: " + e);
+            System.out.println("JVM/Tomcat7 version error: " + e);
         }
 	}
 	
@@ -110,15 +95,22 @@ public class Audit {
         }
 	}
 
+    private static void verifyOscar() {
+        File directory = searchForDirectory("/var/lib/tomcat7", ".*catalina.base.*");
+        Stack<String> files = grabFiles(directory, "^(oscar)[0-9]*?.*(properties)$");
+        /*
+        * while (!files.empty())
+        *   files.pop()
+        *   oscarBuild(file)
+        *   verifyOscarProperties(file)
+        */
+    }
+
     /*
     * TODO: 
     * - Check to see where this file is located (and what it could be named)
     */
 	private static void oscarBuild() {
-		if (!searchForFiles("/usr/share/tomcat7/", "^(oscar)[0-9]*?.*(properties)$")) {
-			System.out.println("Could not find file for Oscar build/version.");
-			return;
-		}
 		String s;
 		File oscar = new File ("/usr/share/tomcat7/oscar.properties");
 		try {
@@ -142,111 +134,85 @@ public class Audit {
 	}	
 
 	/*
-	* NOTE: CURRENTLY NOT USED
-	* - File object can be considered a file or a directory!
-	* - Can't change working directory while executing a Java program
-	* - But can use Process/ProcessBuilder to list all files in the directory
-	*/
-	private static boolean searchForFile(String path, String pattern) {		
-		String filename = "";
-		filename = pattern;
-		File file = new File(path + filename);	
-		
-		if (file.canRead()) {
-			System.out.println("SEARCH FOR FILE CHECK: " + file.canRead() + " and DIRECTORY?: " + file.isDirectory());
-			return true;
-		}
-		else {
-			System.out.println("SEARCH FOR FILE CHECK: " + file.canRead());
-			return false;	
-		}
-	}
-	
-	/*
-	*  - Search for CATALINA HOME directory using command: ps -ef | grep tomcat7 (search for tag)
-	*  - Read/sort through all files that have "pattern" in name
+    *  - Search in $CATALINA_BASE/webapps directory for all folders that could be deployed
+    *    (EDGE CASE: if the folder does NOT contain the pattern "oscar")
+	*  - Search in CATALINA BASE directory using command: ps -ef | grep tomcat7 (search for tag)
+    *  - Grab the CATALINA BASE directory from the command output
+    *  - Return directory name
 	*  - Fix RE for in pattern
-    *  - Take the highest version value (i.e read "oscar15.properties" vs. "oscar2.properties") (ASK RAYMOND)
-    *  - Figure out way to remove FINALLY {BLOCK}
 	*/
-	private static boolean searchForFiles(String defaultPath, String pattern) {
+	private static File searchForDirectory(String defaultPath, String pattern) {
 		String pathName = "";
 		Stack<String> files = new Stack<String>();
 		boolean isMatch = false;
-		File directory;
+		File directory = new File(defaultPath);
 
-		// Search for "CATALINA HOME" directory
+		// Search for "CATALINA BASE" directory
         try {
 			String s = "";
             Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "ps -ef | grep tomcat7"});
-            System.out.println(p);
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((s = br.readLine()) != null) {
-                isMatch = Pattern.matches(".*catalina.home.*", s); // may not need this
-				System.out.println(isMatch);
+                isMatch = Pattern.matches(pattern, s); // may not need this -> use RE to grab starting point of substring
+				System.out.println("Did we get a match?: " + isMatch);
                 if (isMatch) {
 					pathName = s.substring(0,11); // take substring (FIX)
                     System.out.println("Currently in TRY/CATCH block: " + pathName); // check if path is correct
 					break;
                 }
             }
-            System.out.println(s); // currently null
+            System.out.println("VALUE OF S: " + s); // currently null
             p.destroy();
+            if (!isMatch) {
+                System.out.println("DEFAULT PATH USED: " + directory);
+                return directory;
+            } else {
+                System.out.println("PATHNAME FOUND AND USED: " + directory);
+                return new File(pathName);
+            }
         } catch (Exception e) {
-            System.out.println("Process check for Tomcat7 failed: " + e);
-        } finally {
-		
-			// Search for path failed, use defaultPath	
-			if (!isMatch) {
-				directory = new File(defaultPath);
-				System.out.println("DEFAULT PATH USED: " + directory);
-			} else {
-				directory = new File(pathName);
-				System.out.println("PATHNAME FOUND AND USED: " + directory);
-			}
-
-			// List all files in directory		
-			String[] fileList = directory.list();
-			System.out.println("All files in directory:");
-			for (int i = 0; i < fileList.length; i++) {
-				Arrays.sort(fileList);
-				System.out.println(fileList[i]);
-			}
-		
-			// List all possible file(s) that we are looking for
-			System.out.println("Adding all possible files:");
-			for (int i = 0; i < fileList.length; i++) {
-				if (Pattern.matches(pattern, fileList[i])) {
-					System.out.println(fileList[i]);
-					files.push(fileList[i]);
-				}
-			}
-		
-			// We did not find a file	
-			if (files.empty()) {
-				System.out.println("Our stack is empty -> return false.");
-				return false;
-			}
-		
-            if (directory.canRead()) {
-                System.out.println("SEARCH FOR FILE CHECK: " + directory.canRead() + " and DIRECTORY?: " + directory.isDirectory());
-                return true;
-            }
-            else {
-                System.out.println("SEARCH FOR FILE CHECK: " + directory.canRead());
-                return false;
-            }
-            // search in directory for all the files that contain the pattern (if no file w/ pattern is found, return false)        
-            // grab first one
-            // return true??    
+            System.out.println("Process check for Tomcat7 failed (also using defaultPath): " + e);
+            return new File(defaultPath);
         }
 	}
+
+    /*
+    *  - Loop through folders/files in directory
+    *  - Push files onto Stack w/ pattern
+    */
+    private static Stack<String> grabFiles(File directory, String pattern) {
+        String[] fileList = directory.list();
+        Stack<String> files = new Stack<String>();
+        
+        // List all deployed folders in directory      
+        System.out.println("All deployed folders in directory:");
+        for (int i = 0; i < fileList.length; i++) {
+                Arrays.sort(fileList);
+                System.out.println(fileList[i]);
+        }
+         
+        // List all possible file(s) that we are looking for
+        System.out.println("Adding all possible file(s):");
+        for (int i = 0; i < fileList.length; i++) {
+                if (Pattern.matches(pattern, fileList[i])) {
+                     System.out.println(fileList[i]);
+                     files.push(fileList[i]);
+                }
+        }
+         
+        // We did not find a file   
+        if (files.empty()) {
+            System.out.println("Our stack is empty -> return false.");
+            return null;
+        }         
+        return files;    
+    }
 
     /*
     * TODO: 
     * - Check to see where this file is located (and what it could be named)
     */
-	private static void verifyOscar() {
+	private static void verifyOscarProperties() {
 		String s;
         File oscar = new File("/usr/share/tomcat7/oscar.properties");
         try {
@@ -291,15 +257,15 @@ public class Audit {
 			if (!flag3)
 				System.out.println("\"TMP_DIR\" tag not configured properly.");              
         } catch (Exception e) {
-                System.out.println("Oscar verification error: " + e);
+            System.out.println("Oscar verification error: " + e);
         }
 	}
 
-        /*
-        * TODO: 
-        * - Check to see where this file is located (and what it could be named)
+    /*
+    * TODO: 
+    * - Check to see where this file is located (and what it could be named)
 	* - Remove hard code for port number (use guest port)
-        */
+    */
 	private static void verifyDrugref() {
         String s;
         File drugref = new File("/usr/share/tomcat7/drugref2.properties");
@@ -382,7 +348,7 @@ public class Audit {
                 }
             }
         } catch (Exception e) {
-                System.out.println("Tomcat verification error: " + e);
+            System.out.println("Tomcat verification error: " + e);
         }
 	}
 
