@@ -20,21 +20,22 @@ public class Audit {
 	*  Read properties file if command does not exist?
 	*/
 	private static void serverVersion() {
-        	try {
+        try {
 			String s;
-        		Process p = Runtime.getRuntime().exec("lsb_release -r");
-                	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                	while ((s = br.readLine()) != null)
-                		System.out.println("Ubuntu server version: " + s.substring(9));
-                	p.destroy();
-        	} catch (Exception e) {
-                	System.out.println("Could not detect sever version.");
-			System.out.println("Error: " + e);
-         	}
+            Process p = Runtime.getRuntime().exec("lsb_release -r");
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((s = br.readLine()) != null)
+                System.out.println("Ubuntu server version: " + s.substring(9));
+            p.destroy();
+        } catch (Exception e) {
+            System.out.println("Could not detect sever version.");
+            System.out.println("Error: " + e);
+        }
 	}
 
-	/*
-	* Check to see if "lsb release" command exists.
+	/* 
+	* NOTE: CURRENTLY NOT USED
+	* - Check to see if "lsb release" command exists.
 	*/	
 	private static boolean checkLSB() {
 		try {
@@ -45,8 +46,7 @@ public class Audit {
 				return true;
 			}
 			return false;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			System.out.println("command -v lsb_release don't work!?!?: " + e);
 			return false;
 		}		
@@ -67,53 +67,53 @@ public class Audit {
 	}
 	*/
 	
-        /*
-        * TODO: 
-        * - Check to see where this bash script is located (and what it could be named)
-        */
+    /*
+    * TODO: 
+    * - Check to see where this bash script is located (and what it could be named)
+    */
 	private static void JVMTomcat7() {
 		String s;
-        	String cmd = new String("/usr/share/tomcat7/bin/version.sh");
-        	try {
-        		Process p = Runtime.getRuntime().exec(cmd);
-                	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			boolean isMatch = false;
-                	while ((s = br.readLine()) != null) {
-				isMatch = Pattern.matches("^(JVM Version:).*", s);
-                        	if (isMatch) {
-                        		System.out.println(s);
-					break;
-                        	}
-                	}
-			if (!isMatch)
-				System.out.println("JVM/Tomcat7 version cannot be found.");
-			p.destroy();
-		} catch (Exception e) {
-               		System.out.println("JVM/Tomcat7 version error: " + e);
-        	}
+        String cmd = new String("/usr/share/tomcat7/bin/version.sh");
+        try {
+            Process p = Runtime.getRuntime().exec(cmd);
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            boolean isMatch = false;
+            while ((s = br.readLine()) != null) {
+                isMatch = Pattern.matches("^(JVM Version:).*", s);
+                if (isMatch) {
+                    System.out.println(s);
+                    break;
+                }
+            }
+            if (!isMatch)
+                System.out.println("JVM/Tomcat7 version cannot be found.");
+            p.destroy();
+        } catch (Exception e) {
+                System.out.println("JVM/Tomcat7 version error: " + e);
+        }
 	}
 	
-        /*
-        * TODO: 
-        * - Check to see that this command will always work (similar to Ubuntu version)
-        */
+    /*
+    * TODO: 
+    * - Check to see that this command will always work (similar to Ubuntu version)
+    */
 	private static void mysqlVersion() {
 		String s;
-                try {
-                        Process p = Runtime.getRuntime().exec("mysql --version");
-                        BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                        while ((s = br.readLine()) != null)
-                                System.out.println("MySQL version: " + s.substring(11));
-                        p.destroy();
-                } catch (Exception e) {
-                        System.out.println("MySQL version error: " + e);
-                }
+        try {
+            Process p = Runtime.getRuntime().exec("mysql --version");
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((s = br.readLine()) != null)
+                System.out.println("MySQL version: " + s.substring(11));
+            p.destroy();
+        } catch (Exception e) {
+            System.out.println("MySQL version error: " + e);
+        }
 	}
 
-        /*
-        * TODO: 
-        * - Check to see where this file is located (and what it could be named)
-        */
+    /*
+    * TODO: 
+    * - Check to see where this file is located (and what it could be named)
+    */
 	private static void oscarBuild() {
 		if (!searchForFiles("/usr/share/tomcat7/", "^(oscar)[0-9]*?.*(properties)$")) {
 			System.out.println("Could not find file for Oscar build/version.");
@@ -125,13 +125,13 @@ public class Audit {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
 			boolean isMatch = false;
 			while ((s = br.readLine()) != null) {
-				if (Pattern.matches("^(#).*", s))
-					continue;
-				isMatch = Pattern.matches("^(buildtag=).*", s);
-				if (isMatch) {
-					System.out.println("Build and version: " + s.substring(9));
-					break;
-				}
+            if (Pattern.matches("^(#).*", s))
+                continue;
+            isMatch = Pattern.matches("^(buildtag=).*", s);
+            if (isMatch) {
+                System.out.println("Build and version: " + s.substring(9));
+                break;
+            }
 			}
 			if (!isMatch) {
 				System.out.println("Oscar build/version cannot be found.");
@@ -142,10 +142,10 @@ public class Audit {
 	}	
 
 	/*
-	* NOTE:
-	*  - File object can be considered a file or a directory!
-	*  - Can't change working directory while executing a Java program
-	*  - But can use Process/ProcessBuilder to list all files in the directory
+	* NOTE: CURRENTLY NOT USED
+	* - File object can be considered a file or a directory!
+	* - Can't change working directory while executing a Java program
+	* - But can use Process/ProcessBuilder to list all files in the directory
 	*/
 	private static boolean searchForFile(String path, String pattern) {		
 		String filename = "";
@@ -165,68 +165,110 @@ public class Audit {
 	/*
 	*  - Search for CATALINA HOME directory using command: ps -ef | grep tomcat7 (search for tag)
 	*  - Read/sort through all files that have "pattern" in name
-        *  - Take the highest version value (i.e read "oscar15.properties" vs. "oscar2.properties")
+	*  - Fix RE for in pattern
+    *  - Take the highest version value (i.e read "oscar15.properties" vs. "oscar2.properties") (ASK RAYMOND)
+    *  - Figure out way to remove FINALLY {BLOCK}
 	*/
-	private static boolean searchForFiles(String path, String pattern) {
-                String filename = "";
-		Stack<String> files = new Stack<String>(); 
-                File directory = new File(path); 
+	private static boolean searchForFiles(String defaultPath, String pattern) {
+		String pathName = "";
+		Stack<String> files = new Stack<String>();
+		boolean isMatch = false;
+		File directory;
+
+		// Search for "CATALINA HOME" directory
+        try {
+			String s = "";
+            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "ps -ef | grep tomcat7"});
+            System.out.println(p);
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((s = br.readLine()) != null) {
+                isMatch = Pattern.matches(".*catalina.home.*", s); // may not need this
+				System.out.println(isMatch);
+                if (isMatch) {
+					pathName = s.substring(0,11); // take substring (FIX)
+                    System.out.println("Currently in TRY/CATCH block: " + pathName); // check if path is correct
+					break;
+                }
+            }
+            System.out.println(s); // currently null
+            p.destroy();
+        } catch (Exception e) {
+            System.out.println("Process check for Tomcat7 failed: " + e);
+        } finally {
 		
-		String[] fileList = directory.list();
-		System.out.println("All files in directory:");
-		for (int i = 0; i < fileList.length; i++) {
-			Arrays.sort(fileList);
-			System.out.println(fileList[i]);
-		}
-		
-		System.out.println("Adding all possible files:");
-		for (int i = 0; i < fileList.length; i++) {
-			if (Pattern.matches(pattern, fileList[i])) {
-				System.out.println(fileList[i]);
-				files.push(fileList[i]);
+			// Search for path failed, use defaultPath	
+			if (!isMatch) {
+				directory = new File(defaultPath);
+				System.out.println("DEFAULT PATH USED: " + directory);
+			} else {
+				directory = new File(pathName);
+				System.out.println("PATHNAME FOUND AND USED: " + directory);
 			}
-		}
+
+			// List all files in directory		
+			String[] fileList = directory.list();
+			System.out.println("All files in directory:");
+			for (int i = 0; i < fileList.length; i++) {
+				Arrays.sort(fileList);
+				System.out.println(fileList[i]);
+			}
 		
-                if (directory.canRead()) {
-                        System.out.println("SEARCH FOR FILE CHECK: " + directory.canRead() + " and DIRECTORY?: " + directory.isDirectory());
-                        return true;
-                }
-                else {
-                        System.out.println("SEARCH FOR FILE CHECK: " + directory.canRead());
-                        return false;
-                }
-                // search in directory for all the files that contain the pattern (if no file w/ pattern is found, return false)        
-                // grab first one
-                // return true??    
+			// List all possible file(s) that we are looking for
+			System.out.println("Adding all possible files:");
+			for (int i = 0; i < fileList.length; i++) {
+				if (Pattern.matches(pattern, fileList[i])) {
+					System.out.println(fileList[i]);
+					files.push(fileList[i]);
+				}
+			}
+		
+			// We did not find a file	
+			if (files.empty()) {
+				System.out.println("Our stack is empty -> return false.");
+				return false;
+			}
+		
+            if (directory.canRead()) {
+                System.out.println("SEARCH FOR FILE CHECK: " + directory.canRead() + " and DIRECTORY?: " + directory.isDirectory());
+                return true;
+            }
+            else {
+                System.out.println("SEARCH FOR FILE CHECK: " + directory.canRead());
+                return false;
+            }
+            // search in directory for all the files that contain the pattern (if no file w/ pattern is found, return false)        
+            // grab first one
+            // return true??    
+        }
 	}
 
-        /*
-        * TODO: 
-        * - Check to see where this file is located (and what it could be named)
-        */
+    /*
+    * TODO: 
+    * - Check to see where this file is located (and what it could be named)
+    */
 	private static void verifyOscar() {
 		String s;
-                File oscar = new File("/usr/share/tomcat7/oscar.properties");
-                try {
-                        BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
-			boolean isMatch1 = false;
-			boolean isMatch2 = false;
-			boolean isMatch3 = false;
-			boolean flag1 = false;
-			boolean flag2 = false;
-			boolean flag3 = false;
-                        while ((s = br.readLine()) != null) {
+        File oscar = new File("/usr/share/tomcat7/oscar.properties");
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
+            boolean isMatch1 = false;
+            boolean isMatch2 = false;
+            boolean isMatch3 = false;
+            boolean flag1 = false;
+            boolean flag2 = false;
+            boolean flag3 = false;
+            while ((s = br.readLine()) != null) {
 				if (Pattern.matches("^(#).*", s))
-                                        continue;
+                    continue;
 				isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", s);
-                                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", s);
+                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", s);
 				isMatch3 = Pattern.matches("^(TMP_DIR=).*", s);
-                                if (isMatch1) {
+                if (isMatch1) {
 					if (s.substring(13).toLowerCase().equals("yes")) {
 						flag1 = true;
 						System.out.println(s);
 					}
-                                }
+                }
 				if (isMatch2) {
 					if (s.substring(18).toLowerCase().equals("true")) {
 						flag2 = true;
@@ -241,16 +283,16 @@ public class Audit {
 				}
 				if (flag1 && flag2 && flag3)
 					break;
-                        }
+            }
 			if (!flag1)
 				System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");        
 			if (!flag2)
 				System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");    
 			if (!flag3)
 				System.out.println("\"TMP_DIR\" tag not configured properly.");              
-                } catch (Exception e) {
-                        System.out.println("Oscar verification error: " + e);
-                }
+        } catch (Exception e) {
+                System.out.println("Oscar verification error: " + e);
+        }
 	}
 
         /*
@@ -259,10 +301,10 @@ public class Audit {
 	* - Remove hard code for port number (use guest port)
         */
 	private static void verifyDrugref() {
-                String s;
-                File drugref = new File("/usr/share/tomcat7/drugref2.properties");
-                try {
-                        BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
+        String s;
+        File drugref = new File("/usr/share/tomcat7/drugref2.properties");
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
 			boolean isMatch1 = false;
 			boolean isMatch2 = false;
 			boolean isMatch3 = false;
@@ -271,31 +313,31 @@ public class Audit {
 			boolean flag2 = false;
 			boolean flag3 = false;
 			boolean flag4 = false;
-                        while ((s = br.readLine()) != null) {
-                                if (Pattern.matches("^(#).*", s))
-                                        continue;
-                                isMatch1 = Pattern.matches("^(db_user=).*", s);
-                                isMatch2 = Pattern.matches("^(db_url=).*", s);
-                                isMatch3 = Pattern.matches("^(db_driver=).*", s);
-				isMatch4 = Pattern.matches("^(drugref_url=).*", s);
-                                if (isMatch1) {
-                                        if (!s.substring(8).equals("")) {
-						flag1 = true;
-                                                System.out.println(s);
-                                        }
-                                }
-                                if (isMatch2) {
-                                        if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) { // will port value &
-	                                        flag2 = true;        							  // drugref always be
-						System.out.println(s);							  // these values?
-                                        }
-                                }
-                                if (isMatch3) {
-                                        if (s.substring(10).toLowerCase().equals("com.mysql.jdbc.driver")) {
-                                                flag3 = true;
-						System.out.println(s);
-                                        }
-                                }
+            while ((s = br.readLine()) != null) {
+                if (Pattern.matches("^(#).*", s))
+                    continue;
+                isMatch1 = Pattern.matches("^(db_user=).*", s);
+                isMatch2 = Pattern.matches("^(db_url=).*", s);
+                isMatch3 = Pattern.matches("^(db_driver=).*", s);
+                isMatch4 = Pattern.matches("^(drugref_url=).*", s);
+                if (isMatch1) {
+                    if (!s.substring(8).equals("")) {
+                        flag1 = true;
+                        System.out.println(s);
+                    }
+                }
+                if (isMatch2) {
+                    if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) { // will port value &
+                        flag2 = true;        							                              // drugref always be
+                        System.out.println(s);							                              // these values?
+                    }
+                }
+                if (isMatch3) {
+                    if (s.substring(10).toLowerCase().equals("com.mysql.jdbc.driver")) {
+                        flag3 = true;
+                        System.out.println(s);
+                    }
+                }
 				if (isMatch4) {
 					if (!s.substring(12).toLowerCase().equals("")) { 
 						flag4 = true;
@@ -306,42 +348,42 @@ public class Audit {
 					break;
 			}
 			if (!flag1)
-         		        System.out.println("\"db_user\" tag not configured properly."); 	
-                       	if (!flag2)
-                        	System.out.println("\"db_url\" tag not configured properly.");          
-                       	if (!flag3)
-                        	System.out.println("\"db_driver\" tag not configured properly.");       
+                System.out.println("\"db_user\" tag not configured properly."); 	
+            if (!flag2)
+                System.out.println("\"db_url\" tag not configured properly.");          
+            if (!flag3)
+                System.out.println("\"db_driver\" tag not configured properly.");       
 			if (!flag4)
 				System.out.println("\"drugref_url\" tag not configured properly.");     
-                } catch (Exception e) {
-                        System.out.println("Drugref verification error: " + e);
-                }
+        } catch (Exception e) {
+            System.out.println("Drugref verification error: " + e);
         }
+    }
 
-        /*
-        * TODO: 
-        * - Check to see where this file is located (and what it could be named)
+    /*
+    * TODO: 
+    * - Check to see where this file is located (and what it could be named)
 	* - Figure out how to check for increased memory resources
-        */
+    */
 	private static void verifyTomcat() {
-	        String s;
-                File tomcat = new File("/etc/default/tomcat7");
-                try {
-                        BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(tomcat)));
-                        while ((s = br.readLine()) != null) {
-                                if (Pattern.matches("^(#).*", s))
-                                        continue;
-                                boolean isMatch = Pattern.matches("^(JAVA_OPTS=).*", s);
-                                if (isMatch) {
-					if (!s.substring(10).equals("")) {
-                                        	System.out.println(s);
-						break;
-					}
-                                }
-                        }
-                } catch (Exception e) {
-                        System.out.println("Tomcat verification error: " + e);
+        String s;
+        File tomcat = new File("/etc/default/tomcat7");
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(tomcat)));
+            while ((s = br.readLine()) != null) {
+                if (Pattern.matches("^(#).*", s))
+                    continue;
+                boolean isMatch = Pattern.matches("^(JAVA_OPTS=).*", s);
+                if (isMatch) {
+                    if (!s.substring(10).equals("")) {
+                        System.out.println(s);
+                        break;
+                    }
                 }
+            }
+        } catch (Exception e) {
+                System.out.println("Tomcat verification error: " + e);
+        }
 	}
 
 	public static void main(String args[]) {
@@ -349,13 +391,13 @@ public class Audit {
 		String os = System.getProperty("os.name");
 		
 		if (os.toLowerCase().equals("linux")) {
-			serverVersion();
-			JVMTomcat7();
-			mysqlVersion();
+			//serverVersion();
+			//JVMTomcat7();
+			//mysqlVersion();
 			oscarBuild();
-			verifyOscar();
-			verifyDrugref();
-			verifyTomcat();
+			//verifyOscar();
+			//verifyDrugref();
+			//verifyTomcat();
 		} else if (os.toLowerCase().equals("windows")) { // fix me to RE
 
 		} else { // unix
