@@ -10,18 +10,16 @@ import java.util.regex.Pattern;
 * MASTER TODO:
 * - Proper error handling (all methods)
 * - OS compatible
-* - Do tags have to be capitalized?
-* - Go to highest version number of file (use REGex)
 */
 public class Audit {
 
 	/* 
+    *  serverVersion():
 	*  Run "lsb_release -r" command and extract release value.
-	*  Read properties file if command does not exist?
 	*/
 	private static void serverVersion() {
         try {
-			String s;
+		    String s;
             Process p = Runtime.getRuntime().exec("lsb_release -r");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((s = br.readLine()) != null)
@@ -31,11 +29,12 @@ public class Audit {
             System.out.println("Could not detect sever version.");
             System.out.println("Error: " + e);
         }
-	}
+    }
 
-	/* 
-	* NOTE: CURRENTLY NOT USED
-	* - Check to see if "lsb release" command exists.
+	/*
+    *  CURRENTLY NOT USED
+    *  checkLSB():
+	*  Check to see if "lsb release" command exists.
 	*/	
 	private static boolean checkLSB() {
 		try {
@@ -52,8 +51,8 @@ public class Audit {
 		}		
 	}
 
-    /*
-    * TODO: 
+    /* 
+    *  JVMTomcat7():
     * - Check to see where this bash script is located (and what it could be named)
     */
 	private static void JVMTomcat7() {
@@ -78,9 +77,9 @@ public class Audit {
         }
 	}
 	
-    /*
-    * TODO: 
-    * - Check to see that this command will always work (similar to Ubuntu version)
+    /* 
+    *  mysqlVersion():
+    *  Run "mysql --version" command and extract version value.
     */
 	private static void mysqlVersion() {
 		String s;
@@ -95,34 +94,36 @@ public class Audit {
         }
 	}
 
+    /* 
+    *  verifyOscar():
+    *  Verify all Oscar deployments.
+    */
     private static void verifyOscar() {
-        File directory = searchForDirectory("/var/lib/tomcat7", ".*catalina.base.*");
-        Stack<String> files = grabFiles(directory, "^(oscar)[0-9]*?.*(properties)$");
+        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*");
+        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
+        File webApps = new File(catalinaBase.getPath()+"/webapps");
+        Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
         
-        // Verify files
-        /*
-        * while (!files.empty())
-        *   files.pop()
-        *   oscarBuild(file.pop()) // Keep file as String or as File object?
-        *   verifyOscarProperties(file.pop())
-        */
+        // Verify files on the Stack
+        while (!files.empty()) {
+            String file = files.pop();
+            System.out.println("Currently checking \"" + file + ".properties\" file...");
+            oscarBuild(catalinaHome+"/"+file);
+            verifyOscarProperties(catalinaHome+"/"+file);
+        }
     }
 
-	/*
-    *  - Search in $CATALINA_BASE/webapps directory for all folders that could be deployed
-    *    (EDGE CASE: if the folder does NOT contain the pattern "oscar")
-	*  - Search in CATALINA BASE directory using command: ps -ef | grep tomcat7 (search for tag)
-    *  - Grab the CATALINA BASE directory from the command output
-    *  - Return directory name
-	*  - Fix RE for in pattern
+	/* 
+    *  searchForDirectory(String: defaultPath, String: regex):
+	*  Run "ps" command to find Tomact7 details and
+    *  then use pattern matching to find desired tags
+    *  (i.e "$CATALINA_HOME" full path name).
 	*/
 	private static File searchForDirectory(String defaultPath, String regex) {
 		CharSequence pathName = "";
-		Stack<String> files = new Stack<String>();
 		boolean isMatch = false;
-		File directory = new File(defaultPath);
+        Stack<String> files = new Stack<String>();
 
-		// Search for "CATALINA BASE" directory
         try {
 			String s = "";
             Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "ps -ef | grep tomcat7"});
@@ -131,34 +132,33 @@ public class Audit {
                 Pattern pattern = Pattern.compile(regex);
                 Matcher matcher = pattern.matcher(s);
                 isMatch = matcher.matches();
-                //isMatch = Pattern.matches(regex, s);
-				System.out.println("Did we get a match?: " + isMatch);
                 if (isMatch) {
-                    // Properly take substring (start from match.end() up until we hit whitespace -> pathName)
-                    pathName = matcher.group(0);
-					//pathName = cs.subSequence(60, 80);
-                    System.out.println("Currently in TRY/CATCH block, our value of pathname: " + pathName); // check if path is correct
+                    pathName = matcher.group(1);
+                    String[] path = pathName.toString().split("=");
+                    pathName = path[1];
 					break;
                 }
             }
             System.out.println("VALUE OF S (line we are reading through): " + s);
             p.destroy();
             if (!isMatch) {
-                System.out.println("DEFAULT PATH USED: " + directory);
-                return new File(defaultPath);
+                System.out.println("DEFAULT PATH USED");
+                return new File(defaultPath + "/");
             } else {
-                System.out.println("PATHNAME FOUND AND USED: " + directory);
-                return new File(pathName.toString());
+                System.out.println("PATHNAME FOUND AND USED");
+                return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
             }
         } catch (Exception e) {
             System.out.println("Process check for Tomcat7 failed (using defaultPath): " + e);
-            return new File(defaultPath);
+            return new File(defaultPath + "/");
         }
 	}
 
     /*
-    *  - Loop through folders/files in directory
-    *  - Push files onto Stack w/ pattern
+    *  grabFiles(File: directory, String: regex):
+    *  Loop through folders/files in directory and
+    *  push all possible files (pattern matching)
+    *  onto the Stack.
     */
     private static Stack<String> grabFiles(File directory, String regex) {
         String[] fileList = directory.list();
@@ -182,19 +182,18 @@ public class Audit {
          
         // We did not find a file   
         if (files.empty()) {
-            System.out.println("Our stack is empty -> return false.");
-            return files;
+            System.out.println("No possible files were found.");
         }         
         return files;    
     }
 
-    /*
-    * TODO: 
-    * - Check to see where this file is located (and what it could be named)
+    /* 
+    *  oscarBuild(String: fileName):
+    *  Read Oscar buildtag of properties file.
     */
     private static void oscarBuild(String fileName) {
         String s;
-        File oscar = new File (fileName);
+        File oscar = new File(fileName + ".properties");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch = false; 
@@ -216,12 +215,13 @@ public class Audit {
     }
 
     /*
-    * TODO: 
-    * - Check to see where this file is located (and what it could be named)
+    *  verifyOscarProperties(String: fileName):
+    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," and
+    *  "TMP_DIR" tags of properties file.
     */
 	private static void verifyOscarProperties(String fileName) {
 		String s;
-        File oscar = new File(fileName);
+        File oscar = new File(fileName + ".properties");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch1 = false;
@@ -230,6 +230,7 @@ public class Audit {
             boolean flag1 = false;
             boolean flag2 = false;
             boolean flag3 = false;
+
             while ((s = br.readLine()) != null) {
 				if (Pattern.matches("^(#).*", s))
                     continue;
@@ -268,10 +269,14 @@ public class Audit {
         }
 	}
     
+    /*
+    *  verifyDrugref():
+    *  Verify all Drugref deployments.
+    */
     private static void verifyDrugref() {}
 
     /*
-    * TODO: 
+    *  verifyDrugrefProperties():
     * - Check to see where this file is located (and what it could be named)
 	* - Remove hard code for port number (use guest port)
     */
@@ -336,7 +341,7 @@ public class Audit {
     }
 
     /*
-    * TODO: 
+    *  verifyTomcat():
     * - Check to see where this file is located (and what it could be named)
 	* - Figure out how to check for increased memory resources
     */
@@ -369,7 +374,7 @@ public class Audit {
 			//serverVersion();
 			//JVMTomcat7();
 			//mysqlVersion();
-            //verifyOscar();
+            verifyOscar();
 			//oscarBuild();
 			//verifyOscar();
 			//verifyDrugref();
