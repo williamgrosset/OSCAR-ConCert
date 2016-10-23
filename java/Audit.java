@@ -8,18 +8,16 @@ import java.util.regex.Pattern;
 
 /*
 * MASTER TODO:
-* - Proper error handling (all methods)
 * - OS compatible
 */
 public class Audit {
-
-	/* 
+    /* 
     *  serverVersion():
-	*  Run "lsb_release -r" command and extract release value.
-	*/
-	private static void serverVersion() {
+    *  Run "lsb_release -r" command and extract release value.
+    */
+    private static void serverVersion() {
         try {
-		    String s;
+            String s;
             Process p = Runtime.getRuntime().exec("lsb_release -r");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((s = br.readLine()) != null)
@@ -369,17 +367,17 @@ public class Audit {
         Stack<String> files = new Stack<String>();
         
         // List all deployed folders in directory      
-        //System.out.println("All deployed folders in directory:");
+        System.out.println("All deployed folders in directory:");
         for (int i = 0; i < fileList.length; i++) {
                 Arrays.sort(fileList);
-                //System.out.println(fileList[i]);
+                System.out.println(fileList[i]);
         }
          
         // List all possible file(s) that we are looking for
-        //System.out.println("Adding all possible file(s):");
+        System.out.println("Adding all possible file(s):");
         for (int i = 0; i < fileList.length; i++) {
                 if (Pattern.matches(regex, fileList[i])) {
-                     //System.out.println(fileList[i]);
+                     System.out.println(fileList[i]);
                      files.push(fileList[i]);
                 }
         }
