@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 * - OS compatible
 */
 public class Audit {
+    
     /* 
     *  serverVersion():
     *  Run "lsb_release -r" command and extract release value.
@@ -41,8 +42,8 @@ public class Audit {
     *  JVMTomcat7(String: binPath):
     *  Read bash script and extract JVM/Tomcat version information.
     */
-	private static void JVMTomcat7(String binPath) {
-		String s;
+    private static void JVMTomcat7(String binPath) {
+        String s;
         String cmd = new String(binPath + "/version.sh");
         try {
             Process p = Runtime.getRuntime().exec(cmd);
@@ -74,14 +75,14 @@ public class Audit {
         } catch (Exception e) {
             System.out.println("JVM/Tomcat7 bash script error: " + e);
         }
-	}
+    }
 	
     /* 
     *  mysqlVersion():
     *  Run "mysql --version" command and extract version value.
     */
-	private static void mysqlVersion() {
-		String s;
+    private static void mysqlVersion() {
+        String s;
         try {
             Process p = Runtime.getRuntime().exec("mysql --version");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
@@ -91,7 +92,7 @@ public class Audit {
         } catch (Exception e) {
             System.out.println("Could not detect MySQL version: " + e);
         }
-	}
+    }
 
     /* 
     *  verifyOscar():
@@ -102,7 +103,7 @@ public class Audit {
         File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
-        
+
         if (files.empty()) {
             System.out.println("Could not find any properties files for Oscar.");
         }
@@ -147,8 +148,8 @@ public class Audit {
     *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," and
     *  "TMP_DIR" tags of properties file.
     */
-	private static void verifyOscarProperties(String fileName) {
-		String s;
+    private static void verifyOscarProperties(String fileName) {
+	    String s;
         File oscar = new File(fileName + ".properties");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
@@ -160,42 +161,42 @@ public class Audit {
             boolean flag3 = false;
 
             while ((s = br.readLine()) != null) {
-				if (Pattern.matches("^(#).*", s))
+                if (Pattern.matches("^(#).*", s))
                     continue;
-				isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", s);
+                isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", s);
                 isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", s);
-				isMatch3 = Pattern.matches("^(TMP_DIR=).*", s);
+                isMatch3 = Pattern.matches("^(TMP_DIR=).*", s);
                 if (isMatch1) { // HL7TEXT_LABS=
-					if (s.substring(13).toLowerCase().equals("yes")) {
-						flag1 = true;
-						System.out.println("\"HL7TEXT_LABS\" tag is configured properly.");
-					}
+                    if (s.substring(13).toLowerCase().equals("yes")) {
+                        flag1 = true;
+                        System.out.println("\"HL7TEXT_LABS\" tag is configured properly.");
+                    }
                 }
-				if (isMatch2) { // SINGLE_PAGE_CHART=
-					if (s.substring(18).toLowerCase().equals("true")) {
-						flag2 = true;
-						System.out.println("\"SINGLE_PAGE_CHART\" tag is configured properly.");
-					}
-				}
-				if (isMatch3) { // TMP_DIR=
-					if (!s.substring(8).equals("")) {
-						flag3 = true;
-						System.out.println("\"TMP_DIR tag\" is configured properly.");
-					}
-				}
-				if (flag1 && flag2 && flag3)
-					break;
+                if (isMatch2) { // SINGLE_PAGE_CHART=
+                    if (s.substring(18).toLowerCase().equals("true")) {
+                        flag2 = true;
+                        System.out.println("\"SINGLE_PAGE_CHART\" tag is configured properly.");
+                    }
+                }
+                if (isMatch3) { // TMP_DIR=
+                    if (!s.substring(8).equals("")) {
+                        flag3 = true;
+                        System.out.println("\"TMP_DIR tag\" is configured properly.");
+                    }
+                }
+                if (flag1 && flag2 && flag3)
+                    break;
             }
-			if (!flag1)
-				System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");        
-			if (!flag2)
-				System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");    
-			if (!flag3)
-				System.out.println("\"TMP_DIR\" tag not configured properly.");              
+            if (!flag1)
+                System.out.println("\"HL7TEXT_LABS\" tag not configured properly.");        
+            if (!flag2)
+                System.out.println("\"SINGLE_PAGE_CHART\" tag not configured properly.");    
+            if (!flag3)
+                System.out.println("\"TMP_DIR\" tag not configured properly.");              
         } catch (Exception e) {
             System.out.println("Oscar verification error: " + e);
         }
-	}
+    }
     
     /*
     *  verifyDrugref():
@@ -216,11 +217,10 @@ public class Audit {
             System.out.println("Currently checking \"" + file + ".properties\" file...");
             verifyDrugrefProperties(catalinaHome+"/"+file);
         }
-     }
+    }
 
     /*
     *  verifyDrugrefProperties(String: fileName):
-	*  Remove hard code for port number (use guest port)
     *  Read "db_user," "db_url," "db_driver," and
     *  "drugref_url" tags of properties file.
     */
@@ -229,14 +229,14 @@ public class Audit {
         File drugref = new File(fileName + ".properties");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
-			boolean isMatch1 = false;
-			boolean isMatch2 = false;
-			boolean isMatch3 = false;
-			boolean isMatch4 = false;
-			boolean flag1 = false;
-			boolean flag2 = false;
-			boolean flag3 = false;
-			boolean flag4 = false;
+            boolean isMatch1 = false;
+            boolean isMatch2 = false;
+            boolean isMatch3 = false;
+            boolean isMatch4 = false;
+            boolean flag1 = false;
+            boolean flag2 = false;
+            boolean flag3 = false;
+            boolean flag4 = false;
             while ((s = br.readLine()) != null) {
                 if (Pattern.matches("^(#).*", s))
                     continue;
@@ -251,7 +251,7 @@ public class Audit {
                     }
                 }
                 if (isMatch2) { // db_url=
-                    if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) {
+                    if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) { // verify this port value
                         flag2 = true;        							                              
                         System.out.println("\"db_url\" tag is configured properly.");				
                     }
@@ -262,23 +262,23 @@ public class Audit {
                         System.out.println("\"db_driver\" tag is configured properly.");
                     }
                 }
-				if (isMatch4) { // drugref_url=
-					if (!s.substring(12).toLowerCase().equals("")) { 
-						flag4 = true;
-						System.out.println("\"drugref_url\" tag is configured properly.");
-					}
-				}
-				if (flag1 && flag2 && flag3 && flag4)
-					break;
-			}
-			if (!flag1)
+                if (isMatch4) { // drugref_url=
+                    if (!s.substring(12).toLowerCase().equals("")) { 
+                        flag4 = true;
+                        System.out.println("\"drugref_url\" tag is configured properly.");
+                    }
+                }
+                if (flag1 && flag2 && flag3 && flag4)
+                    break;
+            }
+            if (!flag1)
                 System.out.println("\"db_user\" tag not configured properly."); 	
             if (!flag2)
                 System.out.println("\"db_url\" tag not configured properly.");          
             if (!flag3)
                 System.out.println("\"db_driver\" tag not configured properly.");       
-			if (!flag4)
-				System.out.println("\"drugref_url\" tag not configured properly.");     
+            if (!flag4)
+                System.out.println("\"drugref_url\" tag not configured properly.");     
         } catch (Exception e) {
             System.out.println("Drugref verification error: " + e);
         }
@@ -288,7 +288,7 @@ public class Audit {
     *  verifyTomcat():
     *  Read "JAVA_OPTS" tag in properties file.
     */
-	private static void tomcatReinforcement() {
+    private static void tomcatReinforcement() {
         String s;
         File tomcat = new File("/etc/default/tomcat7");
         try {
@@ -311,7 +311,7 @@ public class Audit {
         } catch (Exception e) {
             System.out.println("Could not detect Tomcat reinforcement: " + e);
         }
-	}
+    }
 
     /////////////////////////////////
     //////// HELPER METHODS /////////
@@ -319,17 +319,17 @@ public class Audit {
 
     /* 
     *  searchForDirectory(String: defaultPath, String: regex):
-	*  Run "ps" command to find Tomact7 details and
+    *  Run "ps" command to find Tomact7 details and
     *  then use pattern matching to find desired tags
     *  (i.e "$CATALINA_HOME" full path name).
-	*/
-	private static File searchForDirectory(String defaultPath, String regex) {
-		CharSequence pathName = "";
-		boolean isMatch = false;
+    */
+    private static File searchForDirectory(String defaultPath, String regex) {
+        CharSequence pathName = "";
+        boolean isMatch = false;
         Stack<String> files = new Stack<String>();
 
         try {
-			String s = "";
+            String s = "";
             Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "ps -ef | grep tomcat7"});
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((s = br.readLine()) != null) {
@@ -340,7 +340,7 @@ public class Audit {
                     pathName = matcher.group(1);
                     String[] path = pathName.toString().split("=");
                     pathName = path[1];
-					break;
+                    break;
                 }
             }
             p.destroy();
@@ -349,12 +349,11 @@ public class Audit {
                 return new File(defaultPath + "/");
             }
             return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
-  
         } catch (Exception e) {
             System.out.println("Process check for Tomcat7 failed (using defaultPath): " + e);
             return new File(defaultPath + "/");
         }
-	}
+    }
 
     /*
     *  grabFiles(File: directory, String: regex):
@@ -367,67 +366,67 @@ public class Audit {
         Stack<String> files = new Stack<String>();
         
         // List all deployed folders in directory      
-        System.out.println("All deployed folders in directory:");
+        //System.out.println("All deployed folders in directory:");
         for (int i = 0; i < fileList.length; i++) {
-                Arrays.sort(fileList);
-                System.out.println(fileList[i]);
+            Arrays.sort(fileList);
+            //System.out.println(fileList[i]);
         }
          
         // List all possible file(s) that we are looking for
-        System.out.println("Adding all possible file(s):");
+        //System.out.println("Adding all possible file(s):");
         for (int i = 0; i < fileList.length; i++) {
-                if (Pattern.matches(regex, fileList[i])) {
-                     System.out.println(fileList[i]);
-                     files.push(fileList[i]);
-                }
-        }
-         
-        // We did not find a file   
+            if (Pattern.matches(regex, fileList[i])) {
+                //System.out.println(fileList[i]);
+                files.push(fileList[i]);
+            }
+        }  
+
+        // We did not find a file
         if (files.empty()) {
             System.out.println("No possible files were found.");
         }         
         return files;    
     }
 
-	/*
+    /*
     *  CURRENTLY NOT USED
     *  checkLSB():
-	*  Check to see if "lsb release" command exists.
-	*/	
-	private static boolean checkLSB() {
-		try {
-			String str;
-			Process p = Runtime.getRuntime().exec("which lsb_release");
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((str = br.readLine()) != null) {
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			System.out.println("command -v lsb_release don't work!?!?: " + e);
-			return false;
-		}		
-	}
+    *  Check to see if "lsb release" command exists.
+    */	
+    private static boolean checkLSB() {
+        try {
+            String str;
+            Process p = Runtime.getRuntime().exec("which lsb_release");
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((str = br.readLine()) != null) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.out.println("command -v lsb_release don't work!?!?: " + e);
+            return false;
+        }		
+    }
 
     /////////////////////////////////
     ///////// MAIN METHOD ///////////
     /////////////////////////////////
 
-	public static void main(String args[]) {
-		// Verify operating system && run corresponding functions
-		String os = System.getProperty("os.name");
-		
-		if (os.toLowerCase().equals("linux")) {
-			serverVersion();
-	        verifyTomcat();
-			mysqlVersion();
+    public static void main(String args[]) {
+        // Verify operating system && run corresponding functions
+        String os = System.getProperty("os.name");
+
+        if (os.toLowerCase().equals("linux")) {
+            serverVersion();
+            verifyTomcat();
+            mysqlVersion();
             verifyOscar();
             verifyDrugref();
-			tomcatReinforcement();
-		} else if (os.toLowerCase().equals("windows")) { // fix me to RE
+            tomcatReinforcement();
+        } else if (os.toLowerCase().equals("windows")) { // fix me to RE
 
-		} else { // unix
+        } else { // unix
 
-		}
-	}
+        }
+    }
 }
