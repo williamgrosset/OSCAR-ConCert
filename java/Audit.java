@@ -224,7 +224,7 @@ public class Audit {
     *  Read "db_user," "db_url," "db_driver," and
     *  "drugref_url" tags of properties file.
     */
-	private static void verifyDrugrefProperties(String fileName) {
+    private static void verifyDrugrefProperties(String fileName) {
         String s;
         File drugref = new File(fileName + ".properties");
         try {
@@ -237,6 +237,7 @@ public class Audit {
             boolean flag2 = false;
             boolean flag3 = false;
             boolean flag4 = false;
+
             while ((s = br.readLine()) != null) {
                 if (Pattern.matches("^(#).*", s))
                     continue;
