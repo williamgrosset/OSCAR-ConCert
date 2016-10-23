@@ -26,54 +26,55 @@ public class Audit {
                 System.out.println("Ubuntu server version: " + s.substring(9));
             p.destroy();
         } catch (Exception e) {
-            System.out.println("Could not detect sever version.");
-            System.out.println("Error: " + e);
+            System.out.println("Could not detect Ubuntu server version: " + e);
         }
     }
 
-	/*
-    *  CURRENTLY NOT USED
-    *  checkLSB():
-	*  Check to see if "lsb release" command exists.
-	*/	
-	private static boolean checkLSB() {
-		try {
-			String str;
-			Process p = Runtime.getRuntime().exec("which lsb_release");
-			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((str = br.readLine()) != null) {
-				return true;
-			}
-			return false;
-		} catch (Exception e) {
-			System.out.println("command -v lsb_release don't work!?!?: " + e);
-			return false;
-		}		
-	}
+    /*
+    *  verifyTomcat():
+    *  Verify JVM/Tomcat7 versions.
+    */
+    private static void verifyTomcat() {
+        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
+        JVMTomcat7(catalinaHome.getPath()+"/bin"); 
+    }
 
     /* 
-    *  JVMTomcat7():
-    * - Check to see where this bash script is located (and what it could be named)
+    *  JVMTomcat7(String: binPath):
+    *  Read bash script and extract JVM/Tomcat version information.
     */
-	private static void JVMTomcat7() {
+	private static void JVMTomcat7(String binPath) {
 		String s;
-        String cmd = new String("/usr/share/tomcat7/bin/version.sh");
+        String cmd = new String(binPath + "/version.sh");
         try {
             Process p = Runtime.getRuntime().exec(cmd);
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            boolean isMatch = false;
+            boolean isMatch1 = false;
+            boolean isMatch2 = false;
+            boolean flag1 = false;
+            boolean flag2 = false;
+
             while ((s = br.readLine()) != null) {
-                isMatch = Pattern.matches("^(JVM Version:).*", s);
-                if (isMatch) {
-                    System.out.println(s);
-                    break;
+                isMatch1 = Pattern.matches("^(JVM Version:).*", s);
+                isMatch2 = Pattern.matches("^(Server version:).*", s);
+                if (isMatch1) {
+                    System.out.println("JVM Version: " + s.substring(16));
+                    flag1 = true;
                 }
+                if (isMatch2) {
+                    System.out.println("Tomcat version: " + s.substring(16));
+                    flag2 = true;
+                }
+                if (flag1 && flag2)
+                    break;
             }
-            if (!isMatch)
-                System.out.println("JVM/Tomcat7 version cannot be found.");
+            if (!flag1)
+                System.out.println("JVM version cannot be found.");
+            if (!flag2)
+                System.out.println("Tomcat version cannot be found.");
             p.destroy();
         } catch (Exception e) {
-            System.out.println("JVM/Tomcat7 version error: " + e);
+            System.out.println("JVM/Tomcat7 bash script error: " + e);
         }
 	}
 	
@@ -90,7 +91,7 @@ public class Audit {
                 System.out.println("MySQL version: " + s.substring(11));
             p.destroy();
         } catch (Exception e) {
-            System.out.println("MySQL version error: " + e);
+            System.out.println("Could not detect MySQL version: " + e);
         }
 	}
 
@@ -104,6 +105,9 @@ public class Audit {
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
         
+        if (files.empty()) {
+            System.out.println("Could not find any properties files for Oscar.");
+        }
         // Verify files on the Stack
         while (!files.empty()) {
             String file = files.pop();
@@ -111,80 +115,6 @@ public class Audit {
             oscarBuild(catalinaHome+"/"+file);
             verifyOscarProperties(catalinaHome+"/"+file);
         }
-    }
-
-	/* 
-    *  searchForDirectory(String: defaultPath, String: regex):
-	*  Run "ps" command to find Tomact7 details and
-    *  then use pattern matching to find desired tags
-    *  (i.e "$CATALINA_HOME" full path name).
-	*/
-	private static File searchForDirectory(String defaultPath, String regex) {
-		CharSequence pathName = "";
-		boolean isMatch = false;
-        Stack<String> files = new Stack<String>();
-
-        try {
-			String s = "";
-            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "ps -ef | grep tomcat7"});
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            while ((s = br.readLine()) != null) {
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(s);
-                isMatch = matcher.matches();
-                if (isMatch) {
-                    pathName = matcher.group(1);
-                    String[] path = pathName.toString().split("=");
-                    pathName = path[1];
-					break;
-                }
-            }
-            System.out.println("VALUE OF S (line we are reading through): " + s);
-            p.destroy();
-            if (!isMatch) {
-                System.out.println("DEFAULT PATH USED");
-                return new File(defaultPath + "/");
-            } else {
-                System.out.println("PATHNAME FOUND AND USED");
-                return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
-            }
-        } catch (Exception e) {
-            System.out.println("Process check for Tomcat7 failed (using defaultPath): " + e);
-            return new File(defaultPath + "/");
-        }
-	}
-
-    /*
-    *  grabFiles(File: directory, String: regex):
-    *  Loop through folders/files in directory and
-    *  push all possible files (pattern matching)
-    *  onto the Stack.
-    */
-    private static Stack<String> grabFiles(File directory, String regex) {
-        String[] fileList = directory.list();
-        Stack<String> files = new Stack<String>();
-        
-        // List all deployed folders in directory      
-        System.out.println("All deployed folders in directory:");
-        for (int i = 0; i < fileList.length; i++) {
-                Arrays.sort(fileList);
-                System.out.println(fileList[i]);
-        }
-         
-        // List all possible file(s) that we are looking for
-        System.out.println("Adding all possible file(s):");
-        for (int i = 0; i < fileList.length; i++) {
-                if (Pattern.matches(regex, fileList[i])) {
-                     System.out.println(fileList[i]);
-                     files.push(fileList[i]);
-                }
-        }
-         
-        // We did not find a file   
-        if (files.empty()) {
-            System.out.println("No possible files were found.");
-        }         
-        return files;    
     }
 
     /* 
@@ -202,7 +132,7 @@ public class Audit {
                     continue;
                 isMatch = Pattern.matches("^(buildtag=).*", s);
                 if (isMatch) {
-                    System.out.println("Build and version: " + s.substring(9));
+                    System.out.println("Oscar build and version: " + s.substring(9));
                     break;
                 }   
             }
@@ -210,7 +140,7 @@ public class Audit {
                 System.out.println("Oscar build/version cannot be found.");
             }   
         } catch (Exception e) {
-            System.out.println("Oscar build error: " + e);
+            System.out.println("Could not detect Oscar build and version: " + e);
         }   
     }
 
@@ -240,19 +170,19 @@ public class Audit {
                 if (isMatch1) { // HL7TEXT_LABS=
 					if (s.substring(13).toLowerCase().equals("yes")) {
 						flag1 = true;
-						System.out.println(s);
+						System.out.println("\"HL7TEXT_LABS\" tag is configured properly.");
 					}
                 }
 				if (isMatch2) { // SINGLE_PAGE_CHART=
 					if (s.substring(18).toLowerCase().equals("true")) {
 						flag2 = true;
-						System.out.println(s);
+						System.out.println("\"SINGLE_PAGE_CHART\" tag is configured properly.");
 					}
 				}
 				if (isMatch3) { // TMP_DIR=
 					if (!s.substring(8).equals("")) {
 						flag3 = true;
-						System.out.println(s);
+						System.out.println("\"TMP_DIR tag\" is configured properly.");
 					}
 				}
 				if (flag1 && flag2 && flag3)
@@ -273,16 +203,32 @@ public class Audit {
     *  verifyDrugref():
     *  Verify all Drugref deployments.
     */
-    private static void verifyDrugref() {}
+    private static void verifyDrugref() {
+        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*");
+        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
+        File webApps = new File(catalinaBase.getPath()+"/webapps");
+        Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*?)$");
+
+        if (files.empty()) {
+            System.out.println("Could not find any properties files for Drugref.");
+        } 
+        // Verify files on the Stack
+        while (!files.empty()) {
+            String file = files.pop();
+            System.out.println("Currently checking \"" + file + ".properties\" file...");
+            verifyDrugrefProperties(catalinaHome+"/"+file);
+        }
+     }
 
     /*
-    *  verifyDrugrefProperties():
-    * - Check to see where this file is located (and what it could be named)
-	* - Remove hard code for port number (use guest port)
+    *  verifyDrugrefProperties(String: fileName):
+	*  Remove hard code for port number (use guest port)
+    *  Read "db_user," "db_url," "db_driver," and
+    *  "drugref_url" tags of properties file.
     */
-	private static void verifyDrugrefProperties() {
+	private static void verifyDrugrefProperties(String fileName) {
         String s;
-        File drugref = new File("/usr/share/tomcat7/drugref2.properties");
+        File drugref = new File(fileName + ".properties");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
 			boolean isMatch1 = false;
@@ -303,25 +249,25 @@ public class Audit {
                 if (isMatch1) { // db_user=
                     if (!s.substring(8).equals("")) {
                         flag1 = true;
-                        System.out.println(s);
+                        System.out.println("\"db_user\" tag is configured properly.");
                     }
                 }
                 if (isMatch2) { // db_url=
-                    if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) { // will port value &
-                        flag2 = true;        							                              // drugref always be
-                        System.out.println(s);							                              // these values?
+                    if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) {
+                        flag2 = true;        							                              
+                        System.out.println("\"db_url\" tag is configured properly.");				
                     }
                 }
                 if (isMatch3) { // db_driver=
                     if (s.substring(10).toLowerCase().equals("com.mysql.jdbc.driver")) {
                         flag3 = true;
-                        System.out.println(s);
+                        System.out.println("\"db_driver\" tag is configured properly.");
                     }
                 }
 				if (isMatch4) { // drugref_url=
 					if (!s.substring(12).toLowerCase().equals("")) { 
 						flag4 = true;
-						System.out.println(s);
+						System.out.println("\"drugref_url\" tag is configured properly.");
 					}
 				}
 				if (flag1 && flag2 && flag3 && flag4)
@@ -342,43 +288,144 @@ public class Audit {
 
     /*
     *  verifyTomcat():
-    * - Check to see where this file is located (and what it could be named)
-	* - Figure out how to check for increased memory resources
+    *  Read "JAVA_OPTS" tag in properties file.
     */
-	private static void verifyTomcat() {
+	private static void tomcatReinforcement() {
         String s;
         File tomcat = new File("/etc/default/tomcat7");
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(tomcat)));
+            boolean isMatch = false;
             while ((s = br.readLine()) != null) {
                 if (Pattern.matches("^(#).*", s))
                     continue;
-                boolean isMatch = Pattern.matches("^(JAVA_OPTS=).*", s);
+                isMatch = Pattern.matches("^(JAVA_OPTS=).*", s);
                 if (isMatch) {
-                    if (!s.substring(10).equals("")) {
-                        System.out.println(s);
+                    if (!s.substring(10).equals("")) { // how to check for increased memory resources?
+                        System.out.println("Tomcat is reinforced.");
                         break;
                     }
                 }
             }
+            if (!isMatch) {
+                System.out.println("Tomcat is not reinforced. Please check your tomcat file.");
+            }
         } catch (Exception e) {
-            System.out.println("Tomcat verification error: " + e);
+            System.out.println("Could not detect Tomcat reinforcement: " + e);
         }
 	}
+
+    /////////////////////////////////
+    //////// HELPER METHODS /////////
+    /////////////////////////////////
+
+    /* 
+    *  searchForDirectory(String: defaultPath, String: regex):
+	*  Run "ps" command to find Tomact7 details and
+    *  then use pattern matching to find desired tags
+    *  (i.e "$CATALINA_HOME" full path name).
+	*/
+	private static File searchForDirectory(String defaultPath, String regex) {
+		CharSequence pathName = "";
+		boolean isMatch = false;
+        Stack<String> files = new Stack<String>();
+
+        try {
+			String s = "";
+            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "ps -ef | grep tomcat7"});
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            while ((s = br.readLine()) != null) {
+                Pattern pattern = Pattern.compile(regex);
+                Matcher matcher = pattern.matcher(s);
+                isMatch = matcher.matches();
+                if (isMatch) {
+                    pathName = matcher.group(1);
+                    String[] path = pathName.toString().split("=");
+                    pathName = path[1];
+					break;
+                }
+            }
+            p.destroy();
+            if (!isMatch) {
+                System.out.println("Could not find specified path (using defaultPath).");
+                return new File(defaultPath + "/");
+            }
+            return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
+  
+        } catch (Exception e) {
+            System.out.println("Process check for Tomcat7 failed (using defaultPath): " + e);
+            return new File(defaultPath + "/");
+        }
+	}
+
+    /*
+    *  grabFiles(File: directory, String: regex):
+    *  Loop through folders/files in directory and
+    *  push all possible files (pattern matching)
+    *  onto the Stack.
+    */
+    private static Stack<String> grabFiles(File directory, String regex) {
+        String[] fileList = directory.list();
+        Stack<String> files = new Stack<String>();
+        
+        // List all deployed folders in directory      
+        //System.out.println("All deployed folders in directory:");
+        for (int i = 0; i < fileList.length; i++) {
+                Arrays.sort(fileList);
+                //System.out.println(fileList[i]);
+        }
+         
+        // List all possible file(s) that we are looking for
+        //System.out.println("Adding all possible file(s):");
+        for (int i = 0; i < fileList.length; i++) {
+                if (Pattern.matches(regex, fileList[i])) {
+                     //System.out.println(fileList[i]);
+                     files.push(fileList[i]);
+                }
+        }
+         
+        // We did not find a file   
+        if (files.empty()) {
+            System.out.println("No possible files were found.");
+        }         
+        return files;    
+    }
+
+	/*
+    *  CURRENTLY NOT USED
+    *  checkLSB():
+	*  Check to see if "lsb release" command exists.
+	*/	
+	private static boolean checkLSB() {
+		try {
+			String str;
+			Process p = Runtime.getRuntime().exec("which lsb_release");
+			BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			while ((str = br.readLine()) != null) {
+				return true;
+			}
+			return false;
+		} catch (Exception e) {
+			System.out.println("command -v lsb_release don't work!?!?: " + e);
+			return false;
+		}		
+	}
+
+    /////////////////////////////////
+    ///////// MAIN METHOD ///////////
+    /////////////////////////////////
 
 	public static void main(String args[]) {
 		// Verify operating system && run corresponding functions
 		String os = System.getProperty("os.name");
 		
 		if (os.toLowerCase().equals("linux")) {
-			//serverVersion();
-			//JVMTomcat7();
-			//mysqlVersion();
+			serverVersion();
+	        verifyTomcat();
+			mysqlVersion();
             verifyOscar();
-			//oscarBuild();
-			//verifyOscar();
-			//verifyDrugref();
-			//verifyTomcat();
+            verifyDrugref();
+			tomcatReinforcement();
 		} else if (os.toLowerCase().equals("windows")) { // fix me to RE
 
 		} else { // unix
