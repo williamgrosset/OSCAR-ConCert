@@ -43,9 +43,9 @@ public class Audit {
     *  Read bash script and extract JVM/Tomcat version information.
     */
     private static void JVMTomcat7(String binPath) {
-        String s;
-        String cmd = new String(binPath + "/version.sh");
         try {
+            String s;
+            String cmd = new String(binPath + "/version.sh");
             Process p = Runtime.getRuntime().exec(cmd);
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             boolean isMatch1 = false;
@@ -82,8 +82,8 @@ public class Audit {
     *  Run "mysql --version" command and extract version value.
     */
     private static void mysqlVersion() {
-        String s;
         try {
+            String s;
             Process p = Runtime.getRuntime().exec("mysql --version");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             while ((s = br.readLine()) != null)
@@ -121,11 +121,12 @@ public class Audit {
     *  Read Oscar buildtag of properties file.
     */
     private static void oscarBuild(String fileName) {
-        String s;
-        File oscar = new File(fileName + ".properties");
         try {
+            String s;
+            File oscar = new File(fileName + ".properties");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch = false; 
+
             while ((s = br.readLine()) != null) {
                 if (Pattern.matches("^(#).*", s))
                     continue;
@@ -149,9 +150,9 @@ public class Audit {
     *  "TMP_DIR" tags of properties file.
     */
     private static void verifyOscarProperties(String fileName) {
-	    String s;
-        File oscar = new File(fileName + ".properties");
         try {
+            String s;
+            File oscar = new File(fileName + ".properties");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch1 = false;
             boolean isMatch2 = false;
@@ -225,9 +226,9 @@ public class Audit {
     *  "drugref_url" tags of properties file.
     */
     private static void verifyDrugrefProperties(String fileName) {
-        String s;
-        File drugref = new File(fileName + ".properties");
         try {
+            String s;
+            File drugref = new File(fileName + ".properties");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
             boolean isMatch1 = false;
             boolean isMatch2 = false;
@@ -290,11 +291,12 @@ public class Audit {
     *  Read "JAVA_OPTS" tag in properties file.
     */
     private static void tomcatReinforcement() {
-        String s;
-        File tomcat = new File("/etc/default/tomcat7");
         try {
+            String s;
+            File tomcat = new File("/etc/default/tomcat7");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(tomcat)));
             boolean isMatch = false;
+
             while ((s = br.readLine()) != null) {
                 if (Pattern.matches("^(#).*", s))
                     continue;
