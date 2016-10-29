@@ -11,11 +11,14 @@ import java.util.regex.Pattern;
 * - OS compatible
 */
 public class Audit {
-
   
     private static File catalinaBase;
     private static File catalinaHome;
 
+    /*
+    *  CONSTRUCTOR Audit():
+    *  Initiliaze path variables for CATALINA_BASE and "$CATALINA_HOME."
+    */  
     public Audit() {
         catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
         catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
@@ -223,7 +226,8 @@ public class Audit {
                 isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", s);
                 isMatch3 = Pattern.matches("^(TMP_DIR=).*", s);
                 if (isMatch1) { // HL7TEXT_LABS=
-                    if (s.substring(13).toLowerCase().equals("yes")) { // THIS needs to be fixed, what if there is a white space after '=' ??
+                    CharSequence yes = "yes";
+                    if (s.substring(13).toLowerCase().equals(yes)) { // THIS needs to be fixed, what if there is a white space after '=' ??
                         flag1 = true;
                         System.out.println("\"HL7TEXT_LABS\" tag is configured properly.");
                     }
