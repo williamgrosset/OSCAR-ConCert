@@ -11,7 +11,16 @@ import java.util.regex.Pattern;
 * - OS compatible
 */
 public class Audit {
-    
+
+  
+    private static File catalinaBase;
+    private static File catalinaHome;
+
+    public Audit() {
+        catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
+        catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
+    }
+
     /*
     *  serverVersion():
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
@@ -45,7 +54,6 @@ public class Audit {
     */
     private static void verifyTomcat() {
         System.out.println("Verifying Tomcat...");
-        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
         JVMTomcat7(catalinaHome.getPath()+"/bin"); 
     }
 
@@ -114,8 +122,6 @@ public class Audit {
     */
     private static void verifyOscar() {
         System.out.println("Verifying Oscar...");
-        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
-        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
 
@@ -253,8 +259,6 @@ public class Audit {
     */
     private static void verifyDrugref() {
         System.out.println("Verifying Drugref...");
-        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
-        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*?)$");
 
@@ -420,7 +424,7 @@ public class Audit {
             }
             p.destroy();
             if (!isMatch) {
-                System.out.println("Could not find specified path using " + defaultPathName + " defaultPath.");
+                System.out.println("Could not find specified path (using " + defaultPathName + " defaultPath).");
                 return new File(defaultPath + "/");
             }
             return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
@@ -494,6 +498,7 @@ public class Audit {
         // Verify operating system && run corresponding functions
         //String os = System.getProperty("os.name");
         //if (os.toLowerCase().equals("linux")) {
+            Audit audit = new Audit();
             serverVersion();
             mysqlVersion();
             verifyOscar();
