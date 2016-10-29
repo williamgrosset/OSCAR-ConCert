@@ -123,6 +123,7 @@ public class Audit {
     private static void verifyOscar() {
         System.out.println("Verifying Oscar...");
         File webApps = new File(catalinaBase.getPath()+"/webapps");
+        System.out.println("Grabbing possible Oscar files...");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
 
         if (files.empty()) {
@@ -260,6 +261,7 @@ public class Audit {
     private static void verifyDrugref() {
         System.out.println("Verifying Drugref...");
         File webApps = new File(catalinaBase.getPath()+"/webapps");
+        System.out.println("Grabbing possible Drugref files...");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*?)$");
 
         if (files.empty()) {
@@ -446,7 +448,7 @@ public class Audit {
 
         // We did not find a file
         if (fileList == null || fileList.length == 0) {
-            System.out.println("No possible files were found.");
+            System.out.println("No possible files were found in directory.");
             return files;
         }
         
