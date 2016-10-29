@@ -44,7 +44,8 @@ public class Audit {
     *  Verify JVM/Tomcat7 versions.
     */
     private static void verifyTomcat() {
-        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
+        System.out.println("Verifying Tomcat...");
+        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
         JVMTomcat7(catalinaHome.getPath()+"/bin"); 
     }
 
@@ -112,8 +113,9 @@ public class Audit {
     *  Verify all Oscar deployments.
     */
     private static void verifyOscar() {
-        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*");
-        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
+        System.out.println("Verifying Oscar...");
+        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
+        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
 
@@ -250,8 +252,9 @@ public class Audit {
     *  Verify all Drugref deployments.
     */
     private static void verifyDrugref() {
-        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*");
-        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
+        System.out.println("Verifying Drugref...");
+        File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
+        File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*?)$");
 
@@ -393,11 +396,12 @@ public class Audit {
     *  then use pattern matching to find desired tags
     *  (i.e "$CATALINA_HOME" full path name).
     */
-    private static File searchForDirectory(String defaultPath, String regex) {
+    private static File searchForDirectory(String defaultPath, String regex, String defaultPathName) {
         CharSequence pathName = "";
         boolean isMatch = false;
         Stack<String> files = new Stack<String>();
 
+        System.out.println("Currently looking for " + defaultPathName + " path...");
         try {
             String s = "";
             Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep tomcat"});
@@ -416,7 +420,7 @@ public class Audit {
             }
             p.destroy();
             if (!isMatch) {
-                System.out.println("Could not find specified path (using defaultPath).");
+                System.out.println("Could not find specified path (using " + defaultPathName + " defaultPath.");
                 return new File(defaultPath + "/");
             }
             return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
