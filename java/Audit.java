@@ -420,7 +420,7 @@ public class Audit {
             }
             p.destroy();
             if (!isMatch) {
-                System.out.println("Could not find specified path (using " + defaultPathName + " defaultPath.");
+                System.out.println("Could not find specified path using " + defaultPathName + " defaultPath.");
                 return new File(defaultPath + "/");
             }
             return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
@@ -495,7 +495,6 @@ public class Audit {
         //String os = System.getProperty("os.name");
         //if (os.toLowerCase().equals("linux")) {
             serverVersion();
-            verifyTomcat();
             mysqlVersion();
             verifyOscar();
             verifyDrugref();
