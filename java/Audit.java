@@ -437,7 +437,7 @@ public class Audit {
         Stack<String> files = new Stack<String>();
 
         // We did not find a file
-        if (fileList.length == 0 || fileList == null) {
+        if (fileList == null || fileList.length == 0) {
             System.out.println("No possible files were found.");
             return files;
         }
