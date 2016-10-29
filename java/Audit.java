@@ -17,13 +17,13 @@ public class Audit {
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     */
     private static void serverVersion() {
+        System.out.println("Currently checking Ubuntu server version...");
         try {
             String s = "";
             File lsbRelease = new File("/etc/lsb-release");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(lsbRelease)));
             boolean isMatch = false;
 
-            System.out.println("Currently checking Ubuntu server version...");
             while ((s = br.readLine()) != null) {
                 isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", s);
                 if (isMatch) {
@@ -35,7 +35,7 @@ public class Audit {
                 System.out.println("Could not detect Ubuntu server version.");
             }
         } catch (Exception e) {
-            System.out.println("Could not run \"lsb release\" command to detect Ubuntu server version " + e);
+            System.out.println("Could not run \"lsb release\" command to detect Ubuntu server version: " + e);
         }
     }
 
@@ -53,6 +53,7 @@ public class Audit {
     *  Read bash script and extract JVM/Tomcat version information.
     */
     private static void JVMTomcat7(String binPath) {
+        System.out.println("Currently checking JVM/Tomcat versions...");
         try {
             String s = "";
             String cmd = new String(binPath + "/version.sh");
@@ -63,7 +64,6 @@ public class Audit {
             boolean flag1 = false;
             boolean flag2 = false;
             
-            System.out.println("Currently checking JVM/Tomcat versions...");
             while ((s = br.readLine()) != null) {
                 isMatch1 = Pattern.matches("^(JVM Version:).*", s);
                 isMatch2 = Pattern.matches("^(Server version:).*", s);
@@ -92,13 +92,13 @@ public class Audit {
     *  mysqlVersion():
     *  Run "mysql --version" command and extract version value.
     */
-    private static void mysqlVersion() {
+    private static void mysqlVersion() { 
+        System.out.println("Currently checking MySQL version...");
         try {
             String s = "";
             Process p = Runtime.getRuntime().exec("mysql --version");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-            System.out.println("Currently checking MySQL version...");
             while ((s = br.readLine()) != null)
                 System.out.println("MySQL version: " + s.substring(11));
             p.destroy();
@@ -435,6 +435,12 @@ public class Audit {
     private static Stack<String> grabFiles(File directory, String regex) {
         String[] fileList = directory.list();
         Stack<String> files = new Stack<String>();
+
+        // We did not find a file
+        if (fileList.length == 0 || fileList == null) {
+            System.out.println("No possible files were found.");
+            return files;
+        }
         
         // List all deployed folders in directory      
         //System.out.println("All deployed folders in directory:");
@@ -451,11 +457,6 @@ public class Audit {
                 files.push(fileList[i]);
             }
         }  
-
-        // We did not find a file
-        if (files.empty()) {
-            System.out.println("No possible files were found.");
-        }         
         return files;    
     }
 
