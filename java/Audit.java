@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*
-* MASTER TODO:
+* TODO:
 * - OS compatible
 */
 public class Audit {
@@ -17,7 +17,7 @@ public class Audit {
 
     /*
     *  CONSTRUCTOR Audit():
-    *  Initiliaze path variables for CATALINA_BASE and "$CATALINA_HOME."
+    *  Initiliaze path variables for "$CATALINA_BASE" and "$CATALINA_HOME."
     */  
     public Audit() {
         catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
@@ -125,6 +125,7 @@ public class Audit {
     */
     private static void verifyOscar() {
         System.out.println("Verifying Oscar...");
+        
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         System.out.println("Grabbing possible Oscar files...");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
@@ -226,23 +227,16 @@ public class Audit {
                 isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", s);
                 isMatch3 = Pattern.matches("^(TMP_DIR=).*", s);
                 if (isMatch1) { // HL7TEXT_LABS=
-                    CharSequence yes = "yes";
-                    if (s.substring(13).toLowerCase().equals(yes)) { // THIS needs to be fixed, what if there is a white space after '=' ??
-                        flag1 = true;
-                        System.out.println("\"HL7TEXT_LABS\" tag is configured properly.");
-                    }
+                    flag1 = true;
+                    System.out.println("\"HL7TEXT_LABS\" tag is configured as: " + s.substring(13));
                 }
                 if (isMatch2) { // SINGLE_PAGE_CHART=
-                    if (s.substring(18).toLowerCase().equals("true")) {
-                        flag2 = true;
-                        System.out.println("\"SINGLE_PAGE_CHART\" tag is configured properly.");
-                    }
+                    flag2 = true;
+                    System.out.println("\"SINGLE_PAGE_CHART\" tag is configured as: " + s.substring(18));
                 }
                 if (isMatch3) { // TMP_DIR=
-                    if (!s.substring(8).equals("")) {
-                        flag3 = true;
-                        System.out.println("\"TMP_DIR tag\" is configured properly.");
-                    }
+                    flag3 = true;
+                    System.out.println("\"TMP_DIR tag\" is configured as: " + s.substring(8));
                 }
                 if (flag1 && flag2 && flag3)
                     break;
@@ -264,6 +258,7 @@ public class Audit {
     */
     private static void verifyDrugref() {
         System.out.println("Verifying Drugref...");
+       
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         System.out.println("Grabbing possible Drugref files...");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*?)$");
@@ -306,28 +301,20 @@ public class Audit {
                 isMatch3 = Pattern.matches("^(db_driver=).*", s);
                 isMatch4 = Pattern.matches("^(drugref_url=).*", s);
                 if (isMatch1) { // db_user=
-                    if (!s.substring(8).equals("")) {
-                        flag1 = true;
-                        System.out.println("\"db_user\" tag is configured properly.");
-                    }
+                    flag1 = true;
+                    System.out.println("\"db_user\" tag is configured as: " + s.substring(8));
                 }
                 if (isMatch2) { // db_url=
-                    if (s.substring(7).toLowerCase().equals("jdbc:mysql://127.0.0.1:3306/drugref")) { // verify this port value
-                        flag2 = true;        							                              
-                        System.out.println("\"db_url\" tag is configured properly.");				
-                    }
+                    flag2 = true;        							                              
+                    System.out.println("\"db_url\" tag is configured as: " + s.substring(8));
                 }
                 if (isMatch3) { // db_driver=
-                    if (s.substring(10).toLowerCase().equals("com.mysql.jdbc.driver")) {
-                        flag3 = true;
-                        System.out.println("\"db_driver\" tag is configured properly.");
-                    }
+                    flag3 = true;
+                    System.out.println("\"db_driver\" tag is configured as: " + s.substring(10));
                 }
                 if (isMatch4) { // drugref_url=
-                    if (!s.substring(12).toLowerCase().equals("")) { 
-                        flag4 = true;
-                        System.out.println("\"drugref_url\" tag is configured properly.");
-                    }
+                    flag4 = true;
+                    System.out.println("\"drugref_url\" tag is configured as: " + s.substring(12));
                 }
                 if (flag1 && flag2 && flag3 && flag4)
                     break;
@@ -391,6 +378,7 @@ public class Audit {
             if (!flag2) {
                 System.out.println("Could not detect Xms value.");
             }
+            p.destroy();
         } catch (Exception e) {
             System.out.println("Could not find Tomcat process to detect amount of memory allocation: " + e);
         }
@@ -488,6 +476,7 @@ public class Audit {
             while ((str = br.readLine()) != null) {
                 return true;
             }
+            p.destroy();
             return false;
         } catch (Exception e) {
             System.out.println("command -v lsb_release don't work!?!?: " + e);
