@@ -4,3 +4,4 @@ The objective of this project (nicknamed ConCert - for Continuous Certification)
 #### Mac OS X:
 ![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/osx_test.png "Mac OS X")
 #### Windows:
+![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/windows_test.png "Windows")
