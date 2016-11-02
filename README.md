@@ -4,11 +4,13 @@ The objective of this project (nicknamed ConCert - for Continuous Certification)
 ### Current To-do List
 * OS compatability
 * Merge Java file into working with a Java servlet
+
 ### Screenshots (Testing)
 #### Mac OS X:
 ![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/osx_test.png "Mac OS X")
 #### Windows:
 ![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/windows_test.png "Windows")
+
 ### Integerating with Java Servlet Pages...
 * MVC Architecture (client-server-database)
 * A Servlet is a Java-based server-side web technology
