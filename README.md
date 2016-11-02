@@ -15,8 +15,8 @@ The objective of this project (nicknamed ConCert - for Continuous Certification)
 * MVC Architecture (client-server-database)
 * A Servlet is a Java-based server-side web technology
 * Special class in Java EE that may respond to HTTP requests
-* Servlets are generally used as the Controller component
-So, what exactly are we utilizing to do this? **Objects.**
+* Servlets are generally used as the Controller component  
+So, what exactly are we utilizing to do this? **Objects.**  
 1. **Request object:** created by the web server when request arrives to hold information pertaining to the request
 2. **Response object:** created by the web server when request arrives to hold information pertaining to the response
 However, no persistence. A new set of request and response objects are created with each new call.
