@@ -6,7 +6,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Audit {
+public class OldAudit {
   
     private static File catalinaBase;
     private static File catalinaHome;
@@ -15,7 +15,7 @@ public class Audit {
     *  CONSTRUCTOR Audit():
     *  Initiliaze path variables for "$CATALINA_BASE" and "$CATALINA_HOME."
     */  
-    public Audit() {
+    public OldAudit() {
         catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
         catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
     }
@@ -467,7 +467,7 @@ public class Audit {
         // Verify operating system && run corresponding functions
         //String os = System.getProperty("os.name");
         //if (os.toLowerCase().equals("linux")) {
-            Audit audit = new Audit();
+            OldAudit audit = new OldAudit();
             serverVersion();
             mysqlVersion();
             verifyOscar();
