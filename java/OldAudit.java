@@ -8,17 +8,8 @@ import java.util.regex.Pattern;
 
 public class OldAudit {
   
-    private static File catalinaBase;
-    private static File catalinaHome;
-
-    /*
-    *  CONSTRUCTOR Audit():
-    *  Initiliaze path variables for "$CATALINA_BASE" and "$CATALINA_HOME."
-    */  
-    public OldAudit() {
-        catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
-        catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
-    }
+    private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
+    private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
 
     /*
     *  serverVersion():
@@ -61,7 +52,6 @@ public class OldAudit {
     *  Read bash script and extract JVM/Tomcat version information.
     */
     private static void JVMTomcat7(String binPath) {
-        System.out.println("Currently checking JVM/Tomcat versions...");
         try {
             String s = "";
             String cmd = new String(binPath + "/version.sh");
@@ -470,6 +460,7 @@ public class OldAudit {
             OldAudit audit = new OldAudit();
             serverVersion();
             mysqlVersion();
+            verifyTomcat();
             verifyOscar();
             verifyDrugref();
             tomcatReinforcement();
