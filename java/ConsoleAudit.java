@@ -6,7 +6,7 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class OldAudit {
+public class ConsoleAudit {
   
     private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
     private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
@@ -457,7 +457,6 @@ public class OldAudit {
         // Verify operating system && run corresponding functions
         //String os = System.getProperty("os.name");
         //if (os.toLowerCase().equals("linux")) {
-            OldAudit audit = new OldAudit();
             serverVersion();
             mysqlVersion();
             verifyTomcat();

@@ -1,3 +1,5 @@
+package audit;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.File;
@@ -6,17 +8,30 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import java.io.IOException;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 public class Audit extends HttpServlet {
 
-    private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
-    private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
-    
-    public void doGet(HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+    public void doGet(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
         servletRequest.setAttribute("serverVersion", serverVersion());
+        servletRequest.getRequestDispatcher("/Test.jsp").forward(servletRequest, servletResponse);
+    }
+
+    private static File catalinaBase;
+    private static File catalinaHome;
+
+    /*
+    *  CONSTRUCTOR Audit():
+    *  Initiliaze path variables for "$CATALINA_BASE" and "$CATALINA_HOME."
+    */
+    public Audit() {
+        catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
+        catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
     }
 
     /*

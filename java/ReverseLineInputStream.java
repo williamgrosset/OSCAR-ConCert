@@ -1,4 +1,4 @@
-//package www.kosoft.util;
+package audit;
 
 import java.io.File;
 import java.io.FileNotFoundException;
