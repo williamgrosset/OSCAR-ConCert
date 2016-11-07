@@ -17,21 +17,18 @@ import javax.servlet.http.HttpServletResponse;
 
 public class Audit extends HttpServlet {
 
+
+    private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
+    private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
+
     public void doGet(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
         servletRequest.setAttribute("serverVersion", serverVersion());
+        servletRequest.setAttribute("mysqlVersion", mysqlVersion());
+        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
+        servletRequest.setAttribute("verifyOscar", verifyOscar());
+        //servletRequest.setAttribute("verifyDrugref", verifyDrugref());
+        servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         servletRequest.getRequestDispatcher("/Test.jsp").forward(servletRequest, servletResponse);
-    }
-
-    private static File catalinaBase;
-    private static File catalinaHome;
-
-    /*
-    *  CONSTRUCTOR Audit():
-    *  Initiliaze path variables for "$CATALINA_BASE" and "$CATALINA_HOME."
-    */
-    public Audit() {
-        catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
-        catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
     }
 
     /*
@@ -68,9 +65,8 @@ public class Audit extends HttpServlet {
     *  verifyTomcat():
     *  Verify JVM/Tomcat7 versions.
     */
-    private static void verifyTomcat() {
-        System.out.println("Verifying Tomcat...");
-        JVMTomcat7(catalinaHome.getPath()+"/bin");
+    private static String verifyTomcat() {
+        return JVMTomcat7(catalinaHome.getPath()+"/bin");
     }
 
     /*
@@ -141,7 +137,7 @@ public class Audit extends HttpServlet {
     *  verifyOscar():
     *  Verify all Oscar deployments.
     */
-    private static void verifyOscar() {
+    private static String verifyOscar() {
         System.out.println("Verifying Oscar...");
         String output = "";
 
@@ -150,7 +146,7 @@ public class Audit extends HttpServlet {
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
 
         if (files.empty()) {
-            System.out.println("Could not find any properties files for Oscar.");
+            output += "Could not find any properties files for Oscar." + "<br />";
             //output = "Could not find any properties files for Oscar.";
         }
         // Verify files on the Stack
@@ -159,45 +155,14 @@ public class Audit extends HttpServlet {
             // Verify "oscar_mcmaster.properties" file (not on Stack)
             System.out.println("Currently checking \"" + file + "_mcmaster.properties\" file..." + "\n");
             //output = "Currently checking \"" + file + "_mcmaster.properties\" file..." + "\n";
-            oscarBuild("/var/lib/tomcat7/webapps/oscar/WEB-INF/classes/" + file + "_mcmaster"); // will this always be "oscar($)*_mcmaster.properties"?
+            output += oscarBuild("/var/lib/tomcat7/webapps/oscar/WEB-INF/classes/" + file + "_mcmaster");
             // Verify properties file (on Stack)
             System.out.println("Currently checking \"" + file + ".properties\" file..." + "\n");
             //output = "Currently checking \"" + file + ".properties\" file..." + "\n";
-            oscarBuild(catalinaHome+"/"+file);
-            verifyOscarProperties(catalinaHome+"/"+file);
+            output += oscarBuild(catalinaHome+"/"+file);
+            output += verifyOscarProperties(catalinaHome+"/"+file);
         }
-    }
-
-    /*
-    *  oscarMcmasterBuild(String: fileName):
-    *  Read Oscar buildtag of mcmaster properties file.
-    */
-    private static String oscarMcmasterBuild(String fileName) {
-        String output = "";
-        try {
-            File oscarMcmaster = new File(fileName + ".properties");
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscarMcmaster)));
-            boolean isMatch = false;
-            String line = "";
-
-            while ((line = br.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line))
-                    continue;
-                isMatch = Pattern.matches("^(buildtag=).*", line);
-                if (isMatch) {
-                    output = "Oscar build and version: " + line.substring(9) + "\n";
-                    break;
-                }
-            }
-            if (!isMatch) {
-                output = "Oscar build/version cannot be found." + "\n";
-            }
-            return output;
-        } catch (Exception e) {
-            output = "Could not read \"oscar_mcmaster.properties\" file to detect build: " + e.getMessage();
-            return output;
-        }
-
+        return output;
     }
 
     /*
@@ -217,16 +182,16 @@ public class Audit extends HttpServlet {
                     continue;
                 isMatch = Pattern.matches("^(buildtag=).*", line);
                 if (isMatch) {
-                    output = "Oscar build and version: " + line.substring(9);
+                    output += "Oscar build and version: " + line.substring(9) + "<br />";
                     break;
                 }
             }
             if (!isMatch) {
-                output = "Oscar build/version cannot be found.";
+                output += "Oscar build/version cannot be found." + "<br />";
             }
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to detect Oscar build: " + e.getMessage();
+            output = "Could not read properties file to detect Oscar build: " + e.getMessage() + "<br />";
             return output;
         }
     }
@@ -257,28 +222,28 @@ public class Audit extends HttpServlet {
                 isMatch3 = Pattern.matches("^(TMP_DIR=).*", line);
                 if (isMatch1) { // HL7TEXT_LABS=
                     flag1 = true;
-                    output = "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(13) + "\n";
+                    output += "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(13) + "<br />";
                 }
                 if (isMatch2) { // SINGLE_PAGE_CHART=
                     flag2 = true;
-                    output = "\"SINGLE_PAGE_CHART\" tag is configured as: " + line.substring(18) + "\n";
+                    output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + line.substring(18) + "<br />";
                 }
                 if (isMatch3) { // TMP_DIR=
                     flag3 = true;
-                    output = "\"TMP_DIR tag\" is configured as: " + line.substring(8) + "\n";
+                    output += "\"TMP_DIR tag\" is configured as: " + line.substring(8) + "<br />";
                 }
                 if (flag1 && flag2 && flag3)
                     break;
             }
             if (!flag1)
-                output = "\"HL7TEXT_LABS\" tag is not set to \"yes\" and is not configured properly." + "\n";
+                output += "\"HL7TEXT_LABS\" tag is not set to \"yes\" and is not configured properly." + "<br />";
             if (!flag2)
-                output = "\"SINGLE_PAGE_CHART\" tag not set to \"true\" and is not configured properly." + "\n";
+                output += "\"SINGLE_PAGE_CHART\" tag not set to \"true\" and is not configured properly." + "<br />";
             if (!flag3)
-                output = "\"TMP_DIR\" tag is not set to a directory and is not configured properly." + "\n";
+                output += "\"TMP_DIR\" tag is not set to a directory and is not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to verify Oscar tags: " + e.getMessage();
+            output += "Could not read properties file to verify Oscar tags: " + e.getMessage();
             return output;
         }
     }
@@ -396,13 +361,13 @@ public class Audit extends HttpServlet {
                     xmx = matcher1.group(1);
                     String[] xmxString = xmx.toString().split("x");
                     flag1 = true;
-                    output = "Xmx value: " + xmxString[1] + "\n";
+                    output += "Xmx value: " + xmxString[1] + "<br />";
                 }
                 if (isMatch2) {
                     xms = matcher2.group(1);
                     String[] xmsString = xms.toString().split("s");
                     flag2 = true;
-                    output = "Xms value: " + xmsString[1] + "\n";
+                    output += "Xms value: " + xmsString[1] + "<br />";
                 }
                 if (flag1 && flag2)
                     break;

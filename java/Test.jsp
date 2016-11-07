@@ -5,10 +5,22 @@
 <html>
     <title>Oscar Audit</title>
     <head>
-    <h5>THIS IS ONLY A TEST.. </h5>
-    <h6>Testing a value: ${serverVersion}</h6>
+        <h1>OSCAR AUDIT TEST</h1>
     </head>
     <body>
-    <b> Hello: <c:out value="${serverVersion}" default='guest'/></b>
+        <h2>Server Version:</h2>
+        <h3>${serverVersion}</h3>
+
+        <h2>MySQL Version:</h2>
+        <h3>${mysqlVersion}</h3>
+
+        <h2>Verify Tomcat:</h2>
+        <h3>${verifyTomcat}</h3>
+
+        <h2>Verify Oscar:</h2>
+        <h3>${verifyOscar}</h3>
+        
+        <h2>Tomcat Reinforcement:
+        <h3>${tomcatReinforcement}</h3>
     </body>
 </html>
