@@ -3,7 +3,7 @@
 The objective of this project (nicknamed ConCert - for Continuous Certification) is to develop software that aids automatic auditing of medical information systems that are subject to certification. In particular, the project will focus on the OSCAR Electronic Medical Record (EMR) system.
 
 ### Design Decisions
-1. Why utilize a **Stack** when grabbing and sorting files? *(Audit.java)*<br><br>  
+1. Why utilize a **Stack** when grabbing and sorting files? *(Audit.java)*<br><br>
 It does not really matter what data structure we use here. I chose the **Stack** to simply help other developers have a clearer understanding of the file verification process.
 
 2. Why are all methods **private** and **static?** *(Audit.java)*<br><br> 

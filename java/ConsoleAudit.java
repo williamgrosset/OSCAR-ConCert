@@ -454,19 +454,11 @@ public class ConsoleAudit {
 
     public static void main(String args[]) {
         System.out.println("CATEGORY 1 AUDIT: ");
-        // Verify operating system && run corresponding functions
-        //String os = System.getProperty("os.name");
-        //if (os.toLowerCase().equals("linux")) {
-            serverVersion();
-            mysqlVersion();
-            verifyTomcat();
-            verifyOscar();
-            verifyDrugref();
-            tomcatReinforcement();
-        //} else if (os.toLowerCase().equals("windows")) { // fix me to RE
-
-        //} else { // unix
-
-        //}
+        serverVersion();
+        mysqlVersion();
+        verifyTomcat();
+        verifyOscar();
+        verifyDrugref();
+        tomcatReinforcement();
     }
 }
