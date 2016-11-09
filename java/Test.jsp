@@ -9,18 +9,21 @@
     </head>
     <body>
         <h2>Server Version:</h2>
-        <h3>${serverVersion}</h3>
+        <p>${serverVersion}</p>
 
         <h2>MySQL Version:</h2>
-        <h3>${mysqlVersion}</h3>
+        <p>${mysqlVersion}</p>
 
         <h2>Verify Tomcat:</h2>
-        <h3>${verifyTomcat}</h3>
+        <p>${verifyTomcat}</p>
 
         <h2>Verify Oscar:</h2>
-        <h3>${verifyOscar}</h3>
+        <p>${verifyOscar}</p>
         
-        <h2>Tomcat Reinforcement:
-        <h3>${tomcatReinforcement}</h3>
+        <h2>Verify Drugref:</h2>
+        <p>${verifyDrugref}</p>
+
+        <h2>Tomcat Reinforcement:</h2>
+        <p>${tomcatReinforcement}</p>
     </body>
 </html>

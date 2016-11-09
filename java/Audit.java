@@ -26,7 +26,7 @@ public class Audit extends HttpServlet {
         servletRequest.setAttribute("mysqlVersion", mysqlVersion());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
         servletRequest.setAttribute("verifyOscar", verifyOscar());
-        //servletRequest.setAttribute("verifyDrugref", verifyDrugref());
+        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         servletRequest.getRequestDispatcher("/Test.jsp").forward(servletRequest, servletResponse);
     }
@@ -89,20 +89,20 @@ public class Audit extends HttpServlet {
                 isMatch1 = Pattern.matches("^(JVM Version:).*", line);
                 isMatch2 = Pattern.matches("^(Server version:).*", line);
                 if (isMatch1) {
-                    output = "JVM Version: " + line.substring(16) + "\n";
+                    output += "JVM Version: " + line.substring(16) + "<br />";
                     flag1 = true;
                 }
                 if (isMatch2) {
-                    output = "Tomcat version: " + line.substring(16) + "\n";
+                    output += "Tomcat version: " + line.substring(16) + "<br />";
                     flag2 = true;
                 }
                 if (flag1 && flag2)
                     break;
             }
             if (!flag1)
-                output = "JVM version cannot be found." + "\n";
+                output += "JVM version cannot be found." + "<br />";
             if (!flag2)
-                output = "Tomcat version cannot be found." + "\n";
+                output += "Tomcat version cannot be found." + "<br />";
             p.destroy();
             return output;
         } catch (Exception e) {
@@ -146,19 +146,17 @@ public class Audit extends HttpServlet {
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
 
         if (files.empty()) {
-            output += "Could not find any properties files for Oscar." + "<br />";
+            output = "Could not find any properties files for Oscar." + "<br />";
             //output = "Could not find any properties files for Oscar.";
         }
         // Verify files on the Stack
         while (!files.empty()) {
             String file = files.pop();
-            // Verify "oscar_mcmaster.properties" file (not on Stack)
-            System.out.println("Currently checking \"" + file + "_mcmaster.properties\" file..." + "\n");
-            //output = "Currently checking \"" + file + "_mcmaster.properties\" file..." + "\n";
+            // Verify "oscar_mcmaster.properties" file (not on Stack, but checks to see if it exists and verifies it)
+            output += "Currently checking \"" + file + "_mcmaster.properties\" file..." + "<br />";
             output += oscarBuild("/var/lib/tomcat7/webapps/oscar/WEB-INF/classes/" + file + "_mcmaster");
             // Verify properties file (on Stack)
-            System.out.println("Currently checking \"" + file + ".properties\" file..." + "\n");
-            //output = "Currently checking \"" + file + ".properties\" file..." + "\n";
+            output += "Currently checking \"" + file + ".properties\" file..." + "<br />";
             output += oscarBuild(catalinaHome+"/"+file);
             output += verifyOscarProperties(catalinaHome+"/"+file);
         }
@@ -243,7 +241,7 @@ public class Audit extends HttpServlet {
                 output += "\"TMP_DIR\" tag is not set to a directory and is not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
-            output += "Could not read properties file to verify Oscar tags: " + e.getMessage();
+            output = "Could not read properties file to verify Oscar tags: " + e.getMessage();
             return output;
         }
     }
@@ -252,22 +250,24 @@ public class Audit extends HttpServlet {
     *  verifyDrugref():
     *  Verify all Drugref deployments.
     */
-    private static void verifyDrugref() {
+    private static String verifyDrugref() {
         System.out.println("Verifying Drugref...");
+        String output = "";
 
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         System.out.println("Grabbing possible Drugref files...");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*?)$");
 
         if (files.empty()) {
-            System.out.println("Could not find any properties files for Drugref.");
+            output = "Could not find any properties files for Drugref.";
         }
         // Verify files on the Stack
         while (!files.empty()) {
             String file = files.pop();
-            System.out.println("Currently checking \"" + file + ".properties\" file...");
-            verifyDrugrefProperties(catalinaHome+"/"+file);
+            output += "Currently checking \"" + file + ".properties\" file..." + "<br />";
+            output += verifyDrugrefProperties(catalinaHome+"/"+file);
         }
+        return output;
     }
 
     /*
@@ -299,31 +299,31 @@ public class Audit extends HttpServlet {
                 isMatch4 = Pattern.matches("^(drugref_url=).*", line);
                 if (isMatch1) { // db_user=
                     flag1 = true;
-                    output = "\"db_user\" tag is configured as: " + line.substring(8) + "\n";
+                    output += "\"db_user\" tag is configured as: " + line.substring(8) + "<br />";
                 }
                 if (isMatch2) { // db_url=
                     flag2 = true;
-                    output = "\"db_url\" tag is configured as: " + line.substring(8) + "\n";
+                    output += "\"db_url\" tag is configured as: " + line.substring(8) + "<br />";
                 }
                 if (isMatch3) { // db_driver=
                     flag3 = true;
-                    output = "\"db_driver\" tag is configured as: " + line.substring(10) + "\n";
+                    output += "\"db_driver\" tag is configured as: " + line.substring(10) + "<br />";
                 }
                 if (isMatch4) { // drugref_url=
                     flag4 = true;
-                    output = "\"drugref_url\" tag is configured as: " + line.substring(12) + "\n";
+                    output += "\"drugref_url\" tag is configured as: " + line.substring(12) + "<br />";
                 }
                 if (flag1 && flag2 && flag3 && flag4)
                     break;
             }
             if (!flag1)
-                output = "\"db_user\" tag not configured properly." + "\n";
+                output += "\"db_user\" tag not configured properly." + "<br />";
             if (!flag2)
-                output = "\"db_url\" tag not configured properly." + "\n";
+                output += "\"db_url\" tag not configured properly." + "<br />";
             if (!flag3)
-                output = "\"db_driver\" tag not configured properly." + "\n";
+                output += "\"db_driver\" tag not configured properly." + "<br />";
             if (!flag4)
-                output = "\"drugref_url\" tag not configured properly." + "\n";
+                output += "\"drugref_url\" tag not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
             output = "Could not read properties file to verify Drugref tags: " + e.getMessage();
@@ -373,10 +373,10 @@ public class Audit extends HttpServlet {
                     break;
             }
             if (!flag1) {
-                output = "Could not detect Xmx value." + "\n";
+                output += "Could not detect Xmx value." + "<br />";
             }
             if (!flag2) {
-                output = "Could not detect Xms value." + "\n";
+                output += "Could not detect Xms value." + "<br />";
             }
             p.destroy();
             return output;
