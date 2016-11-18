@@ -124,7 +124,7 @@ public class ConsoleAudit {
             String file = files.pop();
             // Verify "oscar_mcmaster.properties" file (not on Stack)
             System.out.println("Currently checking \"" + file + "_mcmaster.properties\" file...");
-            oscarBuild("/var/lib/tomcat7/webapps/oscar/WEB-INF/classes/" + file + "_mcmaster"); // will this always be "oscar($)*_mcmaster.properties"?
+            oscarBuild("/var/lib/tomcat7/webapps/oscar/WEB-INF/classes/" + file + "_mcmaster");
             // Verify properties file (on Stack)
             System.out.println("Currently checking \"" + file + ".properties\" file...");
             oscarBuild(catalinaHome+"/"+file);
@@ -434,14 +434,12 @@ public class ConsoleAudit {
         //System.out.println("All deployed folders in directory:");
         for (int i = 0; i < fileList.length; i++) {
             Arrays.sort(fileList);
-            //System.out.println(fileList[i]);
         }
          
         // List all possible file(s) that we are looking for
         //System.out.println("Adding all possible file(s):");
         for (int i = 0; i < fileList.length; i++) {
             if (Pattern.matches(regex, fileList[i])) {
-                //System.out.println(fileList[i]);
                 files.push(fileList[i]);
             }
         }  
