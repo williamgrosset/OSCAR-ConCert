@@ -30,8 +30,8 @@ However, no persistence. A new set of request and response objects are created w
 
 ### Screenshots (Testing)
 #### Mac OS X:
-![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/osx_test.png "Mac OS X")
+![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/OSCAR-ConCert/screenshots/osx_test.png "Mac OS X")
 #### Windows:
-![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/windows_test.png "Windows")
+![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/OSCAR-ConCert/screenshots/windows_test.png "Windows")
 #### Java Servlet:
-![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/jsp_test.png "JSP")
+![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/OSCAR-ConCert/screenshots/jsp_test.png "JSP")
