@@ -114,7 +114,8 @@ public class ConsoleAudit {
         
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         System.out.println("Grabbing possible Oscar files...");
-        Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*?)$");
+        Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
+        
 
         if (files.empty()) {
             System.out.println("Could not find any properties files for Oscar.");
@@ -123,8 +124,8 @@ public class ConsoleAudit {
         while (!files.empty()) {
             String file = files.pop();
             // Verify "oscar_mcmaster.properties" file (not on Stack)
-            System.out.println("Currently checking \"" + file + "_mcmaster.properties\" file...");
-            oscarBuild("/var/lib/tomcat7/webapps/oscar/WEB-INF/classes/" + file + "_mcmaster");
+            System.out.println("Currently checking \"oscar_mcmaster.properties\" file...");
+            oscarBuild("/var/lib/tomcat7/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
             // Verify properties file (on Stack)
             System.out.println("Currently checking \"" + file + ".properties\" file...");
             oscarBuild(catalinaHome+"/"+file);
@@ -247,7 +248,7 @@ public class ConsoleAudit {
        
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         System.out.println("Grabbing possible Drugref files...");
-        Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*?)$");
+        Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
 
         if (files.empty()) {
             System.out.println("Could not find any properties files for Drugref.");
@@ -430,14 +431,15 @@ public class ConsoleAudit {
             return files;
         }
         
+        Arrays.sort(fileList);
         // List all deployed folders in directory      
         //System.out.println("All deployed folders in directory:");
-        for (int i = 0; i < fileList.length; i++) {
-            Arrays.sort(fileList);
-        }
+        //for (int i = 0; i < fileList.length; i++) {
+        //    System.out.println(fileList[i]);
+        //}
          
         // List all possible file(s) that we are looking for
-        //System.out.println("Adding all possible file(s):");
+        System.out.println("Adding all possible file(s):");
         for (int i = 0; i < fileList.length; i++) {
             if (Pattern.matches(regex, fileList[i])) {
                 files.push(fileList[i]);
