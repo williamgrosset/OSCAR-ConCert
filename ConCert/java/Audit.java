@@ -3,33 +3,36 @@ package oscar.util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import java.io.IOException;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class Audit extends HttpServlet {
+import org.apache.struts.action.Action;
+import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionForward;
+import org.apache.struts.action.ActionMapping;
 
 
-    private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
-    private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
+public class Audit extends Action {
 
-    public void doGet(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
+    public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         servletRequest.setAttribute("serverVersion", serverVersion());
         servletRequest.setAttribute("mysqlVersion", mysqlVersion());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
         servletRequest.setAttribute("verifyOscar", verifyOscar());
         servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
-        servletRequest.getRequestDispatcher("/Test.jsp").forward(servletRequest, servletResponse);
+
+        return actionMapping.findForward("success");
     }
+
+    private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
+    private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
 
     /*
     *  serverVersion():
