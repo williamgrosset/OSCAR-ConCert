@@ -1,29 +1,33 @@
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <%@page isELIgnored="false" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@page import="audit.*"%>
 <html>
+
+    <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
+    <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
     <title>Oscar Audit</title>
     <head>
-        <h1>OSCAR AUDIT TEST</h1>
+        <div class="page-header">
+            <h4>OSCAR Audit</h4>
+        </div>
     </head>
     <body>
-        <h2>Server Version:</h2>
+        <h5>Server Version:</h5>
         <pre>${serverVersion}</pre>
 
-        <h2>MySQL Version:</h2>
+        <h5>MySQL Version:</h5>
         <pre>${mysqlVersion}</pre>
 
-        <h2>Verify Tomcat:</h2>
+        <h5>Verify Tomcat:</h2>
         <pre>${verifyTomcat}</pre>
 
-        <h2>Verify Oscar:</h2>
+        <h5>Verify Oscar:</h5>
         <pre>${verifyOscar}</pre>
         
-        <h2>Verify Drugref:</h2>
+        <h5>Verify Drugref:</h5>
         <pre>${verifyDrugref}</pre>
 
-        <h2>Tomcat Reinforcement:</h2>
+        <h5>Tomcat Reinforcement:</h5>
         <pre>${tomcatReinforcement}</pre>
     </body>
 </html>

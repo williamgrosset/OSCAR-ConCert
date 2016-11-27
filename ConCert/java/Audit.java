@@ -50,7 +50,7 @@ public class Audit extends Action {
             while ((line = br.readLine()) != null) {
                 isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
                 if (isMatch) {
-                    output = "Ubuntu server version: " + line.substring(20);
+                    output = line.substring(20);
                     break;
                 }
             }
@@ -119,7 +119,6 @@ public class Audit extends Action {
     *  Run "mysql --version" command and extract version value.
     */
     private static String mysqlVersion() {
-        System.out.println("Currently checking MySQL version...");
         String output = "";
         try {
             Process p = Runtime.getRuntime().exec("mysql --version");
@@ -127,7 +126,7 @@ public class Audit extends Action {
             String line = "";
 
             while ((line = br.readLine()) != null)
-                output = "MySQL version: " + line.substring(11);
+                output = line.substring(11);
             p.destroy();
             return output;
         } catch (Exception e) {
@@ -464,9 +463,5 @@ public class Audit extends Action {
             }
         }
         return files;
-    }
-
-    public static void main(String[] args) {
-        System.out.println("Hello, world.");
     }
 }
