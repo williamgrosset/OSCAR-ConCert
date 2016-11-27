@@ -39,7 +39,6 @@ public class Audit extends Action {
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     */
     private static String serverVersion() {
-        System.out.println("Currently checking Ubuntu server version...");
         String output = "";
         try {
             File lsbRelease = new File("/etc/lsb-release");
@@ -116,7 +115,7 @@ public class Audit extends Action {
 
     /*
     *  mysqlVersion():
-    *  Run "mysql --version" command and extract version value.
+    *  Run "mysql --version" command and extract version information.
     */
     private static String mysqlVersion() {
         String output = "";
@@ -137,28 +136,25 @@ public class Audit extends Action {
 
     /*
     *  verifyOscar():
-    *  Verify all Oscar deployments.
+    *  Verify all possible Oscar deployments.
+    *  Grab all Oscar deployment folder names in root and 
+    *  push onto stack. Pop names off of the stack and verify 
+    *  each properties file that exists.
     */
     private static String verifyOscar() {
-        System.out.println("Verifying Oscar...");
         String output = "";
-
         File webApps = new File(catalinaBase.getPath()+"/webapps");
-        System.out.println("Grabbing possible Oscar files...");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
 
         if (files.empty()) {
             output = "Could not find any properties files for Oscar." + "<br />";
-            //output = "Could not find any properties files for Oscar.";
         }
         // Verify files on the Stack
         while (!files.empty()) {
             String file = files.pop();
-            // Verify "oscar_mcmaster.properties" file (not on Stack, but checks to see if it exists and verifies it)
-            output += "Currently checking \"oscar_mcmaster.properties\" file..." + "<br />";
+            output += "<b>Currently checking \"oscar_mcmaster.properties\" file..." + "</b><br />";
             output += oscarBuild("/var/lib/tomcat7/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
-            // Verify properties file (on Stack)
-            output += "Currently checking \"" + file + ".properties\" file..." + "<br />";
+            output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
             output += oscarBuild(catalinaHome+"/"+file);
             output += verifyOscarProperties(catalinaHome+"/"+file);
         }
@@ -251,13 +247,13 @@ public class Audit extends Action {
     /*
     *  verifyDrugref():
     *  Verify all Drugref deployments.
+    *  Grab all Drugref deployment folder names in root and 
+    *  push onto stack. Pop names off of the stack and verify 
+    *  each properties file that exists.
     */
     private static String verifyDrugref() {
-        System.out.println("Verifying Drugref...");
         String output = "";
-
         File webApps = new File(catalinaBase.getPath()+"/webapps");
-        System.out.println("Grabbing possible Drugref files...");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
 
         if (files.empty()) {
@@ -266,7 +262,7 @@ public class Audit extends Action {
         // Verify files on the Stack
         while (!files.empty()) {
             String file = files.pop();
-            output += "Currently checking \"" + file + ".properties\" file..." + "<br />";
+            output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
             output += verifyDrugrefProperties(catalinaHome+"/"+file);
         }
         return output;
@@ -335,7 +331,7 @@ public class Audit extends Action {
 
     /*
     *  tomcatReinforcement():
-    *  Read "JAVA_OPTS" tag in properties file.
+    *  Read "xmx" and "xms" values of Tomcat.
     */
     private static String tomcatReinforcement() {
         String output = "";
@@ -350,7 +346,6 @@ public class Audit extends Action {
             boolean flag2 = false;
             String line = "";
 
-            System.out.println("Currently checking Tomcat reinforcement...");
             while ((line = br.readLine()) != null) {
                 Pattern pattern1 = Pattern.compile(".*(Xmx[0-9]+m).*");
                 Matcher matcher1 = pattern1.matcher(line);
@@ -421,13 +416,13 @@ public class Audit extends Action {
                 }
             }
             p.destroy();
+            // Use default file path
             if (!isMatch) {
-                System.out.println("Could not find specified path (using " + defaultPathName + " defaultPath).");
                 return new File(defaultPath + "/");
             }
             return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
+            // Use default file path
         } catch (Exception e) {
-            System.out.println("Process check for Tomcat7 failed (using defaultPath): " + e.getMessage());
             return new File(defaultPath + "/");
         }
     }
@@ -444,19 +439,10 @@ public class Audit extends Action {
 
         // We did not find a file
         if (fileList == null || fileList.length == 0) {
-            System.out.println("No possible files were found in directory.");
             return files;
         }
 
         Arrays.sort(fileList);
-        // List all deployed folders in directory
-        //System.out.println("All deployed folders in directory:");
-        //for (int i = 0; i < fileList.length; i++) {
-        //    System.out.println(fileList[i]);
-        //}
-
-        // List all possible file(s) that we are looking for
-        //System.out.println("Adding all possible file(s):");
         for (int i = 0; i < fileList.length; i++) {
             if (Pattern.matches(regex, fileList[i])) {
                 files.push(fileList[i]);
