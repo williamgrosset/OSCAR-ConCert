@@ -2,22 +2,65 @@
 ### Objective
 The objective of this project (nicknamed ConCert - for Continuous Certification) is to develop software that aids automatic auditing of medical information systems that are subject to certification. In particular, the project will focus on the OSCAR Electronic Medical Record (EMR) system.
 
+### Contributor
+William Grosset (100-hour work term) at @LEAD Lab. Supervised by Dr. Raymond Rusk and Dr. Jens Weber.
+
 ### Design Decisions
 1. Why utilize a **Stack** when grabbing and sorting files? *(Audit.java)*<br><br>
-It does not really matter what data structure we use here. I chose the **Stack** to simply help other developers have a clearer understanding of the file verification process.
+It does not really matter what data structure we use here. I chose the **Stack** to simply the verification process, so other developers have a clearer understanding.
 
 2. Why are all methods **private** and **static?** *(Audit.java)*<br><br> 
-Encapsulation played a large factor in the design of this code. The **private** methods only belong to this class and cannot be accessed outside. This allows developers to not worry about changes affecting exterior classes. Also, all of these methods belong to the class, not to an instance or an object of the class. The **static** methods within this class can be considered as *utility functions*, which do not modify or effect any state.
+Encapsulation played a large factor in the design of this code. The **private** methods only belong to this class and cannot be accessed outside the class. This allows developers to not worry about changes affecting exterior classes. Only calls to the private methods are done within side the class. Also, all of these methods belong to the class, not to an instance or an object of the class. The **static** methods within this class can be considered *utility functions*, which do not modify or effect any type of state.
 
 3. How are you checking for Tomcat reinforcement? *(Audit.java)*<br><br> 
-ConCert focuses on auditing of a live Oscar application. We can track the process status of the currently running application(s) and find all possible Tomcat(s) that are live. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size.
+ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size.
 
 4. Why use JSTL tags with JavaServer pages? *(Test.jsp)*<br><br> 
-With all projects, I want to be able to keep my code readable and easily understood. JSTL allows us to encapsulate and hide away the details of the main Java work. This allows us to not mix all the source code with the HTML markup. In my experience, this was fairly similar to using the *JQuery* library over vanilla *JavaScript.*
+Keeping code readable, maintainable, and easily understood is important for development of open source projects. JSTL allows us to encapsulate and hide away the details of the main Java work. This allows us to not mix all the source code with the HTML markup. In my experience, this was fairly similar to using the *JQuery* library over vanilla *JavaScript.*
 
 ### Utilizing the Struct framework
+The Struct framework utilizes the Java Servlet API (Java Enterprise Edition) and formulates a Model, View, Controller (MVC) architecture. This framework is used for flexible and maintainable Java web-based applications.
+
+The **Action class** *(Audit.java)* represents our model (M). This class is contains our logic and processes the request by the client. Our Action class receives the appropriate data (calling our audit methods below) and then forwards the data back to the presentation layer. Overriding the execute method allows us to handle the GET request:
+```java
+    public ActionForward execute(ActionMapping actionMapping, ActionForm 
+                                 actionForm, HttpServletRequest 
+                                 servletRequest, HttpServletResponse 
+                                 servletResponse) 
+    {
+        servletRequest.setAttribute("serverVersion", serverVersion());
+        servletRequest.setAttribute("mysqlVersion", mysqlVersion());
+        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
+        servletRequest.setAttribute("verifyOscar", verifyOscar());
+        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
+        servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
+        return actionMapping.findForward("success");
+    }
+    ... // audit methods below
+```
+
+The **struts-config** file *(struts-config.xml)* represents our controller (C). This class handles and designates the appropriate request by the client.
+```xml
+    <action path="/admin/Test" scope="request" parameter="method" 
+     validate="false" type="oscar.util.Audit">
+        <forward name="success" path="/admin/oscarAudit.jsp" />
+    </action>
+```
+
+The **JSP** file *(oscarAudit.jsp)* represents our view (V).
+```jsp
+    <body>
+        <h5>Server Version:</h5>
+        <pre>${serverVersion}</pre>
+        <h5>MySQL Version:</h5>
+        <pre>${mysqlVersion}</pre>
+        <h5>Verify Tomcat:</h2>
+        <pre>${verifyTomcat}</pre>
+    ...
+```
 
 ### What else needs to be done?
+Auditing of hardware, network requirements, and interfaces to external providers (i.e. labs being received, OLIS setup correctly).
 
 ### Screenshots
 #### Mac OS X (Console Test):
