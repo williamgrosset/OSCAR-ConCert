@@ -1,6 +1,4 @@
-*NOTE: This is a fork of the main OSCAR repository that contains my project. The main repository can be found here: https://github.com/scoophealth/oscar
-
-Please see the ConCert directory for my project and further information.
+*NOTE: This is a fork of the OSCAR repository that contains my project. The main repository can be found here: https://github.com/scoophealth/oscar. Please see the ConCert directory for my project and further information.
 
 ======================
 OSCAR McMaster Project
