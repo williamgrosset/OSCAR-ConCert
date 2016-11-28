@@ -3,7 +3,7 @@
 The objective of this project (nicknamed ConCert - for Continuous Certification) is to develop software that aids automatic auditing of medical information systems that are subject to certification. In particular, the project will focus on the OSCAR Electronic Medical Record (EMR) system.
 
 ### Contributor
-William Grosset (100-hour work term) at @LEAD Lab. Supervised by Dr. Raymond Rusk and Dr. Jens Weber.
+William Grosset (100-hour work term) at [LEAD Lab](http://leadlab.ca/about-us/). Supervised by Dr. Raymond Rusk and Dr. Jens Weber.
 
 ### Design Decisions
 1. Why utilize a **Stack** when grabbing and sorting files? *(Audit.java)*<br><br>
@@ -19,44 +19,44 @@ ConCert focuses on auditing of a live OSCAR application. We can track the proces
 Keeping code readable, maintainable, and easily understood is important for development of open source projects. JSTL allows us to encapsulate and hide away the details of the main Java work. This allows us to not mix all the source code with the HTML markup. In my experience, this was fairly similar to using the *JQuery* library over vanilla *JavaScript.*
 
 ### Utilizing the Struct framework
-The Struct framework utilizes the Java Servlet API (Java Enterprise Edition) and formulates a Model, View, Controller (MVC) architecture. This framework is used for flexible and maintainable Java web-based applications.
+The Struct framework utilizes the Java Servlet API (Java Enterprise Edition) and formulates a Model, View, Controller (MVC) architecture. This framework is used for flexible and maintainable Java web-based applications. Currently, OSCAR is running on Struts version 1.2.7.
 
-The **Action class** *(Audit.java)* represents our model (M). This class is contains our logic and processes the request by the client. Our Action class receives the appropriate data (calling our audit methods below) and then forwards the data back to the presentation layer. Overriding the execute method allows us to handle the GET request:
+The **Action class** *(Audit.java)* represents our model (M). This class is contains our logic and processes the request by the client. Our Action class receives the appropriate data (calling our audit methods below) and then forwards the data back to the presentation layer. Overriding the execute method allows us to handle the HTTP request:
 ```java
-    public ActionForward execute(ActionMapping actionMapping, ActionForm 
-                                 actionForm, HttpServletRequest 
-                                 servletRequest, HttpServletResponse 
-                                 servletResponse) 
-    {
-        servletRequest.setAttribute("serverVersion", serverVersion());
-        servletRequest.setAttribute("mysqlVersion", mysqlVersion());
-        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        servletRequest.setAttribute("verifyOscar", verifyOscar());
-        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
-        servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
-        return actionMapping.findForward("success");
-    }
-    ... // audit methods below
+public ActionForward execute(ActionMapping actionMapping, ActionForm 
+                             actionForm, HttpServletRequest 
+                             servletRequest, HttpServletResponse 
+                             servletResponse) 
+{
+    servletRequest.setAttribute("serverVersion", serverVersion());
+    servletRequest.setAttribute("mysqlVersion", mysqlVersion());
+    servletRequest.setAttribute("verifyTomcat", verifyTomcat());
+    servletRequest.setAttribute("verifyOscar", verifyOscar());
+    servletRequest.setAttribute("verifyDrugref", verifyDrugref());
+    servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
+    return actionMapping.findForward("success");
+}
+... // audit methods below
 ```
 
-The **struts-config** file *(struts-config.xml)* represents our controller (C). This class handles and designates the appropriate request by the client.
+The **struts-config** file *(struts-config.xml)* represents our controller (C). This file handles and designates the appropriate request by the client. The action element corresponds with the appropriate Action class. The controller forwards the request to the correct URL path that coordinates with the Action class:
 ```xml
-    <action path="/admin/Test" scope="request" parameter="method" 
-     validate="false" type="oscar.util.Audit">
-        <forward name="success" path="/admin/oscarAudit.jsp" />
-    </action>
+<action path="/admin/oscarAudit" scope="request" parameter="method" 
+ validate="false" type="oscar.util.Audit">
+    <forward name="success" path="/admin/oscarAudit.jsp" />
+</action>
 ```
 
-The **JSP** file *(oscarAudit.jsp)* represents our view (V).
+The **JSP** file *(oscarAudit.jsp)* represents our view (V). This file displays the request to the client. The JSTL tags allow us to access the attributes of the request specified in the Action class:
 ```jsp
-    <body>
-        <h5>Server Version:</h5>
-        <pre>${serverVersion}</pre>
-        <h5>MySQL Version:</h5>
-        <pre>${mysqlVersion}</pre>
-        <h5>Verify Tomcat:</h2>
-        <pre>${verifyTomcat}</pre>
-    ...
+<body>
+    <h5>Server Version:</h5>
+    <pre>${serverVersion}</pre>
+    <h5>MySQL Version:</h5>
+    <pre>${mysqlVersion}</pre>
+    <h5>Verify Tomcat:</h2>
+    <pre>${verifyTomcat}</pre>
+...
 ```
 
 ### What else needs to be done?
