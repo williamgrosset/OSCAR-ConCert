@@ -23,10 +23,13 @@ It does not really matter what data structure we use here. I chose the **Stack**
 2. Why are all methods **private** and **static?** *(Audit.java)*<br><br> 
 Encapsulation played a large factor in the design of this code. The **private** methods only belong to this class and cannot be accessed outside the class. Only calls to the private methods are done within side the class. This allows developers to not worry about changes affecting exterior classes. Also, all of these methods belong to the class, not to a specific instance or an object of the class. The **static** methods within this class can be considered *utility functions*, which do not modify or affect any type of state.
 
-3. How are you checking for Tomcat reinforcement? *(Audit.java)*<br><br> 
+3. Why use a reverse line input stream? *(Audit.java)*<br><br> 
+Since configured parameters in properties files can be overwritten sequentially, we can make a easy optimization to read the executed parameters bottom-up. We begin at the end of the file, find the desired tags and break when we have collected the information needed. Also, this makes the code more maintainable and robust without requiring extra checks if we were to read top-bottom.
+
+4. How are you checking for Tomcat reinforcement? *(Audit.java)*<br><br> 
 ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size.
 
-4. Why use JSTL tags with JavaServer pages? *(Test.jsp)*<br><br> 
+5. Why use JSTL tags with JavaServer pages? *(Test.jsp)*<br><br> 
 Keeping code readable, maintainable, and easily understood is important for the development of an open source project. JSTL allows us to encapsulate and hide away the details of the main Java work. This allows us to not mix all the source code with the HTML markup. In my experience, this was fairly similar to using the *JQuery* library over vanilla *JavaScript.*
 
 ### Utilizing the Struct framework

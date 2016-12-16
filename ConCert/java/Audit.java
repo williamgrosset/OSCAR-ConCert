@@ -137,9 +137,9 @@ public class Audit extends Action {
     /*
     *  verifyOscar():
     *  Verify all possible Oscar deployments.
-    *  Grab all Oscar deployment folder names in root and 
-    *  push onto stack. Pop names off of the stack and verify 
-    *  each properties file that exists.
+    *  Grab all possible Oscar deployed folder names in root directory 
+    *  and push onto stack. Pop names off of the stack and verify 
+    *  each properties file that exists in "catalinaHome" directory.
     */
     private static String verifyOscar() {
         String output = "";
@@ -247,9 +247,9 @@ public class Audit extends Action {
     /*
     *  verifyDrugref():
     *  Verify all Drugref deployments.
-    *  Grab all Drugref deployment folder names in root and 
-    *  push onto stack. Pop names off of the stack and verify 
-    *  each properties file that exists.
+    *  Grab all possible Drugref deployed folder names in root directory 
+    *  and push onto stack. Pop names off of the stack and verify 
+    *  each properties file that exists in "catalinaHome" directory.
     */
     private static String verifyDrugref() {
         String output = "";
@@ -388,7 +388,7 @@ public class Audit extends Action {
     /////////////////////////////////
 
     /*
-    *  searchForDirectory(String: defaultPath, String: regex):
+    *  searchForDirectory(String: defaultPath, String: regex, String: defaultPathName):
     *  Run "ps" command to find Tomact7 details and
     *  then use pattern matching to find desired tags
     *  (i.e "$CATALINA_HOME" full path name).
@@ -401,7 +401,7 @@ public class Audit extends Action {
         System.out.println("Currently looking for " + defaultPathName + " path...");
         try {
             String s = "";
-            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep tomcat"});
+            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep tomcat7"});
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
             while ((s = br.readLine()) != null) {
@@ -421,7 +421,7 @@ public class Audit extends Action {
                 return new File(defaultPath + "/");
             }
             return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
-            // Use default file path
+        // Use default file path
         } catch (Exception e) {
             return new File(defaultPath + "/");
         }
