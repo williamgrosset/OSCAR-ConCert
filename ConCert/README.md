@@ -24,7 +24,7 @@ It does not really matter what data structure we use here. I chose the **Stack**
 Encapsulation played a large factor in the design of this code. The **private** methods only belong to this class and cannot be accessed outside the class. Only calls to the private methods are done within side the class. This allows developers to not worry about changes affecting exterior classes. Also, all of these methods belong to the class, not to a specific instance or an object of the class. The **static** methods within this class can be considered *utility functions*, which do not modify or affect any type of state.
 
 3. Why use a reverse line input stream? *(Audit.java)*<br><br> 
-Since configured parameters in properties files can be overwritten sequentially, we can make a easy optimization to read the executed parameters bottom-up. We begin at the end of the file, find the desired tags and break when we have collected the information needed. Also, this makes the code more maintainable and robust without requiring extra checks if we were to read top-bottom.
+Since configured parameters in properties files can be overwritten sequentially, we can make an easy optimization to read the executed parameters bottom-up. We begin at the end of the file, find our desired tags and break when we have collected the information needed. Also, this makes the code more maintainable and robust without requiring extra checks if we were to read top-bottom.
 
 4. How are you checking for Tomcat reinforcement? *(Audit.java)*<br><br> 
 ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size.
