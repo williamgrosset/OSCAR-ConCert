@@ -21,6 +21,13 @@ import org.apache.struts.action.ActionMapping;
 public class Audit extends Action {
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        try {
+            if (servletRequest.getSession().getAttribute("userrole") == null)
+                servletResponse.sendRedirect("../logout.jsp");
+        } catch (Exception e) {
+            return actionMapping.findForward("failure");
+        }
+
         servletRequest.setAttribute("serverVersion", serverVersion());
         servletRequest.setAttribute("mysqlVersion", mysqlVersion());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());

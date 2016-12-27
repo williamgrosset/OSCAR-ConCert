@@ -1,8 +1,8 @@
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <%@page isELIgnored="false" %>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib uri="/WEB-INF/security.tld" prefix="security"%>
 <html>
-
     <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
     <title>Oscar Audit</title>

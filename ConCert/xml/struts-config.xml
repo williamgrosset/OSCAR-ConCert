@@ -2576,8 +2576,8 @@
         </action>
 
         <!-- OSCAR AUDIT -->
-        <action path="/admin/Test" scope="request" parameter="method" validate="false" type="oscar.util.Audit">
-            <forward name="success" path="/admin/Test.jsp" />
+        <action path="/admin/oscarAudit" scope="request" parameter="method" validate="false" type="oscar.util.Audit">
+            <forward name="success" path="/admin/oscarAudit.jsp" />
         </action>
 
 		<action path="/OcanIarSubmit" type="org.oscarehr.web.OcanIarSubmitAction" parameter="method" scope="request">
