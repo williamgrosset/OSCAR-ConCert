@@ -65,7 +65,7 @@ public class Audit extends Action {
             }
             return output;
         } catch (Exception e) {
-            output = "Could not run \"lsb release\" command to detect Ubuntu server version: " + e.getMessage();
+            output = "Could not run \"lsb release\" command to detect Ubuntu server version.";
             return output;
         }
     }
@@ -115,7 +115,7 @@ public class Audit extends Action {
             p.destroy();
             return output;
         } catch (Exception e) {
-            output = "Could not run \"version.sh\" bash script to detect JVM/Tomcat version(s): " + e.getMessage();
+            output = "Could not run \"version.sh\" bash script to detect JVM/Tomcat version(s).";
             return output;
         }
      }
@@ -136,7 +136,7 @@ public class Audit extends Action {
             p.destroy();
             return output;
         } catch (Exception e) {
-            output = "Could not run \"mysql --version\" command to detect MySQL version: " + e.getMessage();
+            output = "Could not run \"mysql --version\" command to detect MySQL version.";
             return output;
         }
     }
@@ -194,7 +194,7 @@ public class Audit extends Action {
             }
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to detect Oscar build: " + e.getMessage() + "<br />";
+            output = "Could not read properties file to detect Oscar build." + "<br />";
             return output;
         }
     }
@@ -246,7 +246,7 @@ public class Audit extends Action {
                 output += "\"TMP_DIR\" tag is not set to a directory and is not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to verify Oscar tags: " + e.getMessage();
+            output = "Could not read properties file to verify Oscar tags.";
             return output;
         }
     }
@@ -331,7 +331,7 @@ public class Audit extends Action {
                 output += "\"drugref_url\" tag not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to verify Drugref tags: " + e.getMessage();
+            output = "Could not read properties file to verify Drugref tags.";
             return output;
         }
     }
@@ -385,7 +385,7 @@ public class Audit extends Action {
             p.destroy();
             return output;
         } catch (Exception e) {
-            output = "Could not find Tomcat process to detect amount of memory allocation: " + e.getMessage();
+            output = "Could not find Tomcat process to detect amount of memory allocated.";
             return output;
         }
     }
@@ -405,7 +405,6 @@ public class Audit extends Action {
         boolean isMatch = false;
         Stack<String> files = new Stack<String>();
 
-        System.out.println("Currently looking for " + defaultPathName + " path...");
         try {
             String s = "";
             Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep tomcat7"});

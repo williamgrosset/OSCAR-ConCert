@@ -1,7 +1,19 @@
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
-<%@page isELIgnored="false" %>
-<%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@taglib uri="/WEB-INF/security.tld" prefix="security"%>
+<%@include file="/casemgmt/taglibs.jsp"%>
+<%
+    String roleName$ = (String)session.getAttribute("userrole") + "," +
+                       (String)session.getAttribute("user");
+    boolean authed = true;
+%>
+<security:oscarSec roleName="<%=roleName$%>" objectName="_admin,_admin.misc" rights="r" reverse="<%=true%>">
+	<%authed=false; %>
+	<%response.sendRedirect("../securityError.jsp?type=_admin&type=_admin.misc");%>
+</security:oscarSec>
+<%
+    if (!authed) {
+        return;
+    }
+%>
 <html>
     <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
