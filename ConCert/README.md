@@ -29,7 +29,7 @@ Since configured parameters in properties files can be overwritten sequentially,
 4. How are you checking for Tomcat reinforcement? *(Audit.java)*<br><br> 
 ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size. See ```tomcatReinforcement()``` method for further details.
 
-5. Why is there a ```<br />``` (and sometimes ```<b>```) after every output line?
+5. Why is there a ```<br />``` (and sometimes ```<b>```) tag after every output line?<br><br> 
 The browser will interpret these characters as HTML tags, allowing for breaks between lines. Using the ```\n``` escape sequence will not render correctly.
 
 6. Why use JSTL tags with JavaServer pages? *(oscarAudit.jsp)*<br><br> 
