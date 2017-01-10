@@ -1,46 +1,47 @@
 package oscar.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.FileNotFoundException;
+import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Stack;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import java.lang.Object;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import static org.junit.Assert.*;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class AuditTest {
  
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
+
     /*
     *  serverVersion(String: fileName):
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     */
  
     @Test
-    public void exceptionServerVersion() {
+    public void exceptionServerVersion() throws IOException {
+        File tempFile = folder.newFile("file.txt");
         String expectedResult = "Could not run \"lsb release\" command to detect Ubuntu server version.";
-        assertEquals(expectedResult, Audit.serverVersion("/etc/aFileThatDoesNotExist"));
+        assertEquals(expectedResult, Audit.serverVersion(tempFile.toString()));
     }
 
     @Test
-    public void isMatchTrueServerVersion() {
+    public void isMatchTrueServerVersion() throws IOException {
         String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
         assertEquals(expectedResult, Audit.serverVersion("/etc/lsb-release"));
     }
 
-    /* NEEDS FIXING: find a way to mock a file that does not contain the right tag
     @Test
-    public void isMatchFalseServerVersion() {
+    public void isMatchFalseServerVersion() throws IOException {
+        //File tempFile = folder.newFile("fake-lsb-release");
         String expectedResult = "Could not detect Ubuntu server version.";
-        assertEquals(expectedResult, Audit.serverVersion("/usr/share/tomcat7/oscar15_properties"));
+        //assertEquals(expectedResult, Audit.serverVersion(tempFile.toString()));
+        assertEquals(expectedResult, Audit.serverVersion("/etc/environment"));
     }
-    */
 
     /*
     *  JVMTomcat7(String: binPath):
@@ -57,6 +58,11 @@ public class AuditTest {
     *  mysqlVersion(String: cmd):
     *  Run "mysql --version" command and extract version information.
     */
+    @Test
+    public void exceptionMysqlVersion() {
+        String expectedResult = "Could not run \"mysql --version\" command to detect MySQL version.";
+        assertEquals(expectedResult, Audit.mysqlVersion("notamysqlcommand --version"));
+    }
 
     @Test
     public void isMatchMysqlVesion() {
