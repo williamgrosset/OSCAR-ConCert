@@ -4,9 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.IOException;
 
-import java.lang.Object;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.Test;
