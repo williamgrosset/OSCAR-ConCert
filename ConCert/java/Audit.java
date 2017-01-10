@@ -28,10 +28,10 @@ public class Audit extends Action {
             return actionMapping.findForward("failure");
         }
 
-        servletRequest.setAttribute("serverVersion", serverVersion());
-        servletRequest.setAttribute("mysqlVersion", mysqlVersion());
+        servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
+        servletRequest.setAttribute("mysqlVersion", mysqlVersion("mysql --version"));
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        servletRequest.setAttribute("verifyOscar", verifyOscar());
+        servletRequest.setAttribute("verifyOscar", verifyOscar("/webapps"));
         servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
 
@@ -42,13 +42,13 @@ public class Audit extends Action {
     private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
 
     /*
-    *  serverVersion():
+    *  serverVersion(String: fileName):
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     */
-    private static String serverVersion() {
+    protected static String serverVersion(String fileName) {
         String output = "";
         try {
-            File lsbRelease = new File("/etc/lsb-release");
+            File lsbRelease = new File(fileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(lsbRelease)));
             boolean isMatch = false;
             String line = "";
@@ -74,7 +74,7 @@ public class Audit extends Action {
     *  verifyTomcat():
     *  Verify JVM/Tomcat7 versions.
     */
-    private static String verifyTomcat() {
+    protected static String verifyTomcat() {
         return JVMTomcat7(catalinaHome.getPath()+"/bin");
     }
 
@@ -82,7 +82,7 @@ public class Audit extends Action {
     *  JVMTomcat7(String: binPath):
     *  Read bash script and extract JVM/Tomcat version information.
     */
-    private static String JVMTomcat7(String binPath) {
+    protected static String JVMTomcat7(String binPath) {
         String output = "";
         try {
             String cmd = new String(binPath + "/version.sh");
@@ -121,13 +121,13 @@ public class Audit extends Action {
      }
 
     /*
-    *  mysqlVersion():
+    *  mysqlVersion(String: cmd):
     *  Run "mysql --version" command and extract version information.
     */
-    private static String mysqlVersion() {
+    protected static String mysqlVersion(String cmd) {
         String output = "";
         try {
-            Process p = Runtime.getRuntime().exec("mysql --version");
+            Process p = Runtime.getRuntime().exec(cmd);
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line = "";
 
@@ -142,15 +142,15 @@ public class Audit extends Action {
     }
 
     /*
-    *  verifyOscar():
+    *  verifyOscar(String: path):
     *  Verify all possible Oscar deployments.
     *  Grab all possible Oscar deployed folder names in root directory 
     *  and push onto stack. Pop names off of the stack and verify 
     *  each properties file that exists in "catalinaHome" directory.
     */
-    private static String verifyOscar() {
+    protected static String verifyOscar(String path) {
         String output = "";
-        File webApps = new File(catalinaBase.getPath()+"/webapps");
+        File webApps = new File(catalinaBase.getPath() + path);
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
 
         if (files.empty()) {
@@ -172,7 +172,7 @@ public class Audit extends Action {
     *  oscarBuild(String: fileName):
     *  Read Oscar buildtag of properties file.
     */
-    private static String oscarBuild(String fileName) {
+    protected static String oscarBuild(String fileName) {
         String output = "";
         try {
             File oscar = new File(fileName + ".properties");
@@ -204,7 +204,7 @@ public class Audit extends Action {
     *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," and
     *  "TMP_DIR" tags of properties file.
     */
-    private static String verifyOscarProperties(String fileName) {
+    protected static String verifyOscarProperties(String fileName) {
         String output = "";
         try {
             File oscar = new File(fileName + ".properties");
@@ -258,7 +258,7 @@ public class Audit extends Action {
     *  and push onto stack. Pop names off of the stack and verify 
     *  each properties file that exists in "catalinaHome" directory.
     */
-    private static String verifyDrugref() {
+    protected static String verifyDrugref() {
         String output = "";
         File webApps = new File(catalinaBase.getPath()+"/webapps");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
@@ -280,7 +280,7 @@ public class Audit extends Action {
     *  Read "db_user," "db_url," "db_driver," and
     *  "drugref_url" tags of properties file.
     */
-    private static String verifyDrugrefProperties(String fileName) {
+    protected static String verifyDrugrefProperties(String fileName) {
         String output = "";
         try {
             File drugref = new File(fileName + ".properties");
@@ -340,7 +340,7 @@ public class Audit extends Action {
     *  tomcatReinforcement():
     *  Read "xmx" and "xms" values of Tomcat.
     */
-    private static String tomcatReinforcement() {
+    protected static String tomcatReinforcement() {
         String output = "";
         try {
             String xmx = "";
@@ -400,7 +400,7 @@ public class Audit extends Action {
     *  then use pattern matching to find desired tags
     *  (i.e "$CATALINA_HOME" full path name).
     */
-    private static File searchForDirectory(String defaultPath, String regex, String defaultPathName) {
+    protected static File searchForDirectory(String defaultPath, String regex, String defaultPathName) {
         CharSequence pathName = "";
         boolean isMatch = false;
         Stack<String> files = new Stack<String>();
@@ -439,7 +439,7 @@ public class Audit extends Action {
     *  push all possible files (pattern matching)
     *  onto the Stack.
     */
-    private static Stack<String> grabFiles(File directory, String regex) {
+    protected static Stack<String> grabFiles(File directory, String regex) {
         String[] fileList = directory.list();
         Stack<String> files = new Stack<String>();
 
