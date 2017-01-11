@@ -28,8 +28,8 @@ public class Audit extends Action {
             return actionMapping.findForward("failure");
         }
 
-        servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
-        servletRequest.setAttribute("mysqlVersion", mysqlVersion("mysql --version"));
+        servletRequest.setAttribute("serverVersion", serverVersion());
+        servletRequest.setAttribute("mysqlVersion", mysqlVersion());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
         servletRequest.setAttribute("verifyOscar", verifyOscar("/webapps"));
         servletRequest.setAttribute("verifyDrugref", verifyDrugref());
@@ -38,17 +38,21 @@ public class Audit extends Action {
         return actionMapping.findForward("success");
     }
 
-    private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*", "CATALINA_BASE");
-    private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*", "CATALINA_HOME");
+    //private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*");
+    //private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
+
+    // what happens if the Servlet throws an exception?
+    private static File catalinaBase = new File(System.getProperty("catalina.base"));
+    private static File catalinaHome = new File(System.getProperty("catalina.home"));
 
     /*
     *  serverVersion(String: fileName):
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     */
-    protected static String serverVersion(String fileName) {
+    protected static String serverVersion() {
         String output = "";
         try {
-            File lsbRelease = new File(fileName);
+            File lsbRelease = new File("/etc/lsb-release");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(lsbRelease)));
             boolean isMatch = false;
             String line = "";
@@ -65,28 +69,19 @@ public class Audit extends Action {
             }
             return output;
         } catch (Exception e) {
-            output = "Could not run \"lsb release\" command to detect Ubuntu server version.";
+            output = "Could not read \"lsb-release\" file to detect Ubuntu server version.";
             return output;
         }
     }
 
     /*
     *  verifyTomcat():
-    *  Verify JVM/Tomcat7 versions.
-    */
-    protected static String verifyTomcat() {
-        return JVMTomcat7(catalinaHome.getPath()+"/bin");
-    }
-
-    /*
-    *  JVMTomcat7(String: binPath):
     *  Read bash script and extract JVM/Tomcat version information.
     */
-    protected static String JVMTomcat7(String binPath) {
+    protected static String verifyTomcat() {
         String output = "";
         try {
-            String cmd = new String(binPath + "/version.sh");
-            Process p = Runtime.getRuntime().exec(cmd);
+            Process p = Runtime.getRuntime().exec(catalinaHome.getPath() + "/bin/version.sh");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             boolean isMatch1 = false;
             boolean isMatch2 = false;
@@ -124,15 +119,15 @@ public class Audit extends Action {
     *  mysqlVersion(String: cmd):
     *  Run "mysql --version" command and extract version information.
     */
-    protected static String mysqlVersion(String cmd) {
+    protected static String mysqlVersion() {
         String output = "";
         try {
-            Process p = Runtime.getRuntime().exec(cmd);
+            Process p = Runtime.getRuntime().exec("/usr/bin/mysql --version");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             String line = "";
 
             while ((line = br.readLine()) != null)
-                output = line.substring(11);
+                output = line.substring(16);
             p.destroy();
             return output;
         } catch (Exception e) {
@@ -400,7 +395,7 @@ public class Audit extends Action {
     *  then use pattern matching to find desired tags
     *  (i.e "$CATALINA_HOME" full path name).
     */
-    protected static File searchForDirectory(String defaultPath, String regex, String defaultPathName) {
+    protected static File searchForDirectory(String defaultPath, String regex) {
         CharSequence pathName = "";
         boolean isMatch = false;
         Stack<String> files = new Stack<String>();
