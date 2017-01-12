@@ -17,6 +17,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import oscar.OscarProperties;
 
 public class Audit extends Action {
 
@@ -170,6 +171,13 @@ public class Audit extends Action {
     protected static String oscarBuild(String fileName) {
         String output = "";
         try {
+            if (OscarProperties.getInstance().getProperty("buildtag") == null) {
+                output = "Oscar build/version cannot be found." + "<br />";
+            } else {
+                output = OscarProperties.getInstance().getProperty("buildtagg") + "<br />";
+            }
+            return output;
+            /*
             File oscar = new File(fileName + ".properties");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch = false;
@@ -187,7 +195,7 @@ public class Audit extends Action {
             if (!isMatch) {
                 output += "Oscar build/version cannot be found." + "<br />";
             }
-            return output;
+            return output;*/
         } catch (Exception e) {
             output = "Could not read properties file to detect Oscar build." + "<br />";
             return output;
