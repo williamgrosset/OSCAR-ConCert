@@ -17,7 +17,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import oscar.OscarProperties;
+//import oscar.OscarProperties;
 
 public class Audit extends Action {
 
@@ -29,26 +29,31 @@ public class Audit extends Action {
             return actionMapping.findForward("failure");
         }
 
+        String roleName = (String)servletRequest.getSession().getAttribute("userrole") + ","
+                            + (String)servletRequest.getAttribute("user");
+        if (!roleName.contains("admin")) {
+            return actionMapping.findForward("unauthorized");
+        }
+
         servletRequest.setAttribute("serverVersion", serverVersion());
         servletRequest.setAttribute("mysqlVersion", mysqlVersion());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        servletRequest.setAttribute("verifyOscar", verifyOscar("/webapps"));
+        servletRequest.setAttribute("verifyOscar", verifyOscar());
         servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
-
         return actionMapping.findForward("success");
     }
 
     //private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*");
     //private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
 
-    // what happens if the Servlet throws an exception?
     private static File catalinaBase = new File(System.getProperty("catalina.base"));
     private static File catalinaHome = new File(System.getProperty("catalina.home"));
 
     /*
-    *  serverVersion(String: fileName):
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
+    *
+    *  @return output: Ubuntu server version.
     */
     protected static String serverVersion() {
         String output = "";
@@ -76,8 +81,9 @@ public class Audit extends Action {
     }
 
     /*
-    *  verifyTomcat():
     *  Read bash script and extract JVM/Tomcat version information.
+    *
+    *  @return output: JVM and Tomcat version information.
     */
     protected static String verifyTomcat() {
         String output = "";
@@ -117,8 +123,9 @@ public class Audit extends Action {
      }
 
     /*
-    *  mysqlVersion(String: cmd):
     *  Run "mysql --version" command and extract version information.
+    *
+    *  @return output: MySQL version information.
     */
     protected static String mysqlVersion() {
         String output = "";
@@ -138,15 +145,17 @@ public class Audit extends Action {
     }
 
     /*
-    *  verifyOscar(String: path):
     *  Verify all possible Oscar deployments.
     *  Grab all possible Oscar deployed folder names in root directory 
     *  and push onto stack. Pop names off of the stack and verify 
     *  each properties file that exists in "catalinaHome" directory.
+    *
+    *  @return output: Combined output of Oscar build and properties information
+    *  for each properties file that exists.
     */
-    protected static String verifyOscar(String path) {
+    protected static String verifyOscar() {
         String output = "";
-        File webApps = new File(catalinaBase.getPath() + path);
+        File webApps = new File(catalinaBase.getPath() + "/webapps");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
 
         if (files.empty()) {
@@ -158,26 +167,29 @@ public class Audit extends Action {
             output += "<b>Currently checking \"oscar_mcmaster.properties\" file..." + "</b><br />";
             output += oscarBuild("/var/lib/tomcat7/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += oscarBuild(catalinaHome+"/"+file);
-            output += verifyOscarProperties(catalinaHome+"/"+file);
+            output += oscarBuild(catalinaHome.getPath() + "/" + file);
+            output += verifyOscarProperties(catalinaHome.getPath() + "/" + file);
         }
         return output;
     }
 
     /*
-    *  oscarBuild(String: fileName):
     *  Read Oscar buildtag of properties file.
+    *
+    *  @return output: Current build and version of Oscar.
     */
     protected static String oscarBuild(String fileName) {
         String output = "";
         try {
-            if (OscarProperties.getInstance().getProperty("buildtag") == null) {
-                output = "Oscar build/version cannot be found." + "<br />";
-            } else {
-                output = OscarProperties.getInstance().getProperty("buildtagg") + "<br />";
-            }
-            return output;
             /*
+            if (!fileName.contains("mcmaster")) {
+                if (OscarProperties.getInstance().getProperty("buildtag") == null) {
+                    output = "Oscar build/version cannot be found." + "<br />";
+                } else {
+                    output = OscarProperties.getInstance().getProperty("buildtag") + "<br />";
+                }
+                return output;
+            }*/
             File oscar = new File(fileName + ".properties");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch = false;
@@ -195,7 +207,7 @@ public class Audit extends Action {
             if (!isMatch) {
                 output += "Oscar build/version cannot be found." + "<br />";
             }
-            return output;*/
+            return output;
         } catch (Exception e) {
             output = "Could not read properties file to detect Oscar build." + "<br />";
             return output;
@@ -203,9 +215,11 @@ public class Audit extends Action {
     }
 
     /*
-    *  verifyOscarProperties(String: fileName):
-    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," and
-    *  "TMP_DIR" tags of properties file.
+    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," and "TMP_DIR" tags of 
+    *  properties file.
+    *
+    *  @return output: Output of the required tags in the Oscar properties 
+    *  file.
     */
     protected static String verifyOscarProperties(String fileName) {
         String output = "";
@@ -255,15 +269,17 @@ public class Audit extends Action {
     }
 
     /*
-    *  verifyDrugref():
     *  Verify all Drugref deployments.
     *  Grab all possible Drugref deployed folder names in root directory 
     *  and push onto stack. Pop names off of the stack and verify 
     *  each properties file that exists in "catalinaHome" directory.
+    *
+    *  @return output: Combined output of Drugref properties information
+    *  for each properties file that exists.
     */
     protected static String verifyDrugref() {
         String output = "";
-        File webApps = new File(catalinaBase.getPath()+"/webapps");
+        File webApps = new File(catalinaBase.getPath() + "/webapps");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
 
         if (files.empty()) {
@@ -273,15 +289,17 @@ public class Audit extends Action {
         while (!files.empty()) {
             String file = files.pop();
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += verifyDrugrefProperties(catalinaHome+"/"+file);
+            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file);
         }
         return output;
     }
 
     /*
-    *  verifyDrugrefProperties(String: fileName):
-    *  Read "db_user," "db_url," "db_driver," and
-    *  "drugref_url" tags of properties file.
+    *  Read "db_user," "db_url," "db_driver," and "drugref_url" tags of 
+    *  properties file.
+    *
+    *  @return output: Output of the required tags in the Drugref properties 
+    *  file.
     */
     protected static String verifyDrugrefProperties(String fileName) {
         String output = "";
@@ -340,14 +358,17 @@ public class Audit extends Action {
     }
 
     /*
-    *  tomcatReinforcement():
     *  Read "xmx" and "xms" values of Tomcat.
+    *
+    *  @return output: Xmx (maximum memory allocation) value followed by Xms 
+    *  (minimum memory allocation) value.
     */
     protected static String tomcatReinforcement() {
         String output = "";
         try {
             String xmx = "";
             String xms = "";
+            // currently only grabs initial tomcat found, but we need one for every tomcat instance
             Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep tomcat"});
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             boolean isMatch1 = false;
@@ -437,10 +458,13 @@ public class Audit extends Action {
     }
 
     /*
-    *  grabFiles(File: directory, String: regex):
-    *  Loop through folders/files in directory and
-    *  push all possible files (pattern matching)
-    *  onto the Stack.
+    *  Loop through folders/files in directory and push all possible files 
+    *  (using pattern matching) onto the Stack.
+    *
+    *  @param directory: Webapps directory of Tomcat.
+    *  @param regex: Used for pattern matching on finding Oscar and Drugref 
+    *  deployed folders.
+    *  @return files: Stack of properties files to be verified individually.
     */
     protected static Stack<String> grabFiles(File directory, String regex) {
         String[] fileList = directory.list();
