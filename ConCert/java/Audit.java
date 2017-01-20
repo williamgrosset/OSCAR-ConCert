@@ -17,7 +17,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-//import oscar.OscarProperties;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.sql.DatabaseMetaData;
+import oscar.OscarProperties;
 
 public class Audit extends Action {
 
@@ -43,12 +47,6 @@ public class Audit extends Action {
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
     }
-
-    //private static File catalinaBase = searchForDirectory("/var/lib/tomcat7", ".*(catalina\\.base\\S+).*");
-    //private static File catalinaHome = searchForDirectory("/usr/share/tomcat7", ".*(catalina\\.home\\S+).*");
-
-    private static File catalinaBase = new File(System.getProperty("catalina.base"));
-    private static File catalinaHome = new File(System.getProperty("catalina.home"));
 
     /*
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
@@ -81,6 +79,46 @@ public class Audit extends Action {
     }
 
     /*
+    *  Run "mysql --version" command and extract version information.
+    *
+    *  @return output: MySQL version information.
+    */
+    protected static String mysqlVersion() {
+        String output = "";
+        try {
+            String dbType = OscarProperties.getInstance().getProperty("db_type");
+            if (dbType.equals("") || dbType == null) {
+                output = "Cannot determine database type. \"db_type\" tag is not configured properly.";
+                return output;
+            }
+            if (dbType.contains("mysql")) {
+                // CURRENTLY TESTING
+                String dbUrl = "jdbc:mysql://127.0.0.1:3306/drugref";
+                String dbUserName = OscarProperties.getInstance().getProperty("db_username");
+                String dbPassWord = OscarProperties.getInstance().getProperty("db_password");
+                Connection connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassWord); 
+                DatabaseMetaData metaData = connection.getMetaData();
+                output += metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
+                /*Process p = Runtime.getRuntime().exec("/usr/bin/mysql --version");
+                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+                String line = "";
+
+                while ((line = br.readLine()) != null)
+                    output += line.substring(16);
+                p.destroy();*/
+                return output;
+            } else {
+                return output;
+            }
+        } catch (Exception e) {
+            // fix error message
+            output = e.getMessage();
+            //output = "Could not run determine database name and version.";
+            return output;
+        }
+    }
+
+    /*
     *  Read bash script and extract JVM/Tomcat version information.
     *
     *  @return output: JVM and Tomcat version information.
@@ -88,6 +126,12 @@ public class Audit extends Action {
     protected static String verifyTomcat() {
         String output = "";
         try {
+            File catalinaHome = new File(System.getProperty("catalina.home"));
+            if (catalinaHome == null) {
+                output = "Please verify that your 'catalina.home' directory is setup correctly.";
+                return output;
+            }
+
             Process p = Runtime.getRuntime().exec(catalinaHome.getPath() + "/bin/version.sh");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             boolean isMatch1 = false;
@@ -120,28 +164,6 @@ public class Audit extends Action {
             output = "Could not run \"version.sh\" bash script to detect JVM/Tomcat version(s).";
             return output;
         }
-     }
-
-    /*
-    *  Run "mysql --version" command and extract version information.
-    *
-    *  @return output: MySQL version information.
-    */
-    protected static String mysqlVersion() {
-        String output = "";
-        try {
-            Process p = Runtime.getRuntime().exec("/usr/bin/mysql --version");
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            String line = "";
-
-            while ((line = br.readLine()) != null)
-                output = line.substring(16);
-            p.destroy();
-            return output;
-        } catch (Exception e) {
-            output = "Could not run \"mysql --version\" command to detect MySQL version.";
-            return output;
-        }
     }
 
     /*
@@ -155,6 +177,14 @@ public class Audit extends Action {
     */
     protected static String verifyOscar() {
         String output = "";
+        File catalinaBase = new File(System.getProperty("catalina.base"));
+        File catalinaHome = new File(System.getProperty("catalina.home"));
+
+        if (catalinaBase == null || catalinaHome == null) {
+            output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
+            return output;
+        }
+
         File webApps = new File(catalinaBase.getPath() + "/webapps");
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
 
@@ -165,7 +195,8 @@ public class Audit extends Action {
         while (!files.empty()) {
             String file = files.pop();
             output += "<b>Currently checking \"oscar_mcmaster.properties\" file..." + "</b><br />";
-            output += oscarBuild("/var/lib/tomcat7/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
+            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
+            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
             output += oscarBuild(catalinaHome.getPath() + "/" + file);
             output += verifyOscarProperties(catalinaHome.getPath() + "/" + file);
@@ -181,15 +212,6 @@ public class Audit extends Action {
     protected static String oscarBuild(String fileName) {
         String output = "";
         try {
-            /*
-            if (!fileName.contains("mcmaster")) {
-                if (OscarProperties.getInstance().getProperty("buildtag") == null) {
-                    output = "Oscar build/version cannot be found." + "<br />";
-                } else {
-                    output = OscarProperties.getInstance().getProperty("buildtag") + "<br />";
-                }
-                return output;
-            }*/
             File oscar = new File(fileName + ".properties");
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch = false;
@@ -215,8 +237,8 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," and "TMP_DIR" tags of 
-    *  properties file.
+    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and
+    *  "drugref_url" tags of Oscar properties file.
     *
     *  @return output: Output of the required tags in the Oscar properties 
     *  file.
@@ -229,9 +251,11 @@ public class Audit extends Action {
             boolean isMatch1 = false;
             boolean isMatch2 = false;
             boolean isMatch3 = false;
+            boolean isMatch4 = false;
             boolean flag1 = false;
             boolean flag2 = false;
             boolean flag3 = false;
+            boolean flag4 = false;
             String line = "";
 
             while ((line = br.readLine()) != null) {
@@ -239,7 +263,8 @@ public class Audit extends Action {
                     continue;
                 isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", line);
                 isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", line);
-                isMatch3 = Pattern.matches("^(TMP_DIR=).*", line);
+                isMatch3 = Pattern.matches("^(TMP_DIR(=|:)).*", line);
+                isMatch4 = Pattern.matches("^(drugref_url=).*", line);
                 if (isMatch1) { // HL7TEXT_LABS=
                     flag1 = true;
                     output += "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(13) + "<br />";
@@ -252,15 +277,21 @@ public class Audit extends Action {
                     flag3 = true;
                     output += "\"TMP_DIR tag\" is configured as: " + line.substring(8) + "<br />";
                 }
-                if (flag1 && flag2 && flag3)
+                if (isMatch4) { // drugref_url=
+                    flag4 = true;
+                    output += "\"drugref_url\" tag is configured as: " + line.substring(12) + "<br />";
+                }
+                if (flag1 && flag2 && flag3 && flag4)
                     break;
             }
             if (!flag1)
-                output += "\"HL7TEXT_LABS\" tag is not set to \"yes\" and is not configured properly." + "<br />";
+                output += "\"HL7TEXT_LABS\" tag is not configured properly." + "<br />";
             if (!flag2)
-                output += "\"SINGLE_PAGE_CHART\" tag not set to \"true\" and is not configured properly." + "<br />";
+                output += "\"SINGLE_PAGE_CHART\" tag is not configured properly." + "<br />";
             if (!flag3)
-                output += "\"TMP_DIR\" tag is not set to a directory and is not configured properly." + "<br />";
+                output += "\"TMP_DIR\" tag is not configured properly." + "<br />";
+            if (!flag4)
+                output += "\"drugref_url\" tag is not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
             output = "Could not read properties file to verify Oscar tags.";
@@ -279,6 +310,14 @@ public class Audit extends Action {
     */
     protected static String verifyDrugref() {
         String output = "";
+        File catalinaBase = new File(System.getProperty("catalina.base"));
+        File catalinaHome = new File(System.getProperty("catalina.home"));
+
+        if (catalinaBase == null || catalinaHome == null) {
+            output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
+            return output;
+        }
+
         File webApps = new File(catalinaBase.getPath() + "/webapps");
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
 
@@ -295,7 +334,7 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read "db_user," "db_url," "db_driver," and "drugref_url" tags of 
+    *  Read "db_user," "db_url," and "db_driver" tags of Drugref 
     *  properties file.
     *
     *  @return output: Output of the required tags in the Drugref properties 
@@ -309,11 +348,9 @@ public class Audit extends Action {
             boolean isMatch1 = false;
             boolean isMatch2 = false;
             boolean isMatch3 = false;
-            boolean isMatch4 = false;
             boolean flag1 = false;
             boolean flag2 = false;
             boolean flag3 = false;
-            boolean flag4 = false;
             String line = "";
 
             while ((line = br.readLine()) != null) {
@@ -322,34 +359,27 @@ public class Audit extends Action {
                 isMatch1 = Pattern.matches("^(db_user=).*", line);
                 isMatch2 = Pattern.matches("^(db_url=).*", line);
                 isMatch3 = Pattern.matches("^(db_driver=).*", line);
-                isMatch4 = Pattern.matches("^(drugref_url=).*", line);
                 if (isMatch1) { // db_user=
                     flag1 = true;
                     output += "\"db_user\" tag is configured as: " + line.substring(8) + "<br />";
                 }
                 if (isMatch2) { // db_url=
                     flag2 = true;
-                    output += "\"db_url\" tag is configured as: " + line.substring(8) + "<br />";
+                    output += "\"db_url\" tag is configured as: " + line.substring(7) + "<br />";
                 }
                 if (isMatch3) { // db_driver=
                     flag3 = true;
                     output += "\"db_driver\" tag is configured as: " + line.substring(10) + "<br />";
                 }
-                if (isMatch4) { // drugref_url=
-                    flag4 = true;
-                    output += "\"drugref_url\" tag is configured as: " + line.substring(12) + "<br />";
-                }
-                if (flag1 && flag2 && flag3 && flag4)
+                if (flag1 && flag2 && flag3)
                     break;
             }
             if (!flag1)
-                output += "\"db_user\" tag not configured properly." + "<br />";
+                output += "\"db_user\" tag is not configured properly." + "<br />";
             if (!flag2)
-                output += "\"db_url\" tag not configured properly." + "<br />";
+                output += "\"db_url\" tag is not configured properly." + "<br />";
             if (!flag3)
-                output += "\"db_driver\" tag not configured properly." + "<br />";
-            if (!flag4)
-                output += "\"drugref_url\" tag not configured properly." + "<br />";
+                output += "\"db_driver\" tag is not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
             output = "Could not read properties file to verify Drugref tags.";
@@ -366,33 +396,38 @@ public class Audit extends Action {
     protected static String tomcatReinforcement() {
         String output = "";
         try {
+            File catalinaBase = new File(System.getProperty("catalina.base"));
+            Pattern tomcatVersion = Pattern.compile(".*(tomcat[0-9]+)");
+            Matcher tomcatMatch = tomcatVersion.matcher(catalinaBase.getPath());
+            tomcatMatch.matches(); // necessary for group() method to be run correctly
+            String tomcat = tomcatMatch.group(1);
+            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep " + tomcat});
+            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+
+            String line = "";
             String xmx = "";
             String xms = "";
-            // currently only grabs initial tomcat found, but we need one for every tomcat instance
-            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep tomcat"});
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             boolean isMatch1 = false;
             boolean isMatch2 = false;
             boolean flag1 = false;
             boolean flag2 = false;
-            String line = "";
+            Pattern xmxPattern = Pattern.compile(".*(Xmx[0-9]+m).*");
+            Pattern xmsPattern = Pattern.compile(".*(Xms[0-9]+m).*");
 
             while ((line = br.readLine()) != null) {
-                Pattern pattern1 = Pattern.compile(".*(Xmx[0-9]+m).*");
-                Matcher matcher1 = pattern1.matcher(line);
-                isMatch1 = matcher1.matches();
-                Pattern pattern2 = Pattern.compile(".*(Xms[0-9]+m).*");
-                Matcher matcher2 = pattern2.matcher(line);
-                isMatch2 = matcher2.matches();
+                Matcher xmxMatch = xmxPattern.matcher(line);
+                isMatch1 = xmxMatch.matches();
+                Matcher xmsMatch = xmsPattern.matcher(line);
+                isMatch2 = xmsMatch.matches();
 
                 if (isMatch1) {
-                    xmx = matcher1.group(1);
+                    xmx = xmxMatch.group(1);
                     String[] xmxString = xmx.toString().split("x");
                     flag1 = true;
                     output += "Xmx value: " + xmxString[1] + "<br />";
                 }
                 if (isMatch2) {
-                    xms = matcher2.group(1);
+                    xms = xmsMatch.group(1);
                     String[] xmsString = xms.toString().split("s");
                     flag2 = true;
                     output += "Xms value: " + xmsString[1] + "<br />";
@@ -415,47 +450,8 @@ public class Audit extends Action {
     }
 
     /////////////////////////////////
-    //////// HELPER METHODS /////////
+    //////// HELPER METHOD(S) ///////
     /////////////////////////////////
-
-    /*
-    *  searchForDirectory(String: defaultPath, String: regex, String: defaultPathName):
-    *  Run "ps" command to find Tomact7 details and
-    *  then use pattern matching to find desired tags
-    *  (i.e "$CATALINA_HOME" full path name).
-    */
-    protected static File searchForDirectory(String defaultPath, String regex) {
-        CharSequence pathName = "";
-        boolean isMatch = false;
-        Stack<String> files = new Stack<String>();
-
-        try {
-            String s = "";
-            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep tomcat7"});
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-            while ((s = br.readLine()) != null) {
-                Pattern pattern = Pattern.compile(regex);
-                Matcher matcher = pattern.matcher(s);
-                isMatch = matcher.matches();
-                if (isMatch) {
-                    pathName = matcher.group(1);
-                    String[] path = pathName.toString().split("=");
-                    pathName = path[1];
-                    break;
-                }
-            }
-            p.destroy();
-            // Use default file path
-            if (!isMatch) {
-                return new File(defaultPath + "/");
-            }
-            return new File(pathName.toString() + "/"); // type CharSequence (needs to be String to create File object)
-        // Use default file path
-        } catch (Exception e) {
-            return new File(defaultPath + "/");
-        }
-    }
 
     /*
     *  Loop through folders/files in directory and push all possible files 
