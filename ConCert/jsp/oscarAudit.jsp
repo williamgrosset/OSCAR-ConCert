@@ -13,8 +13,8 @@
         <h5>Server Version:</h5>
         <pre>${serverVersion}</pre>
 
-        <h5>MySQL Version:</h5>
-        <pre>${mysqlVersion}</pre>
+        <h5>Database Information:</h5>
+        <pre>${databaseInfo}</pre>
 
         <h5>Verify Tomcat:</h2>
         <pre>${verifyTomcat}</pre>

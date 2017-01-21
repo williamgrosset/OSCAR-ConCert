@@ -40,7 +40,7 @@ public class Audit extends Action {
         }
 
         servletRequest.setAttribute("serverVersion", serverVersion());
-        servletRequest.setAttribute("mysqlVersion", mysqlVersion());
+        servletRequest.setAttribute("databaseInfo", databaseInfo());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
         servletRequest.setAttribute("verifyOscar", verifyOscar());
         servletRequest.setAttribute("verifyDrugref", verifyDrugref());
@@ -79,11 +79,14 @@ public class Audit extends Action {
     }
 
     /*
-    *  Run "mysql --version" command and extract version information.
+    *  Retrieve url, username, and password information from Oscar properties
+    *  to make a connection with our database. From our connection, we can 
+    *  inspect the DBMS and retrieve which database we are connected and the
+    *  version.
     *
-    *  @return output: MySQL version information.
+    *  @return output: Database name and version.
     */
-    protected static String mysqlVersion() {
+    protected static String databaseInfo() {
         String output = "";
         try {
             String dbType = OscarProperties.getInstance().getProperty("db_type");
@@ -91,29 +94,16 @@ public class Audit extends Action {
                 output = "Cannot determine database type. \"db_type\" tag is not configured properly.";
                 return output;
             }
-            if (dbType.contains("mysql")) {
-                // CURRENTLY TESTING
-                String dbUrl = "jdbc:mysql://127.0.0.1:3306/drugref";
-                String dbUserName = OscarProperties.getInstance().getProperty("db_username");
-                String dbPassWord = OscarProperties.getInstance().getProperty("db_password");
-                Connection connection = DriverManager.getConnection(dbUrl, dbUserName, dbPassWord); 
-                DatabaseMetaData metaData = connection.getMetaData();
-                output += metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
-                /*Process p = Runtime.getRuntime().exec("/usr/bin/mysql --version");
-                BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-                String line = "";
 
-                while ((line = br.readLine()) != null)
-                    output += line.substring(16);
-                p.destroy();*/
-                return output;
-            } else {
-                return output;
-            }
+            String dbUri = OscarProperties.getInstance().getProperty("db_uri");
+            String dbUserName = OscarProperties.getInstance().getProperty("db_username");
+            String dbPassWord = OscarProperties.getInstance().getProperty("db_password");
+            Connection connection = DriverManager.getConnection(dbUri, dbUserName, dbPassWord); 
+            DatabaseMetaData metaData = connection.getMetaData();
+            output = metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
+            return output;
         } catch (Exception e) {
-            // fix error message
-            output = e.getMessage();
-            //output = "Could not run determine database name and version.";
+            output = "Cannot determine database name and version.";
             return output;
         }
     }
