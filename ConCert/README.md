@@ -8,13 +8,13 @@ William Grosset (100-hour work term) at [LEAD Lab](http://leadlab.ca/about-us/).
 ### ConCert
 Currently, the ConCert project audits the OSCAR deployment environment:
 * Ubuntu supported version
-* Oracle-Sun Java/Open JDK version
-* MySQL database version
-* OSCAR/Drugref file properties
+* Java/Open JDK version
+* Database product name and version
 * OSCAR build and version
+* OSCAR/Drugref file properties
 * Tomcat memory allocation
 
-This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a dynamic web page.
+This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page.
 
 ### Design Decisions
 1. Why utilize a **Stack** when grabbing and sorting files? *(Audit.java)*<br><br>
