@@ -39,7 +39,7 @@ public class Audit extends Action {
             return actionMapping.findForward("unauthorized");
         }
 
-        servletRequest.setAttribute("serverVersion", serverVersion());
+        servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
         servletRequest.setAttribute("databaseInfo", databaseInfo());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
         servletRequest.setAttribute("verifyOscar", verifyOscar());
@@ -53,10 +53,10 @@ public class Audit extends Action {
     *
     *  @return output: Ubuntu server version.
     */
-    protected static String serverVersion() {
+    protected static String serverVersion(String lsbPath) {
         String output = "";
         try {
-            File lsbRelease = new File("/etc/lsb-release");
+            File lsbRelease = new File(lsbPath);
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(lsbRelease)));
             boolean isMatch = false;
             String line = "";
@@ -185,11 +185,11 @@ public class Audit extends Action {
         while (!files.empty()) {
             String file = files.pop();
             output += "<b>Currently checking \"oscar_mcmaster.properties\" file..." + "</b><br />";
-            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
-            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster");
+            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster.properties");
+            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster.properties");
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += oscarBuild(catalinaHome.getPath() + "/" + file);
-            output += verifyOscarProperties(catalinaHome.getPath() + "/" + file);
+            output += oscarBuild(catalinaHome.getPath() + "/" + file + ".properties");
+            output += verifyOscarProperties(catalinaHome.getPath() + "/" + file + ".properties");
         }
         return output;
     }
@@ -202,7 +202,7 @@ public class Audit extends Action {
     protected static String oscarBuild(String fileName) {
         String output = "";
         try {
-            File oscar = new File(fileName + ".properties");
+            File oscar = new File(fileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch = false;
             String line = "";
@@ -236,7 +236,7 @@ public class Audit extends Action {
     protected static String verifyOscarProperties(String fileName) {
         String output = "";
         try {
-            File oscar = new File(fileName + ".properties");
+            File oscar = new File(fileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
             boolean isMatch1 = false;
             boolean isMatch2 = false;
@@ -265,7 +265,7 @@ public class Audit extends Action {
                 }
                 if (isMatch3) { // TMP_DIR=
                     flag3 = true;
-                    output += "\"TMP_DIR tag\" is configured as: " + line.substring(8) + "<br />";
+                    output += "\"TMP_DIR\" tag is configured as: " + line.substring(8) + "<br />";
                 }
                 if (isMatch4) { // drugref_url=
                     flag4 = true;
@@ -318,7 +318,7 @@ public class Audit extends Action {
         while (!files.empty()) {
             String file = files.pop();
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file);
+            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file + ".properties");
         }
         return output;
     }
@@ -333,7 +333,7 @@ public class Audit extends Action {
     protected static String verifyDrugrefProperties(String fileName) {
         String output = "";
         try {
-            File drugref = new File(fileName + ".properties");
+            File drugref = new File(fileName);
             BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
             boolean isMatch1 = false;
             boolean isMatch2 = false;

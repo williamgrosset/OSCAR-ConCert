@@ -8,6 +8,7 @@ import static org.junit.Assert.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.apache.commons.io.FileUtils;
 
 public class AuditTest {
  
@@ -15,63 +16,107 @@ public class AuditTest {
     public TemporaryFolder folder = new TemporaryFolder();
 
     /*
-    *  serverVersion(String: fileName):
+    *  serverVersion(String fileName):
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     */
  
     @Test
     public void exceptionServerVersion() throws IOException {
         File tempFile = folder.newFile("file.txt");
-        String expectedResult = "Could not run \"lsb release\" command to detect Ubuntu server version.";
+        String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
         assertEquals(expectedResult, Audit.serverVersion(tempFile.toString()));
     }
 
     @Test
     public void isMatchTrueServerVersion() throws IOException {
+        File tempFile = folder.newFile("correctInfo");
+        FileUtils.writeStringToFile(tempFile, "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
         String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
-        assertEquals(expectedResult, Audit.serverVersion("/etc/lsb-release"));
+        assertEquals(expectedResult, Audit.serverVersion(tempFile.getPath()));
     }
 
     @Test
     public void isMatchFalseServerVersion() throws IOException {
-        //File tempFile = folder.newFile("fake-lsb-release");
+        File tempFile = folder.newFile("notCorrectInfo");
+        FileUtils.writeStringToFile(tempFile, "randomtag=");
         String expectedResult = "Could not detect Ubuntu server version.";
-        //assertEquals(expectedResult, Audit.serverVersion(tempFile.toString()));
-        assertEquals(expectedResult, Audit.serverVersion("/etc/environment"));
+        assertEquals(expectedResult, Audit.serverVersion(tempFile.getPath()));
     }
 
     /*
-    *  JVMTomcat7(String: binPath):
+    *  JVMTomcat7(String binPath):
     *  Read bash script and extract JVM/Tomcat version information.
     */
 
+    /*
+    *  oscarBuild(String fileName):
+    *  Read Oscar buildtag of properties file.
+    */
+
     @Test
-    public void isMatchTrueJVMTomcat7() {
-        String expectedResult = "Tomcat version: Apache Tomcat/7.0.52 (Ubuntu)<br />JVM Version: 1.7.0_80-b15<br />";
-        assertEquals(expectedResult, Audit.JVMTomcat7("/usr/share/tomcat7/bin"));
+    public void isMatchOscarBuild() throws IOException {
+        File tempFile = folder.newFile("correctInfo.properties");
+        FileUtils.writeStringToFile(tempFile, "buildtag=oscar15BetaMaster-454");
+        String expectedResult = "Oscar build and version: oscar15BetaMaster-454<br />";
+        assertEquals(expectedResult, Audit.oscarBuild(tempFile.getPath()));
     }
 
     /*
-    *  mysqlVersion(String: cmd):
-    *  Run "mysql --version" command and extract version information.
+    *  verifyOscarProperties(String fileName):
+    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and
+    *  "drugref_url" tags of Oscar properties file.
+    *
+    *  Note: There are 16 unique permutations for the isMatch behavior of this method.
     */
+
+    // isMatch1, isMatch2, isMatch3, isMatch4
     @Test
-    public void exceptionMysqlVersion() {
-        String expectedResult = "Could not run \"mysql --version\" command to detect MySQL version.";
-        assertEquals(expectedResult, Audit.mysqlVersion("notamysqlcommand --version"));
+    public void isMatchAllVerifyOscarProperties() throws IOException {
+        File tempFile = folder.newFile("correctInfo.properties");
+        FileUtils.writeStringToFile(tempFile, "HL7TEXT_LABS=true\nSINGLE_PAGE_CHART=yes\nTMP_DIR=/pathtotmpdir/\ndrugref_url=/pathtodrugref/");
+        String expectedResult = "\"drugref_url\" tag is configured as: /pathtodrugref/<br />\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />\"HL7TEXT_LABS\" tag is configured as: true<br />";
+        assertEquals(expectedResult, Audit.verifyOscarProperties(tempFile.getPath()));
     }
 
+    // isMatch1, !isMatch2, isMatch3, !isMatch4
     @Test
-    public void isMatchMysqlVesion() {
-        String expectedResult = "14.14 Distrib 5.5.53, for debian-linux-gnu (x86_64) using readline 6.3";
-        assertEquals(expectedResult, Audit.mysqlVersion("mysql --version"));
+    public void isMatch13VerifyOscarProperties() throws IOException {
+
+
+    }
+
+    // !isMatch1, !isMatch2, !isMatch3, !isMatch4
+    @Test
+    public void isMatchFalseVerifyOscarProperties() throws IOException {
+
+
     }
 
     /*
-    *  verifyOscar(String: path):
-    *  Verify all possible Oscar deployments.
-    *  Grab all possible Oscar deployed folder names in root directory 
-    *  and push onto stack. Pop names off of the stack and verify 
-    *  each properties file that exists in "catalinaHome" directory.
+    *  verifyDrugRefProperties(String fileName):
+    *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
+    *
+    *  Note: There are 9 unique permutations for the isMatch behavior of this method.
     */
+
+    // isMatch1, isMatch2, isMatch3
+    @Test
+    public void isMatchAllVerifyDrugrefProperties() throws IOException {
+
+
+    }
+
+    // isMatch1, isMatch2, !isMatch3
+    @Test
+    public void isMatch12VerifyDrugrefProperties() throws IOException {
+
+
+    }
+
+    // !isMatch1, !isMatch2, !isMatch3
+    @Test
+    public void isMatchFalseVerifyDrugrefProperties() throws IOException {
+
+
+    }
 }
