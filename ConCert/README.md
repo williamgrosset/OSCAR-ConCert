@@ -30,7 +30,7 @@ ConCert focuses on auditing of a live OSCAR application. We can track the proces
 The browser will interpret these characters as HTML tags, allowing for breaks between lines. Using the ```\n``` escape sequence will not render correctly.
 
 5. Why use JSTL tags with JavaServer pages? *(oscarAudit.jsp)*<br><br> 
-Keeping code readable, maintainable, and easily understood is important for the development of an open source project. JSTL allows us to encapsulate and hide away the details of the main Java work. This allows us to not mix all the source code with the HTML markup. In my experience, this was fairly similar to using the *JQuery* library over vanilla *JavaScript.*
+Keeping code readable, maintainable, and easily understood is important for the development of an open source project. JSTL allows us to encapsulate and hide away the details of the main Java work. This allows us to not mix all the source code with the HTML markup.
 
 ### Utilizing the Struct framework
 The Struct framework utilizes the Java Servlet API (Java Enterprise Edition) and formulates a model, view, controller (MVC) architecture. This framework is used for flexible and maintainable Java web-based applications. Currently, OSCAR is running on Struts version 1.2.7.
