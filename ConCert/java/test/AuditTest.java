@@ -54,11 +54,26 @@ public class AuditTest {
     */
 
     @Test
-    public void isMatchOscarBuild() throws IOException {
+    public void isMatchTrueOscarBuild() throws IOException {
         File tempFile = folder.newFile("correctInfo.properties");
         FileUtils.writeStringToFile(tempFile, "buildtag=oscar15BetaMaster-454");
         String expectedResult = "Oscar build and version: oscar15BetaMaster-454<br />";
         assertEquals(expectedResult, Audit.oscarBuild(tempFile.getPath()));
+    }
+
+    @Test
+    public void isMatchFalseOscarBuild() throws IOException {
+        File tempFile = folder.newFile("notCorrectInfo.properties");
+        FileUtils.writeStringToFile(tempFile, "#buildtag=oscar15BetaMaster-454");
+        String expectedResult = "Oscar build/version cannot be found.<br />";
+        assertEquals(expectedResult, Audit.oscarBuild(tempFile.getPath()));
+    }
+
+    @Test
+    public void exceptionOscarBuild() throws IOException {
+        File tempFile = folder.newFile("file.txt");
+        String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
+        assertEquals(expectedResult, Audit.oscarBuild(tempFile.toString()));
     }
 
     /*
