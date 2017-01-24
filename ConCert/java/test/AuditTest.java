@@ -3,6 +3,7 @@ package oscar.util;
 import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Stack;
 
 import static org.junit.Assert.*;
 import org.junit.Rule;
@@ -46,6 +47,14 @@ public class AuditTest {
     /*
     *  JVMTomcat7(String binPath):
     *  Read bash script and extract JVM/Tomcat version information.
+    */
+
+    /*
+    *  verifyOscar(): ***FIX MY PARAMETERS***
+    *  Verify all possible Oscar deployments.
+    *  Grab all possible Oscar deployed folder names in root directory
+    *  and push onto stack. Pop names off of the stack and verify
+    *  each properties file that exists in "catalinaHome" directory.
     */
 
     /*
@@ -137,6 +146,14 @@ public class AuditTest {
     }
 
     /*
+    *  verifyDrugRef(): ***FIX MY PARAMETERS***
+    *  Verify all possible Drugref deployments.
+    *  Grab all possible Drugref deployed folder names in root directory
+    *  and push onto stack. Pop names off of the stack and verify
+    *  each properties file that exists in "catalinaHome" directory.
+    */
+
+    /*
     *  verifyDrugRefProperties(String fileName):
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
     *
@@ -188,4 +205,61 @@ public class AuditTest {
         String expectedResult = "Could not read properties file to verify Drugref tags.";      
         assertEquals(expectedResult, Audit.verifyDrugrefProperties(tempFile.toString()));
     }
+
+    /*
+    *  tomcatReinforcement():
+    *  Read "xmx" and "xms" values of Tomcat.
+    */
+
+    /*
+    *  grabFiles(File directory, String regex):
+    *  Loop through folders/files in directory and push all possible files
+    *  (using pattern matching) onto the Stack.
+    */
+
+    @Test
+    public void allGrabFiles() throws IOException {
+        File testingFolder = folder.newFolder("testingFolder"); // grabFiles requires File object
+        File tempFolder1 = new File(testingFolder.getPath() + "/oscar15");
+        tempFolder1.mkdir();
+        File tempFolder2 = new File(testingFolder.getPath() + "/oscar15_bc");
+        tempFolder2.mkdir();
+        File tempFolder3 = new File(testingFolder.getPath() + "/oscar3foo");
+        tempFolder3.mkdir();
+        Stack<String> expectedResult = new Stack<String>();
+        expectedResult.push("oscar15");
+        expectedResult.push("oscar15_bc");
+        expectedResult.push("oscar3foo");
+        assertEquals(expectedResult, Audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
+    }
+
+    @Test
+    public void oneGrabFiles() throws IOException {
+        File testingFolder = folder.newFolder("testingFolder");
+        File tempFolder1 = new File(testingFolder.getPath() + "/foobar1");
+        tempFolder1.mkdir();
+        File tempFolder2 = new File(testingFolder.getPath() + "/foobar912foobar");
+        tempFolder2.mkdir();
+        File tempFolder3 = new File(testingFolder.getPath() + "/oscar10");
+        tempFolder3.mkdir();
+        Stack<String> expectedResult = new Stack<String>();
+        expectedResult.push("oscar10");
+        assertEquals(expectedResult, Audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
+    }
+
+    @Test
+    public void noFileListGrabFiles() throws IOException {
+        File testingFolder = folder.newFolder("testingFolder");
+        Stack<String> expectedResult = new Stack<String>(); // empty stack
+        assertEquals(expectedResult, Audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
+    }
+
+    /* VERIFYOSCAR/VERIFYDRUGREF COVER THIS
+    @Test
+    public void noFilesGrabFiles() throws IOException {
+        File tempFile = folder.newFile("correctInfo");
+        FileUtils.writeStringToFile(tempFile, "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
+        String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
+        assertEquals(expectedResult, Audit.serverVersion(tempFile.getPath()));
+    }*/
 }
