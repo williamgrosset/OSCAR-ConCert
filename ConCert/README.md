@@ -17,19 +17,19 @@ Currently, the ConCert project audits the OSCAR deployment environment:
 This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page.
 
 ### Design Decisions
-1. Why utilize a **Stack** when grabbing and sorting files? *(Audit.java)*<br><br>
+1. Why utilize a **Stack** when grabbing and sorting files? *(java/Audit.java)*<br><br>
 It does not really matter what data structure we use here. I chose the **Stack** to simply the verification process, so other developers have a clearer understanding.
 
-2. Why use a reverse line input stream? *(Audit.java)*<br><br> 
+2. Why use a reverse line input stream? *(java/Audit.java)*<br><br> 
 Since configured parameters in properties files can be overwritten sequentially, we can make an easy optimization to read the executed parameters bottom-up. We begin at the end of the file, find our desired tags and break when we have collected the information needed. Also, this makes the code more maintainable and robust without requiring extra checks if we were to read top-bottom.
 
-3. How are you checking for Tomcat reinforcement? *(Audit.java)*<br><br> 
+3. How are you checking for Tomcat reinforcement? *(java/Audit.java)*<br><br> 
 ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size. See ```tomcatReinforcement()``` method for further details.
 
 4. Why is there a ```<br />``` (and sometimes ```<b>```) tag after every output line? *(Audit.java)*<br><br> 
 The browser will interpret these characters as HTML tags, allowing for breaks between lines. Using the ```\n``` escape sequence will not render correctly.
 
-5. Why use JSTL tags with JavaServer pages? *(oscarAudit.jsp)*<br><br> 
+5. Why use JSTL tags with JavaServer pages? *(jsp/oscarAudit.jsp)*<br><br> 
 Keeping code readable, maintainable, and easily understood is important for the development of an open source project. JSTL allows us to encapsulate and hide away the details of the main Java work. This allows us to not mix all the source code with the HTML markup.
 
 ### Utilizing the Struct framework

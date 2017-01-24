@@ -42,11 +42,14 @@ public class Audit extends Action {
         servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
         servletRequest.setAttribute("databaseInfo", databaseInfo());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        servletRequest.setAttribute("verifyOscar", verifyOscar());
-        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
+        servletRequest.setAttribute("verifyOscar", verifyOscar(catalinaBase.getPath() + "/webapps/", catalinaHome.getPath() + "/"));
+        servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps", catalinaHome.getPath() + "/"));
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
     }
+
+    private static File catalinaBase = new File(System.getProperty("catalina.base"));
+    private static File catalinaHome = new File(System.getProperty("catalina.home"));
 
     /*
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
@@ -116,7 +119,6 @@ public class Audit extends Action {
     protected static String verifyTomcat() {
         String output = "";
         try {
-            File catalinaHome = new File(System.getProperty("catalina.home"));
             if (catalinaHome == null) {
                 output = "Please verify that your 'catalina.home' directory is setup correctly.";
                 return output;
@@ -162,20 +164,19 @@ public class Audit extends Action {
     *  and push onto stack. Pop names off of the stack and verify 
     *  each properties file that exists in "catalinaHome" directory.
     *
+    *  @param webAppsPath: Directory path to locate Oscar deployments.
+    *  @param homePath: Directory path to properties file.
     *  @return output: Combined output of Oscar build and properties information
     *  for each properties file that exists.
     */
-    protected static String verifyOscar() {
+    protected static String verifyOscar(String webAppsPath, String homePath) {
         String output = "";
-        File catalinaBase = new File(System.getProperty("catalina.base"));
-        File catalinaHome = new File(System.getProperty("catalina.home"));
-
         if (catalinaBase == null || catalinaHome == null) {
             output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
             return output;
         }
 
-        File webApps = new File(catalinaBase.getPath() + "/webapps");
+        File webApps = new File(webAppsPath);
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
 
         if (files.empty()) {
@@ -185,11 +186,11 @@ public class Audit extends Action {
         while (!files.empty()) {
             String file = files.pop();
             output += "<b>Currently checking \"oscar_mcmaster.properties\" file..." + "</b><br />";
-            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster.properties");
-            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + file + "/WEB-INF/classes/oscar_mcmaster.properties");
+            output += oscarBuild(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
+            output += verifyOscarProperties(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += oscarBuild(catalinaHome.getPath() + "/" + file + ".properties");
-            output += verifyOscarProperties(catalinaHome.getPath() + "/" + file + ".properties");
+            output += oscarBuild(homePath + file + ".properties");
+            output += verifyOscarProperties(homePath + file + ".properties");
         }
         return output;
     }
@@ -295,20 +296,19 @@ public class Audit extends Action {
     *  and push onto stack. Pop names off of the stack and verify 
     *  each properties file that exists in "catalinaHome" directory.
     *
+    *  @param webAppsPath: Directory path to locate Drugref deployments.
+    *  @param homePath: Directory path to properties file.
     *  @return output: Combined output of Drugref properties information
     *  for each properties file that exists.
     */
-    protected static String verifyDrugref() {
+    protected static String verifyDrugref(String webAppsPath, String homePath) {
         String output = "";
-        File catalinaBase = new File(System.getProperty("catalina.base"));
-        File catalinaHome = new File(System.getProperty("catalina.home"));
-
         if (catalinaBase == null || catalinaHome == null) {
             output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
             return output;
         }
 
-        File webApps = new File(catalinaBase.getPath() + "/webapps");
+        File webApps = new File(webAppsPath);
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
 
         if (files.empty()) {
@@ -318,7 +318,7 @@ public class Audit extends Action {
         while (!files.empty()) {
             String file = files.pop();
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file + ".properties");
+            output += verifyDrugrefProperties(homePath + file + ".properties");
         }
         return output;
     }
