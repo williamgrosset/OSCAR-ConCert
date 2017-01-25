@@ -88,68 +88,92 @@ public class AuditTest {
 
     @Test
     public void nonEmptyVerifyOscar() throws IOException {
-        File testingFolder = folder.newFolder("testingFolder"); // grabFiles requires File object
+        File testingFolder = folder.newFolder("testingFolder");
         File tempFolder1 = new File(testingFolder.getPath() + "/oscar15");
         tempFolder1.mkdir();
-        File tempFolder2 = new File(testingFolder.getPath() + "/oscar15/webapps/WEB-INF/classes");
+        File tempFolder2 = new File(testingFolder.getPath() + "/oscar15/WEB-INF/classes");
         tempFolder2.mkdir();
         // put oscar_mcmaster.properties file in directory above
         File tempFile1 = new File(tempFolder2.getPath() + "/oscar_mcmaster.properties");
         FileUtils.writeStringToFile(tempFile1, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
-                                                + "drugref_url=/pathtodrugref/");
+                                                + "drugref_url=/pathtodrugref/\n"
+                                                + "buildtag=oscar15BetaMaster-454");
         File tempFolder3 = new File(testingFolder.getPath() + "/oscar15_bc");
         tempFolder3.mkdir();
-        File tempFolder4 = new File(testingFolder.getPath() + "/oscar15_bc/webapps/WEB-INF/classes");
+        File tempFolder4 = new File(testingFolder.getPath() + "/oscar15_bc/WEB-INF/classes");
         tempFolder4.mkdir();
         // put oscar_mcmaster.properties file in directory above
         File tempFile2 = new File(tempFolder4.getPath() + "/oscar_mcmaster.properties");
         FileUtils.writeStringToFile(tempFile2, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
-                                                + "drugref_url=/pathtodrugref/");
+                                                + "drugref_url=/pathtodrugref/\n"
+                                                + "buildtag=oscar15BetaMaster-454");
         // create oscar15.properties file & oscar15_bc.properties file in testingFolder directory
         File tempFile3 = new File(testingFolder.getPath() + "/oscar15.properties");
         File tempFile4 = new File(testingFolder.getPath() + "/oscar15_bc.properties");
         FileUtils.writeStringToFile(tempFile3, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
-                                                + "drugref_url=/pathtodrugref/");
+                                                + "drugref_url=/pathtodrugref/\n"
+                                                + "buildtag=oscar15BetaMaster-454");
         FileUtils.writeStringToFile(tempFile4, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
-                                                + "drugref_url=/pathtodrugref/");
+                                                + "drugref_url=/pathtodrugref/\n"
+                                                + "buildtag=oscar15BetaMaster-454");
         // put required information in each file
-        String expectedResult = "<b>Currently checking \"oscar_mcmaster.properties\" file in \"oscar15\"...</b><br />"
-                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
-                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
-                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
-                                    + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
-                                    + "<b>Currently checking \"oscar15.properties\" file...</b><br />"
-                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
-                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
-                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
-                                    + "<b>Currently checking \"oscar_mcmaster.properties\" file in \"oscar15_bc\"...</b><br />"
+        String expectedResult = "<b>Currently checking \"oscar_mcmaster.properties\" file for \"oscar15_bc\"...</b><br />"
+                                    + "Oscar build and version: oscar15BetaMaster-454<br />"
                                     + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
                                     + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
                                     + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
                                     + "<b>Currently checking \"oscar15_bc.properties\" file...</b><br />"
+                                    + "Oscar build and version: oscar15BetaMaster-454<br />"
                                     + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
                                     + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
                                     + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
+                                    + "<b>Currently checking \"oscar_mcmaster.properties\" file for \"oscar15\"...</b><br />"
+                                    + "Oscar build and version: oscar15BetaMaster-454<br />"
+                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
+                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
+                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
+                                    + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
+                                    + "<b>Currently checking \"oscar15.properties\" file...</b><br />"
+                                    + "Oscar build and version: oscar15BetaMaster-454<br />"
+                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
+                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
+                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
    + "\"HL7TEXT_LABS\" tag is configured as: true<br />";
-        assertEquals(expectedResult, Audit.verifyOscar(tempFile2.getPath(), testingFolder.getPath()));
+        assertEquals(expectedResult, Audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     @Test
     public void emptyVerifyOscar() throws IOException {
+        File testingFolder = folder.newFolder("testingFolder");
+        File tempFolder1 = new File(testingFolder.getPath() + "/foobar");
+        tempFolder1.mkdir();
+        String expectedResult = "Could not find any properties files for Oscar.<br />";
+        assertEquals(expectedResult, Audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     @Test
-    public void nullVerifyOscar() throws IOException {
+    public void nullVerifyOscar() throws IOException, NoSuchFieldException, IllegalAccessException {
+        Field field1 = Audit.getClass().getDeclaredField("catalinaBase");
+        field1.setAccessible(true);
+        field1.set(Audit, null);
+        Field field2 = Audit.getClass().getDeclaredField("catalinaHome");
+        field2.setAccessible(true);
+        field2.set(Audit, null);
+        File testingFolder = folder.newFolder("testingFolder");
+        File tempFolder1 = new File(testingFolder.getPath() + "/foobar");
+        tempFolder1.mkdir();
+        String expectedResult = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
+        assertEquals(expectedResult, Audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     /*
@@ -325,7 +349,7 @@ public class AuditTest {
 
     @Test
     public void allGrabFiles() throws IOException {
-        File testingFolder = folder.newFolder("testingFolder"); // grabFiles requires File object
+        File testingFolder = folder.newFolder("testingFolder");
         File tempFolder1 = new File(testingFolder.getPath() + "/oscar15");
         tempFolder1.mkdir();
         File tempFolder2 = new File(testingFolder.getPath() + "/oscar15_bc");

@@ -238,7 +238,7 @@ public class Audit extends Action {
             }
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to detect Oscar build." + "<br />";
+            output = "Could not read properties file to detect Oscar build.<br />";
             return output;
         }
     }
