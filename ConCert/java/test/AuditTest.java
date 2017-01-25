@@ -168,6 +168,21 @@ public class AuditTest {
     public void nullVerifyOscar() throws IOException, NoSuchFieldException, IllegalAccessException {
         catalinaBase.set(audit, null);
         catalinaHome.set(audit, null);
+        File oscar15ClassesFolder = new File("");
+        System.out.println("PATH NAME: " + oscar15ClassesFolder.getPath());
+        File testingFolder = folder.newFolder("testingFolder");
+        File randomFolder = new File(testingFolder.getPath() + "/foobar");
+        randomFolder.mkdir();
+        String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+    }
+
+    @Test
+    public void emptyPathVerifyOscar() throws IOException, NoSuchFieldException, IllegalAccessException {
+        File catalinaBaseFolder = new File("");
+        File catalinaHomeFolder = catalinaBaseFolder;
+        catalinaBase.set(audit, catalinaBaseFolder);
+        catalinaHome.set(audit, catalinaHomeFolder);
         File testingFolder = folder.newFolder("testingFolder");
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
@@ -323,6 +338,18 @@ public class AuditTest {
         assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
+    @Test
+    public void emptyPathVerifyDrugref() throws IOException, NoSuchFieldException, IllegalAccessException {
+        File catalinaBaseFolder = new File("");
+        File catalinaHomeFolder = catalinaBaseFolder;
+        catalinaBase.set(audit, catalinaBaseFolder);
+        catalinaHome.set(audit, catalinaHomeFolder);
+        File testingFolder = folder.newFolder("testingFolder");
+        File randomFolder = new File(testingFolder.getPath() + "/foobar");
+        randomFolder.mkdir();
+        String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+    }
     /*
     *  verifyDrugRefProperties(String fileName):
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
