@@ -6,15 +6,32 @@ import java.io.IOException;
 import java.util.Stack;
 
 import static org.junit.Assert.*;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.apache.commons.io.FileUtils;
 
+import java.lang.reflect.Field;
+
 public class AuditTest {
- 
+
+    Audit Audit = new Audit();
+
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+    @Before
+    public void initialize() throws IOException, NoSuchFieldException, IllegalAccessException {
+        File tempFolder1 = folder.newFolder("test1");
+        Field field1 = Audit.getClass().getDeclaredField("catalinaBase");
+        field1.setAccessible(true);
+        field1.set(Audit, tempFolder1);
+        File tempFolder2 = folder.newFolder("test2");
+        Field field2 = Audit.getClass().getDeclaredField("catalinaHome");
+        field2.setAccessible(true);
+        field2.set(Audit, tempFolder2);
+    }
 
     /*
     *  serverVersion(String fileName):
@@ -25,7 +42,7 @@ public class AuditTest {
     public void exceptionServerVersion() throws IOException {
         File tempFile = folder.newFile("file.txt");
         String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
-        assertEquals(expectedResult, Audit.serverVersion(tempFile.toString()));
+        assertEquals(expectedResult, Audit.serverVersion(tempFile.getPath()));
     }
 
     @Test
@@ -45,17 +62,95 @@ public class AuditTest {
     }
 
     /*
+    *  databaseInfo():
+    *  Retrieve url, username, and password information from Oscar properties
+    *  to make a connection with our database. From our connection, we can
+    *  inspect the DBMS and retrieve which database we are connected to and
+    *  the version.
+    */
+
+    /******* TEST METHODS HERE *******/
+
+    /*
     *  JVMTomcat7(String binPath):
     *  Read bash script and extract JVM/Tomcat version information.
     */
 
+    /******* TEST METHODS HERE *******/
+
     /*
-    *  verifyOscar(): ***FIX MY PARAMETERS***
+    *  verifyOscar(String webAppsPath, String homePath):
     *  Verify all possible Oscar deployments.
     *  Grab all possible Oscar deployed folder names in root directory
     *  and push onto stack. Pop names off of the stack and verify
     *  each properties file that exists in "catalinaHome" directory.
     */
+
+    @Test
+    public void nonEmptyVerifyOscar() throws IOException {
+        File testingFolder = folder.newFolder("testingFolder"); // grabFiles requires File object
+        File tempFolder1 = new File(testingFolder.getPath() + "/oscar15");
+        tempFolder1.mkdir();
+        File tempFolder2 = new File(testingFolder.getPath() + "/oscar15/webapps/WEB-INF/classes");
+        tempFolder2.mkdir();
+        // put oscar_mcmaster.properties file in directory above
+        File tempFile1 = new File(tempFolder2.getPath() + "/oscar_mcmaster.properties");
+        FileUtils.writeStringToFile(tempFile1, "HL7TEXT_LABS=true\n"
+                                                + "SINGLE_PAGE_CHART=yes\n"
+                                                + "TMP_DIR=/pathtotmpdir/\n"
+                                                + "drugref_url=/pathtodrugref/");
+        File tempFolder3 = new File(testingFolder.getPath() + "/oscar15_bc");
+        tempFolder3.mkdir();
+        File tempFolder4 = new File(testingFolder.getPath() + "/oscar15_bc/webapps/WEB-INF/classes");
+        tempFolder4.mkdir();
+        // put oscar_mcmaster.properties file in directory above
+        File tempFile2 = new File(tempFolder4.getPath() + "/oscar_mcmaster.properties");
+        FileUtils.writeStringToFile(tempFile2, "HL7TEXT_LABS=true\n"
+                                                + "SINGLE_PAGE_CHART=yes\n"
+                                                + "TMP_DIR=/pathtotmpdir/\n"
+                                                + "drugref_url=/pathtodrugref/");
+        // create oscar15.properties file & oscar15_bc.properties file in testingFolder directory
+        File tempFile3 = new File(testingFolder.getPath() + "/oscar15.properties");
+        File tempFile4 = new File(testingFolder.getPath() + "/oscar15_bc.properties");
+        FileUtils.writeStringToFile(tempFile3, "HL7TEXT_LABS=true\n"
+                                                + "SINGLE_PAGE_CHART=yes\n"
+                                                + "TMP_DIR=/pathtotmpdir/\n"
+                                                + "drugref_url=/pathtodrugref/");
+        FileUtils.writeStringToFile(tempFile4, "HL7TEXT_LABS=true\n"
+                                                + "SINGLE_PAGE_CHART=yes\n"
+                                                + "TMP_DIR=/pathtotmpdir/\n"
+                                                + "drugref_url=/pathtodrugref/");
+        // put required information in each file
+        String expectedResult = "<b>Currently checking \"oscar_mcmaster.properties\" file in \"oscar15\"...</b><br />"
+                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
+                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
+                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
+                                    + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
+                                    + "<b>Currently checking \"oscar15.properties\" file...</b><br />"
+                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
+                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
+                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
+                                    + "<b>Currently checking \"oscar_mcmaster.properties\" file in \"oscar15_bc\"...</b><br />"
+                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
+                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
+                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
+                                    + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
+                                    + "<b>Currently checking \"oscar15_bc.properties\" file...</b><br />"
+                                    + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
+                                    + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
+                                    + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
+                                    + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
+   + "\"HL7TEXT_LABS\" tag is configured as: true<br />";
+        assertEquals(expectedResult, Audit.verifyOscar(tempFile2.getPath(), testingFolder.getPath()));
+    }
+
+    @Test
+    public void emptyVerifyOscar() throws IOException {
+    }
+
+    @Test
+    public void nullVerifyOscar() throws IOException {
+    }
 
     /*
     *  oscarBuild(String fileName):
@@ -79,10 +174,17 @@ public class AuditTest {
     }
 
     @Test
-    public void exceptionOscarBuild() throws IOException {
+    public void exception1OscarBuild() throws IOException {
         File tempFile = folder.newFile("file.txt");
         String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
-        assertEquals(expectedResult, Audit.oscarBuild(tempFile.toString()));
+        assertEquals(expectedResult, Audit.oscarBuild(tempFile.getPath()));
+    }
+
+    @Test
+    public void exception2OscarBuild() throws IOException, NoSuchFieldException, IllegalAccessException{
+        File tempFolder = folder.newFolder("testingFolder");
+        String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
+        assertEquals(expectedResult, Audit.oscarBuild(tempFolder.getPath()));
     }
 
     /*
@@ -142,16 +244,18 @@ public class AuditTest {
     public void exceptionVerifyOscarProperties() throws IOException {
         File tempFile = folder.newFile("file.txt");
         String expectedResult = "Could not read properties file to verify Oscar tags.";      
-        assertEquals(expectedResult, Audit.verifyOscarProperties(tempFile.toString()));
+        assertEquals(expectedResult, Audit.verifyOscarProperties(tempFile.getPath()));
     }
 
     /*
-    *  verifyDrugRef(): ***FIX MY PARAMETERS***
+    *  verifyDrugRef(String webAppsPath, String homePath):
     *  Verify all possible Drugref deployments.
     *  Grab all possible Drugref deployed folder names in root directory
     *  and push onto stack. Pop names off of the stack and verify
     *  each properties file that exists in "catalinaHome" directory.
     */
+
+    /******* TEST METHODS HERE *******/
 
     /*
     *  verifyDrugRefProperties(String fileName):
@@ -163,7 +267,7 @@ public class AuditTest {
     // isMatch1, isMatch2, isMatch3
     @Test
     public void isMatchAllVerifyDrugrefProperties() throws IOException {
-        File tempFile = folder.newFile("semiCorrectInfo.properties");
+        File tempFile = folder.newFile("correctInfo.properties");
         FileUtils.writeStringToFile(tempFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "db_driver=com.mysql.jdbc.Driver\n");
@@ -203,13 +307,15 @@ public class AuditTest {
     public void exceptionVerifyDrugrefProperties() throws IOException {
         File tempFile = folder.newFile("file.txt");
         String expectedResult = "Could not read properties file to verify Drugref tags.";      
-        assertEquals(expectedResult, Audit.verifyDrugrefProperties(tempFile.toString()));
+        assertEquals(expectedResult, Audit.verifyDrugrefProperties(tempFile.getPath()));
     }
 
     /*
     *  tomcatReinforcement():
     *  Read "xmx" and "xms" values of Tomcat.
     */
+
+    /******* TEST METHODS HERE *******/
 
     /*
     *  grabFiles(File directory, String regex):
@@ -248,18 +354,9 @@ public class AuditTest {
     }
 
     @Test
-    public void noFileListGrabFiles() throws IOException {
+    public void noFileListGrabFiles() throws IOException, NoSuchFieldException, IllegalAccessException {
         File testingFolder = folder.newFolder("testingFolder");
         Stack<String> expectedResult = new Stack<String>(); // empty stack
         assertEquals(expectedResult, Audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
-
-    /* VERIFYOSCAR/VERIFYDRUGREF COVER THIS
-    @Test
-    public void noFilesGrabFiles() throws IOException {
-        File tempFile = folder.newFile("correctInfo");
-        FileUtils.writeStringToFile(tempFile, "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
-        String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
-        assertEquals(expectedResult, Audit.serverVersion(tempFile.getPath()));
-    }*/
 }

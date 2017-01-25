@@ -25,6 +25,19 @@ import oscar.OscarProperties;
 
 public class Audit extends Action {
 
+    private File catalinaBase;
+    private File catalinaHome;
+
+    public Audit() {
+        try {
+            catalinaBase = new File(System.getProperty("catalina.base"));
+            catalinaHome = new File(System.getProperty("catalina.home"));
+        } catch (Exception e) {
+            catalinaBase = null;
+            catalinaHome = null;
+        }
+    }
+
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
             if (servletRequest.getSession().getAttribute("userrole") == null)
@@ -48,15 +61,17 @@ public class Audit extends Action {
         return actionMapping.findForward("success");
     }
 
-    private static File catalinaBase = new File(System.getProperty("catalina.base"));
-    private static File catalinaHome = new File(System.getProperty("catalina.home"));
+    //private File catalinaBase = new File(System.getProperty("catalina.base"));
+    //private File catalinaHome = new File(System.getProperty("catalina.home"));
+    //private File catalinaBase = new File("/var/lib/tomcat7/");
+    //private File catalinaHome = new File("/usr/share/tomcat7");
 
     /*
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     *
     *  @return output: Ubuntu server version.
     */
-    protected static String serverVersion(String lsbPath) {
+    protected String serverVersion(String lsbPath) {
         String output = "";
         try {
             File lsbRelease = new File(lsbPath);
@@ -89,7 +104,7 @@ public class Audit extends Action {
     *
     *  @return output: Database name and version.
     */
-    protected static String databaseInfo() {
+    protected String databaseInfo() {
         String output = "";
         try {
             String dbType = OscarProperties.getInstance().getProperty("db_type");
@@ -116,7 +131,7 @@ public class Audit extends Action {
     *
     *  @return output: JVM and Tomcat version information.
     */
-    protected static String verifyTomcat() {
+    protected String verifyTomcat() {
         String output = "";
         try {
             if (catalinaHome == null) {
@@ -169,8 +184,9 @@ public class Audit extends Action {
     *  @return output: Combined output of Oscar build and properties information
     *  for each properties file that exists.
     */
-    protected static String verifyOscar(String webAppsPath, String homePath) {
+    protected String verifyOscar(String webAppsPath, String homePath) {
         String output = "";
+
         if (catalinaBase == null || catalinaHome == null) {
             output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
             return output;
@@ -185,7 +201,7 @@ public class Audit extends Action {
         // Verify files on the Stack
         while (!files.empty()) {
             String file = files.pop();
-            output += "<b>Currently checking \"oscar_mcmaster.properties\" file..." + "</b><br />";
+            output += "<b>Currently checking \"oscar_mcmaster.properties\" file for \"" + file + "\"..." + "</b><br />";
             output += oscarBuild(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
             output += verifyOscarProperties(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
@@ -200,7 +216,7 @@ public class Audit extends Action {
     *
     *  @return output: Current build and version of Oscar.
     */
-    protected static String oscarBuild(String fileName) {
+    protected String oscarBuild(String fileName) {
         String output = "";
         try {
             File oscar = new File(fileName);
@@ -234,7 +250,7 @@ public class Audit extends Action {
     *  @return output: Output of the required tags in the Oscar properties 
     *  file.
     */
-    protected static String verifyOscarProperties(String fileName) {
+    protected String verifyOscarProperties(String fileName) {
         String output = "";
         try {
             File oscar = new File(fileName);
@@ -301,7 +317,7 @@ public class Audit extends Action {
     *  @return output: Combined output of Drugref properties information
     *  for each properties file that exists.
     */
-    protected static String verifyDrugref(String webAppsPath, String homePath) {
+    protected String verifyDrugref(String webAppsPath, String homePath) {
         String output = "";
         if (catalinaBase == null || catalinaHome == null) {
             output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
@@ -330,7 +346,7 @@ public class Audit extends Action {
     *  @return output: Output of the required tags in the Drugref properties 
     *  file.
     */
-    protected static String verifyDrugrefProperties(String fileName) {
+    protected String verifyDrugrefProperties(String fileName) {
         String output = "";
         try {
             File drugref = new File(fileName);
@@ -383,10 +399,9 @@ public class Audit extends Action {
     *  @return output: Xmx (maximum memory allocation) value followed by Xms 
     *  (minimum memory allocation) value.
     */
-    protected static String tomcatReinforcement() {
+    protected String tomcatReinforcement() {
         String output = "";
         try {
-            File catalinaBase = new File(System.getProperty("catalina.base"));
             Pattern tomcatVersion = Pattern.compile(".*(tomcat[0-9]+)");
             Matcher tomcatMatch = tomcatVersion.matcher(catalinaBase.getPath());
             tomcatMatch.matches(); // necessary for group() method to be run correctly
@@ -452,7 +467,7 @@ public class Audit extends Action {
     *  deployed folders.
     *  @return files: Stack of properties files to be verified individually.
     */
-    protected static Stack<String> grabFiles(File directory, String regex) {
+    protected Stack<String> grabFiles(File directory, String regex) {
         String[] fileList = directory.list();
         Stack<String> files = new Stack<String>();
 
