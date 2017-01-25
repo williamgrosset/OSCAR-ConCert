@@ -33,8 +33,8 @@ public class Audit extends Action {
             catalinaBase = new File(System.getProperty("catalina.base"));
             catalinaHome = new File(System.getProperty("catalina.home"));
         } catch (Exception e) {
-            catalinaBase = null;
-            catalinaHome = null;
+            catalinaBase = new File("");
+            catalinaHome = new File("");
         }
     }
 
@@ -60,11 +60,6 @@ public class Audit extends Action {
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
     }
-
-    //private File catalinaBase = new File(System.getProperty("catalina.base"));
-    //private File catalinaHome = new File(System.getProperty("catalina.home"));
-    //private File catalinaBase = new File("/var/lib/tomcat7/");
-    //private File catalinaHome = new File("/usr/share/tomcat7");
 
     /*
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
@@ -133,12 +128,10 @@ public class Audit extends Action {
     */
     protected String verifyTomcat() {
         String output = "";
-        try {
-            if (catalinaHome == null) {
-                output = "Please verify that your 'catalina.home' directory is setup correctly.";
-                return output;
-            }
+        if (catalinaHome == null || catalinaHome.getPath().equals(""))
+            return "Please verify that your \"catalina.home\" directory is setup correctly.";
 
+        try {
             Process p = Runtime.getRuntime().exec(catalinaHome.getPath() + "/bin/version.sh");
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
             boolean isMatch1 = false;
@@ -187,8 +180,9 @@ public class Audit extends Action {
     protected String verifyOscar(String webAppsPath, String homePath) {
         String output = "";
 
-        if (catalinaBase == null || catalinaHome == null) {
-            output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
+        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
+                || catalinaHome.getPath().equals("")) {
+            output = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
             return output;
         }
 
@@ -319,8 +313,9 @@ public class Audit extends Action {
     */
     protected String verifyDrugref(String webAppsPath, String homePath) {
         String output = "";
-        if (catalinaBase == null || catalinaHome == null) {
-            output = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
+        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
+                || catalinaHome.getPath().equals("")) {
+            output = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
             return output;
         }
 
@@ -401,6 +396,9 @@ public class Audit extends Action {
     */
     protected String tomcatReinforcement() {
         String output = "";
+        if (catalinaBase == null || catalinaBase.getPath().equals(""))
+            return "Please verify that your \"catalina.base\" directory is setup correctly.";
+
         try {
             Pattern tomcatVersion = Pattern.compile(".*(tomcat[0-9]+)");
             Matcher tomcatMatch = tomcatVersion.matcher(catalinaBase.getPath());

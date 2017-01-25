@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
 
 public class AuditTest {
 
-    Audit Audit = new Audit();
+    Audit audit = new Audit();
     private Field catalinaBase;
     private Field catalinaHome;
 
@@ -27,13 +27,13 @@ public class AuditTest {
     @Before
     public void initialize() throws IOException, NoSuchFieldException, IllegalAccessException {
         File catalinaBaseFolder = folder.newFolder("catalinaBase");
-        catalinaBase = Audit.getClass().getDeclaredField("catalinaBase");
+        catalinaBase = audit.getClass().getDeclaredField("catalinaBase");
         catalinaBase.setAccessible(true);
-        catalinaBase.set(Audit, catalinaBaseFolder);
+        catalinaBase.set(audit, catalinaBaseFolder);
         File catalinaHomeFolder = folder.newFolder("catalinaHome");
-        catalinaHome = Audit.getClass().getDeclaredField("catalinaHome");
+        catalinaHome = audit.getClass().getDeclaredField("catalinaHome");
         catalinaHome.setAccessible(true);
-        catalinaHome.set(Audit, catalinaHomeFolder);
+        catalinaHome.set(audit, catalinaHomeFolder);
     }
 
     /*
@@ -45,7 +45,7 @@ public class AuditTest {
     public void exceptionServerVersion() throws IOException {
         File unreadableFile = folder.newFile("file.txt");
         String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
-        assertEquals(expectedResult, Audit.serverVersion(unreadableFile.getPath()));
+        assertEquals(expectedResult, audit.serverVersion(unreadableFile.getPath()));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class AuditTest {
         File correctFile = folder.newFile("correctInfo");
         FileUtils.writeStringToFile(correctFile, "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
         String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
-        assertEquals(expectedResult, Audit.serverVersion(correctFile.getPath()));
+        assertEquals(expectedResult,audit.serverVersion(correctFile.getPath()));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class AuditTest {
         File notCorrectFile = folder.newFile("notCorrectInfo");
         FileUtils.writeStringToFile(notCorrectFile, "randomtag=");
         String expectedResult = "Could not detect Ubuntu server version.";
-        assertEquals(expectedResult, Audit.serverVersion(notCorrectFile.getPath()));
+        assertEquals(expectedResult, audit.serverVersion(notCorrectFile.getPath()));
     }
 
     /*
@@ -152,7 +152,7 @@ public class AuditTest {
                                     + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
    + "\"HL7TEXT_LABS\" tag is configured as: true<br />";
-        assertEquals(expectedResult, Audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     @Test
@@ -161,18 +161,18 @@ public class AuditTest {
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
         String expectedResult = "Could not find any properties files for Oscar.<br />";
-        assertEquals(expectedResult, Audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     @Test
     public void nullVerifyOscar() throws IOException, NoSuchFieldException, IllegalAccessException {
-        catalinaBase.set(Audit, null);
-        catalinaHome.set(Audit, null);
+        catalinaBase.set(audit, null);
+        catalinaHome.set(audit, null);
         File testingFolder = folder.newFolder("testingFolder");
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
-        String expectedResult = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
-        assertEquals(expectedResult, Audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     /*
@@ -185,7 +185,7 @@ public class AuditTest {
         File correctFile = folder.newFile("correctInfo.properties");
         FileUtils.writeStringToFile(correctFile, "buildtag=oscar15BetaMaster-454");
         String expectedResult = "Oscar build and version: oscar15BetaMaster-454<br />";
-        assertEquals(expectedResult, Audit.oscarBuild(correctFile.getPath()));
+        assertEquals(expectedResult, audit.oscarBuild(correctFile.getPath()));
     }
 
     @Test
@@ -193,21 +193,21 @@ public class AuditTest {
         File notCorrectFile = folder.newFile("notCorrectInfo.properties");
         FileUtils.writeStringToFile(notCorrectFile, "#buildtag=oscar15BetaMaster-454");
         String expectedResult = "Oscar build/version cannot be found.<br />";
-        assertEquals(expectedResult, Audit.oscarBuild(notCorrectFile.getPath()));
+        assertEquals(expectedResult, audit.oscarBuild(notCorrectFile.getPath()));
     }
 
     @Test
     public void exception1OscarBuild() throws IOException {
         File unreadableFile = folder.newFile("file.txt");
         String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
-        assertEquals(expectedResult, Audit.oscarBuild(unreadableFile.getPath()));
+        assertEquals(expectedResult, audit.oscarBuild(unreadableFile.getPath()));
     }
 
     @Test
     public void exception2OscarBuild() throws IOException, NoSuchFieldException, IllegalAccessException{
         File randomFolder = folder.newFolder("foobar");
         String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
-        assertEquals(expectedResult, Audit.oscarBuild(randomFolder.getPath()));
+        assertEquals(expectedResult, audit.oscarBuild(randomFolder.getPath()));
     }
 
     /*
@@ -230,7 +230,7 @@ public class AuditTest {
                                     + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
                                     + "\"HL7TEXT_LABS\" tag is configured as: true<br />";
-        assertEquals(expectedResult, Audit.verifyOscarProperties(correctFile.getPath()));
+        assertEquals(expectedResult, audit.verifyOscarProperties(correctFile.getPath()));
     }
 
     // isMatch1, !isMatch2, isMatch3, !isMatch4
@@ -245,7 +245,7 @@ public class AuditTest {
                                     + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is not configured properly.<br />"
                                     + "\"drugref_url\" tag is not configured properly.<br />";
-        assertEquals(expectedResult, Audit.verifyOscarProperties(semiCorrectFile.getPath()));
+        assertEquals(expectedResult, audit.verifyOscarProperties(semiCorrectFile.getPath()));
     }
 
     // !isMatch1, !isMatch2, !isMatch3, !isMatch4
@@ -260,14 +260,14 @@ public class AuditTest {
                                     + "\"SINGLE_PAGE_CHART\" tag is not configured properly.<br />"
                                     + "\"TMP_DIR\" tag is not configured properly.<br />"
                                     + "\"drugref_url\" tag is not configured properly.<br />";
-        assertEquals(expectedResult, Audit.verifyOscarProperties(notCorrectFile.getPath()));
+        assertEquals(expectedResult, audit.verifyOscarProperties(notCorrectFile.getPath()));
     }
 
     @Test
     public void exceptionVerifyOscarProperties() throws IOException {
         File unreadableFile = folder.newFile("file.txt");
         String expectedResult = "Could not read properties file to verify Oscar tags.";      
-        assertEquals(expectedResult, Audit.verifyOscarProperties(unreadableFile.getPath()));
+        assertEquals(expectedResult, audit.verifyOscarProperties(unreadableFile.getPath()));
     }
 
     /*
@@ -302,7 +302,7 @@ public class AuditTest {
                                     + "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />";
-        assertEquals(expectedResult, Audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     @Test
@@ -311,20 +311,16 @@ public class AuditTest {
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
         String expectedResult = "Could not find any properties files for Drugref.";
-        assertEquals(expectedResult, Audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     @Test
     public void nullVerifyDrugref() throws IOException, NoSuchFieldException, IllegalAccessException {
-        Field field1 = Audit.getClass().getDeclaredField("catalinaBase");
-        field1.setAccessible(true);
-        field1.set(Audit, null);
-        Field field2 = Audit.getClass().getDeclaredField("catalinaHome");
-        field2.setAccessible(true);
-        field2.set(Audit, null);
+        catalinaBase.set(audit, null);
+        catalinaHome.set(audit, null);
         File testingFolder = folder.newFolder("testingFolder");
-        String expectedResult = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
-        assertEquals(expectedResult, Audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }
 
     /*
@@ -344,7 +340,7 @@ public class AuditTest {
         String expectedResult = "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />";
-        assertEquals(expectedResult, Audit.verifyDrugrefProperties(correctFile.getPath()));
+        assertEquals(expectedResult, audit.verifyDrugrefProperties(correctFile.getPath()));
     }
 
     // isMatch1, isMatch2, !isMatch3
@@ -357,7 +353,7 @@ public class AuditTest {
         String expectedResult = "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />"
                                     + "\"db_driver\" tag is not configured properly.<br />";
-        assertEquals(expectedResult, Audit.verifyDrugrefProperties(semiCorrectFile.getPath()));
+        assertEquals(expectedResult, audit.verifyDrugrefProperties(semiCorrectFile.getPath()));
     }
 
     // !isMatch1, !isMatch2, !isMatch3
@@ -370,14 +366,14 @@ public class AuditTest {
         String expectedResult = "\"db_user\" tag is not configured properly.<br />"
                                     + "\"db_url\" tag is not configured properly.<br />"
                                     + "\"db_driver\" tag is not configured properly.<br />";
-        assertEquals(expectedResult, Audit.verifyDrugrefProperties(semiCorrectFile.getPath()));
+        assertEquals(expectedResult, audit.verifyDrugrefProperties(semiCorrectFile.getPath()));
     }
 
     @Test
     public void exceptionVerifyDrugrefProperties() throws IOException {
         File unreadableFile = folder.newFile("file.txt");
         String expectedResult = "Could not read properties file to verify Drugref tags.";      
-        assertEquals(expectedResult, Audit.verifyDrugrefProperties(unreadableFile.getPath()));
+        assertEquals(expectedResult, audit.verifyDrugrefProperties(unreadableFile.getPath()));
     }
 
     /*
@@ -406,7 +402,7 @@ public class AuditTest {
         expectedStack.push("oscar15");
         expectedStack.push("oscar15_bc");
         expectedStack.push("oscar3foo");
-        assertEquals(expectedStack, Audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
+        assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
 
     @Test
@@ -420,14 +416,14 @@ public class AuditTest {
         oscar10Folder.mkdir();
         Stack<String> expectedStack = new Stack<String>();
         expectedStack.push("oscar10");
-        assertEquals(expectedStack, Audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
+        assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
 
     @Test
     public void noFileListGrabFiles() throws IOException, NoSuchFieldException, IllegalAccessException {
         File testingFolder = folder.newFolder("testingFolder");
         Stack<String> expectedStack = new Stack<String>(); // empty stack
-        assertEquals(expectedStack, Audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
+        assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
 
     @After
