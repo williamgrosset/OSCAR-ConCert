@@ -279,7 +279,57 @@ public class AuditTest {
     *  each properties file that exists in "catalinaHome" directory.
     */
 
-    /******* TEST METHODS HERE *******/
+    @Test
+    public void nonEmptyVerifyDrugref() throws IOException {
+        File testingFolder = folder.newFolder("testingFolder");
+        File tempFolder1 = new File(testingFolder.getPath() + "/drugref10");
+        tempFolder1.mkdir();
+        File tempFolder2 = new File(testingFolder.getPath() + "/drugref10_ont");
+        tempFolder2.mkdir();
+        // create oscar15.properties file & oscar15_bc.properties file in testingFolder directory
+        File tempFile1 = new File(testingFolder.getPath() + "/drugref10.properties");
+        File tempFile2 = new File(testingFolder.getPath() + "/drugref10_ont.properties");
+        FileUtils.writeStringToFile(tempFile1, "db_user=root\n"
+                                                + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
+                                                + "db_driver=com.mysql.jdbc.Driver");
+        FileUtils.writeStringToFile(tempFile2, "db_user=root\n"
+                                                + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
+                                                + "db_driver=com.mysql.jdbc.Driver");
+        // put required information in each file
+        String expectedResult = "<b>Currently checking \"drugref10_ont.properties\" file...</b><br />" 
+                                    + "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
+                                    + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
+                                    + "\"db_user\" tag is configured as: root<br />"
+                                    + "<b>Currently checking \"drugref10.properties\" file...</b><br />" 
+                                    + "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
+                                    + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
+                                    + "\"db_user\" tag is configured as: root<br />";
+        assertEquals(expectedResult, Audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+    }
+
+    @Test
+    public void emptyVerifyDrugref() throws IOException {
+        File testingFolder = folder.newFolder("testingFolder");
+        File tempFolder1 = new File(testingFolder.getPath() + "/foobar");
+        tempFolder1.mkdir();
+        String expectedResult = "Could not find any properties files for Drugref.";
+        assertEquals(expectedResult, Audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+    }
+
+    @Test
+    public void nullVerifyDrugref() throws IOException, NoSuchFieldException, IllegalAccessException {
+        Field field1 = Audit.getClass().getDeclaredField("catalinaBase");
+        field1.setAccessible(true);
+        field1.set(Audit, null);
+        Field field2 = Audit.getClass().getDeclaredField("catalinaHome");
+        field2.setAccessible(true);
+        field2.set(Audit, null);
+        File testingFolder = folder.newFolder("testingFolder");
+        File tempFolder1 = new File(testingFolder.getPath() + "/foobar");
+        tempFolder1.mkdir();
+        String expectedResult = "Please verify that your 'catalina.base' and 'catalina.home' directories are setup correctly.";
+        assertEquals(expectedResult, Audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+    }
 
     /*
     *  verifyDrugRefProperties(String fileName):
@@ -294,7 +344,7 @@ public class AuditTest {
         File tempFile = folder.newFile("correctInfo.properties");
         FileUtils.writeStringToFile(tempFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
-                                                + "db_driver=com.mysql.jdbc.Driver\n");
+                                                + "db_driver=com.mysql.jdbc.Driver");
         String expectedResult = "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />";
@@ -307,7 +357,7 @@ public class AuditTest {
         File tempFile = folder.newFile("semiCorrectInfo.properties");
         FileUtils.writeStringToFile(tempFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
-                                                + "#db_driver=com.mysql.jdbc.Driver\n");
+                                                + "#db_driver=com.mysql.jdbc.Driver");
         String expectedResult = "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />"
                                     + "\"db_driver\" tag is not configured properly.<br />";
@@ -320,7 +370,7 @@ public class AuditTest {
         File tempFile = folder.newFile("semiCorrectInfo.properties");
         FileUtils.writeStringToFile(tempFile, "#db_user=root\n"
                                                 + "#db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
-                                                + "#db_driver=com.mysql.jdbc.Driver\n");
+                                                + "#db_driver=com.mysql.jdbc.Driver");
         String expectedResult = "\"db_user\" tag is not configured properly.<br />"
                                     + "\"db_url\" tag is not configured properly.<br />"
                                     + "\"db_driver\" tag is not configured properly.<br />";
