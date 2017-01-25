@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.File;
 import java.io.IOException;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -70,11 +71,11 @@ public class Audit extends Action {
         String output = "";
         try {
             File lsbRelease = new File(lsbPath);
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(lsbRelease)));
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(lsbRelease);
             boolean isMatch = false;
             String line = "";
 
-            while ((line = br.readLine()) != null) {
+            while ((line = rf.readLine()) != null) {
                 isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
                 if (isMatch) {
                     output = line.substring(20);
@@ -214,11 +215,11 @@ public class Audit extends Action {
         String output = "";
         try {
             File oscar = new File(fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
             boolean isMatch = false;
             String line = "";
 
-            while ((line = br.readLine()) != null) {
+            while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line))
                     continue;
                 isMatch = Pattern.matches("^(buildtag=).*", line);
@@ -248,7 +249,7 @@ public class Audit extends Action {
         String output = "";
         try {
             File oscar = new File(fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(oscar)));
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
             boolean isMatch1 = false;
             boolean isMatch2 = false;
             boolean isMatch3 = false;
@@ -259,7 +260,7 @@ public class Audit extends Action {
             boolean flag4 = false;
             String line = "";
 
-            while ((line = br.readLine()) != null) {
+            while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line))
                     continue;
                 isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", line);
@@ -345,7 +346,7 @@ public class Audit extends Action {
         String output = "";
         try {
             File drugref = new File(fileName);
-            BufferedReader br = new BufferedReader(new InputStreamReader(new ReverseLineInputStream(drugref)));
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(drugref);
             boolean isMatch1 = false;
             boolean isMatch2 = false;
             boolean isMatch3 = false;
@@ -354,7 +355,7 @@ public class Audit extends Action {
             boolean flag3 = false;
             String line = "";
 
-            while ((line = br.readLine()) != null) {
+            while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line))
                     continue;
                 isMatch1 = Pattern.matches("^(db_user=).*", line);

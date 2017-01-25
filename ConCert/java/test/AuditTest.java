@@ -42,13 +42,6 @@ public class AuditTest {
     */
  
     @Test
-    public void exceptionServerVersion() throws IOException {
-        File unreadableFile = folder.newFile("file.txt");
-        String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
-        assertEquals(expectedResult, audit.serverVersion(unreadableFile.getPath()));
-    }
-
-    @Test
     public void isMatchTrueServerVersion() throws IOException {
         File correctFile = folder.newFile("correctInfo");
         FileUtils.writeStringToFile(correctFile, "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
@@ -62,6 +55,13 @@ public class AuditTest {
         FileUtils.writeStringToFile(notCorrectFile, "randomtag=");
         String expectedResult = "Could not detect Ubuntu server version.";
         assertEquals(expectedResult, audit.serverVersion(notCorrectFile.getPath()));
+    }
+    
+    @Test
+    public void exceptionServerVersion() throws IOException {
+        File unreadableFile = folder.newFolder("fakeFile");
+        String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
+        assertEquals(expectedResult, audit.serverVersion(unreadableFile.getPath()));
     }
 
     /*
@@ -169,7 +169,6 @@ public class AuditTest {
         catalinaBase.set(audit, null);
         catalinaHome.set(audit, null);
         File oscar15ClassesFolder = new File("");
-        System.out.println("PATH NAME: " + oscar15ClassesFolder.getPath());
         File testingFolder = folder.newFolder("testingFolder");
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
@@ -214,15 +213,15 @@ public class AuditTest {
     @Test
     public void exception1OscarBuild() throws IOException {
         File unreadableFile = folder.newFile("file.txt");
-        String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
+        String expectedResult = "Oscar build/version cannot be found.<br />";
         assertEquals(expectedResult, audit.oscarBuild(unreadableFile.getPath()));
     }
 
     @Test
     public void exception2OscarBuild() throws IOException, NoSuchFieldException, IllegalAccessException{
-        File randomFolder = folder.newFolder("foobar");
+        File unreadableFile = folder.newFolder("fakeFile");
         String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
-        assertEquals(expectedResult, audit.oscarBuild(randomFolder.getPath()));
+        assertEquals(expectedResult, audit.oscarBuild(unreadableFile.getPath()));
     }
 
     /*
@@ -280,7 +279,7 @@ public class AuditTest {
 
     @Test
     public void exceptionVerifyOscarProperties() throws IOException {
-        File unreadableFile = folder.newFile("file.txt");
+        File unreadableFile = folder.newFolder("fakeFile");
         String expectedResult = "Could not read properties file to verify Oscar tags.";      
         assertEquals(expectedResult, audit.verifyOscarProperties(unreadableFile.getPath()));
     }
@@ -398,7 +397,7 @@ public class AuditTest {
 
     @Test
     public void exceptionVerifyDrugrefProperties() throws IOException {
-        File unreadableFile = folder.newFile("file.txt");
+        File unreadableFile = folder.newFolder("fakeFile");
         String expectedResult = "Could not read properties file to verify Drugref tags.";      
         assertEquals(expectedResult, audit.verifyDrugrefProperties(unreadableFile.getPath()));
     }
