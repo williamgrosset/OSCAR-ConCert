@@ -20,6 +20,7 @@ public class AuditTest {
     Audit audit = new Audit();
     private Field catalinaBase;
     private Field catalinaHome;
+    private Field jvmVersion;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -34,6 +35,10 @@ public class AuditTest {
         catalinaHome = audit.getClass().getDeclaredField("catalinaHome");
         catalinaHome.setAccessible(true);
         catalinaHome.set(audit, catalinaHomeFolder);
+        String jvmVersionValue = "1.7.0_111";
+        jvmVersion = audit.getClass().getDeclaredField("jvmVersion");
+        jvmVersion.setAccessible(true);
+        jvmVersion.set(audit, jvmVersionValue);
     }
 
     /*
@@ -75,11 +80,24 @@ public class AuditTest {
     /******* TEST METHODS HERE *******/
 
     /*
-    *  JVMTomcat7(String binPath):
+    *  verifyTomcat(String serverInfo):
     *  Read bash script and extract JVM/Tomcat version information.
     */
 
-    /******* TEST METHODS HERE *******/
+    @Test
+    public void matchVerifyTomcat() throws IOException, IllegalAccessException {
+        String paramValue = "Apache Tomcat/7.0.52 (Ubuntu)";
+        String expectedResult = "JVM Version: " + jvmVersion.get(audit) + "<br />"
+                                    + "Tomcat version: " + paramValue + "<br />";
+        assertEquals(expectedResult, audit.verifyTomcat(paramValue));
+    }
+
+    @Test
+    public void emptyVerifyTomcat() {
+        String paramValue1 = "";
+        String expectedResult = "Please verify that Tomcat is setup correctly.";
+        assertEquals(expectedResult, audit.verifyTomcat(paramValue1));
+    }
 
     /*
     *  verifyOscar(String webAppsPath, String homePath):
@@ -218,7 +236,7 @@ public class AuditTest {
     }
 
     @Test
-    public void exception2OscarBuild() throws IOException, NoSuchFieldException, IllegalAccessException{
+    public void exception2OscarBuild() throws IOException {
         File unreadableFile = folder.newFolder("fakeFile");
         String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
         assertEquals(expectedResult, audit.oscarBuild(unreadableFile.getPath()));
@@ -329,7 +347,7 @@ public class AuditTest {
     }
 
     @Test
-    public void nullVerifyDrugref() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public void nullVerifyDrugref() throws IOException, IllegalAccessException {
         catalinaBase.set(audit, null);
         catalinaHome.set(audit, null);
         File testingFolder = folder.newFolder("testingFolder");
@@ -338,7 +356,7 @@ public class AuditTest {
     }
 
     @Test
-    public void emptyPathVerifyDrugref() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public void emptyPathVerifyDrugref() throws IOException, IllegalAccessException {
         File catalinaBaseFolder = new File("");
         File catalinaHomeFolder = catalinaBaseFolder;
         catalinaBase.set(audit, catalinaBaseFolder);
@@ -446,7 +464,7 @@ public class AuditTest {
     }
 
     @Test
-    public void noFileListGrabFiles() throws IOException, NoSuchFieldException, IllegalAccessException {
+    public void noFileListGrabFiles() throws IOException {
         File testingFolder = folder.newFolder("testingFolder");
         Stack<String> expectedStack = new Stack<String>(); // empty stack
         assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
