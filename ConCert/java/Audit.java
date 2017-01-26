@@ -28,12 +28,15 @@ public class Audit extends Action {
 
     private File catalinaBase;
     private File catalinaHome;
+    private String jvmVersion;
 
     public Audit() {
         try {
+            jvmVersion = System.getProperty("java.runtime.version");
             catalinaBase = new File(System.getProperty("catalina.base"));
             catalinaHome = new File(System.getProperty("catalina.home"));
         } catch (Exception e) {
+            jvmVersion = null;
             catalinaBase = new File("");
             catalinaHome = new File("");
         }
@@ -53,9 +56,11 @@ public class Audit extends Action {
             return actionMapping.findForward("unauthorized");
         }
 
+        String tomcatVersion = servletRequest.getServletContext().getServerInfo();
+
         servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
         servletRequest.setAttribute("databaseInfo", databaseInfo());
-        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
+        servletRequest.setAttribute("verifyTomcat", verifyTomcat(tomcatVersion));
         servletRequest.setAttribute("verifyOscar", verifyOscar(catalinaBase.getPath() + "/webapps/", catalinaHome.getPath() + "/"));
         servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps", catalinaHome.getPath() + "/"));
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
@@ -123,48 +128,20 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read bash script and extract JVM/Tomcat version information.
+    *  Extract JVM version from system properties and server information 
+    *  from servlet.
     *
+    *  @param serverInfo: Server information from our servlet.
     *  @return output: JVM and Tomcat version information.
     */
-    protected String verifyTomcat() {
+    protected String verifyTomcat(String serverInfo) {
+        if (jvmVersion == null || serverInfo == null || serverInfo.equals(""))
+            return "Please verify that Tomcat is setup correctly.";
+
         String output = "";
-        if (catalinaHome == null || catalinaHome.getPath().equals(""))
-            return "Please verify that your \"catalina.home\" directory is setup correctly.";
-
-        try {
-            Process p = Runtime.getRuntime().exec(catalinaHome.getPath() + "/bin/version.sh");
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            boolean isMatch1 = false;
-            boolean isMatch2 = false;
-            boolean flag1 = false;
-            boolean flag2 = false;
-            String line = "";
-
-            while ((line = br.readLine()) != null) {
-                isMatch1 = Pattern.matches("^(JVM Version:).*", line);
-                isMatch2 = Pattern.matches("^(Server version:).*", line);
-                if (isMatch1) {
-                    output += "JVM Version: " + line.substring(16) + "<br />";
-                    flag1 = true;
-                }
-                if (isMatch2) {
-                    output += "Tomcat version: " + line.substring(16) + "<br />";
-                    flag2 = true;
-                }
-                if (flag1 && flag2)
-                    break;
-            }
-            if (!flag1)
-                output += "JVM version cannot be found." + "<br />";
-            if (!flag2)
-                output += "Tomcat version cannot be found." + "<br />";
-            p.destroy();
-            return output;
-        } catch (Exception e) {
-            output = "Could not run \"version.sh\" bash script to detect JVM/Tomcat version(s).";
-            return output;
-        }
+        output += "JVM Version: " + jvmVersion + "<br />";
+        output += "Tomcat version: " + serverInfo + "<br />";
+        return output;
     }
 
     /*
