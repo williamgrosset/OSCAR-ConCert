@@ -81,7 +81,8 @@ public class AuditTest {
 
     /*
     *  verifyTomcat(String serverInfo):
-    *  Read bash script and extract JVM/Tomcat version information.
+    *  Extract JVM version from system properties and server information
+    *  from servlet.
     */
 
     @Test
@@ -186,7 +187,6 @@ public class AuditTest {
     public void nullVerifyOscar() throws IOException, NoSuchFieldException, IllegalAccessException {
         catalinaBase.set(audit, null);
         catalinaHome.set(audit, null);
-        File oscar15ClassesFolder = new File("");
         File testingFolder = folder.newFolder("testingFolder");
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
@@ -325,7 +325,6 @@ public class AuditTest {
         FileUtils.writeStringToFile(drugref10ont, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "db_driver=com.mysql.jdbc.Driver");
-        // put required information in each file
         String expectedResult = "<b>Currently checking \"drugref10_ont.properties\" file...</b><br />" 
                                     + "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
@@ -362,8 +361,6 @@ public class AuditTest {
         catalinaBase.set(audit, catalinaBaseFolder);
         catalinaHome.set(audit, catalinaHomeFolder);
         File testingFolder = folder.newFolder("testingFolder");
-        File randomFolder = new File(testingFolder.getPath() + "/foobar");
-        randomFolder.mkdir();
         String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
     }

@@ -73,27 +73,21 @@ public class Audit extends Action {
     *  @return output: Ubuntu server version.
     */
     protected String serverVersion(String lsbPath) {
-        String output = "";
         try {
+            String line = "";
             File lsbRelease = new File(lsbPath);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(lsbRelease);
             boolean isMatch = false;
-            String line = "";
 
             while ((line = rf.readLine()) != null) {
                 isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
                 if (isMatch) {
-                    output = line.substring(20);
-                    break;
+                    return line.substring(20);
                 }
             }
-            if (!isMatch) {
-                output = "Could not detect Ubuntu server version.";
-            }
-            return output;
+            return "Could not detect Ubuntu server version.";
         } catch (Exception e) {
-            output = "Could not read \"lsb-release\" file to detect Ubuntu server version.";
-            return output;
+            return "Could not read \"lsb-release\" file to detect Ubuntu server version.";
         }
     }
 
@@ -106,12 +100,10 @@ public class Audit extends Action {
     *  @return output: Database name and version.
     */
     protected String databaseInfo() {
-        String output = "";
         try {
             String dbType = OscarProperties.getInstance().getProperty("db_type");
             if (dbType.equals("") || dbType == null) {
-                output = "Cannot determine database type. \"db_type\" tag is not configured properly.";
-                return output;
+                return "Cannot determine database type. \"db_type\" tag is not configured properly.";
             }
 
             String dbUri = OscarProperties.getInstance().getProperty("db_uri");
@@ -119,11 +111,9 @@ public class Audit extends Action {
             String dbPassWord = OscarProperties.getInstance().getProperty("db_password");
             Connection connection = DriverManager.getConnection(dbUri, dbUserName, dbPassWord); 
             DatabaseMetaData metaData = connection.getMetaData();
-            output = metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
-            return output;
+            return metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
         } catch (Exception e) {
-            output = "Cannot determine database name and version.";
-            return output;
+            return "Cannot determine database name and version.";
         }
     }
 
@@ -156,19 +146,17 @@ public class Audit extends Action {
     *  for each properties file that exists.
     */
     protected String verifyOscar(String webAppsPath, String homePath) {
-        String output = "";
-
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
-            output = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-            return output;
+            return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         }
 
+        String output = "";
         File webApps = new File(webAppsPath);
         Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
 
         if (files.empty()) {
-            output = "Could not find any properties files for Oscar." + "<br />";
+            return "Could not find any properties files for Oscar." + "<br />";
         }
         // Verify files on the Stack
         while (!files.empty()) {
@@ -189,7 +177,6 @@ public class Audit extends Action {
     *  @return output: Current build and version of Oscar.
     */
     protected String oscarBuild(String fileName) {
-        String output = "";
         try {
             File oscar = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
@@ -201,17 +188,12 @@ public class Audit extends Action {
                     continue;
                 isMatch = Pattern.matches("^(buildtag=).*", line);
                 if (isMatch) {
-                    output += "Oscar build and version: " + line.substring(9) + "<br />";
-                    break;
+                    return "Oscar build and version: " + line.substring(9) + "<br />";
                 }
             }
-            if (!isMatch) {
-                output += "Oscar build/version cannot be found." + "<br />";
-            }
-            return output;
+            return "Oscar build/version cannot be found." + "<br />";
         } catch (Exception e) {
-            output = "Could not read properties file to detect Oscar build.<br />";
-            return output;
+            return "Could not read properties file to detect Oscar build.<br />";
         }
     }
 
@@ -223,8 +205,9 @@ public class Audit extends Action {
     *  file.
     */
     protected String verifyOscarProperties(String fileName) {
-        String output = "";
         try {
+            String output = "";
+            String line = "";
             File oscar = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
             boolean isMatch1 = false;
@@ -235,7 +218,6 @@ public class Audit extends Action {
             boolean flag2 = false;
             boolean flag3 = false;
             boolean flag4 = false;
-            String line = "";
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line))
@@ -273,8 +255,7 @@ public class Audit extends Action {
                 output += "\"drugref_url\" tag is not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to verify Oscar tags.";
-            return output;
+            return "Could not read properties file to verify Oscar tags.";
         }
     }
 
@@ -290,18 +271,17 @@ public class Audit extends Action {
     *  for each properties file that exists.
     */
     protected String verifyDrugref(String webAppsPath, String homePath) {
-        String output = "";
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
-            output = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-            return output;
+            return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         }
 
+        String output = "";
         File webApps = new File(webAppsPath);
         Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
 
         if (files.empty()) {
-            output = "Could not find any properties files for Drugref.";
+            return "Could not find any properties files for Drugref.";
         }
         // Verify files on the Stack
         while (!files.empty()) {
@@ -320,8 +300,9 @@ public class Audit extends Action {
     *  file.
     */
     protected String verifyDrugrefProperties(String fileName) {
-        String output = "";
         try {
+            String output = "";
+            String line = "";
             File drugref = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(drugref);
             boolean isMatch1 = false;
@@ -330,7 +311,6 @@ public class Audit extends Action {
             boolean flag1 = false;
             boolean flag2 = false;
             boolean flag3 = false;
-            String line = "";
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line))
@@ -361,8 +341,7 @@ public class Audit extends Action {
                 output += "\"db_driver\" tag is not configured properly." + "<br />";
             return output;
         } catch (Exception e) {
-            output = "Could not read properties file to verify Drugref tags.";
-            return output;
+            return "Could not read properties file to verify Drugref tags.";
         }
     }
 
@@ -373,7 +352,6 @@ public class Audit extends Action {
     *  (minimum memory allocation) value.
     */
     protected String tomcatReinforcement() {
-        String output = "";
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
 
@@ -385,6 +363,7 @@ public class Audit extends Action {
             Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep " + tomcat});
             BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
+            String output = "";
             String line = "";
             String xmx = "";
             String xms = "";
@@ -425,8 +404,7 @@ public class Audit extends Action {
             p.destroy();
             return output;
         } catch (Exception e) {
-            output = "Could not find Tomcat process to detect amount of memory allocated.";
-            return output;
+            return "Could not find Tomcat process to detect amount of memory allocated.";
         }
     }
 
