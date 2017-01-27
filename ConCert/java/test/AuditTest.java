@@ -471,7 +471,9 @@ public class AuditTest {
     public void tearDown() {
         catalinaBase = null;
         catalinaHome = null;
+        jvmVersion = null;
         assertNull(catalinaBase);
         assertNull(catalinaHome);
+        assertNull(jvmVersion);
     }
 }
