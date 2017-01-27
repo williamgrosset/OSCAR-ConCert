@@ -3,7 +3,8 @@
 The objective of this project (nicknamed ConCert - for Continuous Certification) is to develop software that aids automatic auditing of medical information systems that are subject to certification. In particular, the project will focus on the OSCAR Electronic Medical Record (EMR) system.
 
 ### Contributor
-William Grosset (100-hour work term) at [LEAD Lab](http://leadlab.ca/about-us/). Supervised by Dr. Raymond Rusk and Dr. Jens Weber. The accepted feature request via JIRA can be found [here](https://oscaremr.atlassian.net/browse/OSCAREMR-605/).
+William Grosset (100-hour work term) at [LEAD Lab](http://leadlab.ca/about-us/). Supervised by Dr. Raymond Rusk and Dr. Jens Weber.  
+The accepted feature request via JIRA can be found [here](https://oscaremr.atlassian.net/browse/OSCAREMR-6051/).
 
 ### ConCert
 Currently, the ConCert project audits the OSCAR deployment environment:
