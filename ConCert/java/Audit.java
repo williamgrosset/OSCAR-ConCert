@@ -31,17 +31,35 @@ public class Audit extends Action {
     private String jvmVersion;
 
     public Audit() {
+        catalinaBase = getCatalinaBase();
+        catalinaHome = getCatalinaHome();
+        jvmVersion = getJvmVersion();
+    }
+
+    private String getJvmVersion() {
         try {
-            jvmVersion = System.getProperty("java.runtime.version");
-            catalinaBase = new File(System.getProperty("catalina.base"));
-            catalinaHome = new File(System.getProperty("catalina.home"));
+            return System.getProperty("java.runtime.version");
         } catch (Exception e) {
-            jvmVersion = null;
-            catalinaBase = new File("");
-            catalinaHome = new File("");
+            return null;
         }
     }
 
+    private File getCatalinaBase() {
+        try {
+            return new File(System.getProperty("catalina.base"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private File getCatalinaHome() {
+        try {
+            return new File(System.getProperty("catalina.home"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
             if (servletRequest.getSession().getAttribute("userrole") == null)
@@ -61,8 +79,8 @@ public class Audit extends Action {
         servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
         servletRequest.setAttribute("databaseInfo", databaseInfo());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat(tomcatVersion));
-        servletRequest.setAttribute("verifyOscar", verifyOscar(catalinaBase.getPath() + "/webapps/", catalinaHome.getPath() + "/"));
-        servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps", catalinaHome.getPath() + "/"));
+        servletRequest.setAttribute("verifyOscar", verifyOscar(catalinaBase.getPath() + "/webapps/"));
+        servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps/"));
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
     }
@@ -145,7 +163,7 @@ public class Audit extends Action {
     *  @return output: Combined output of Oscar build and properties information
     *  for each properties file that exists.
     */
-    protected String verifyOscar(String webAppsPath, String homePath) {
+    protected String verifyOscar(String webAppsPath) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -165,8 +183,8 @@ public class Audit extends Action {
             output += oscarBuild(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
             output += verifyOscarProperties(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += oscarBuild(homePath + file + ".properties");
-            output += verifyOscarProperties(homePath + file + ".properties");
+            output += oscarBuild(catalinaHome.getPath() + "/" + file + ".properties");
+            output += verifyOscarProperties(catalinaHome.getPath() + "/" + file + ".properties");
         }
         return output;
     }
@@ -270,7 +288,7 @@ public class Audit extends Action {
     *  @return output: Combined output of Drugref properties information
     *  for each properties file that exists.
     */
-    protected String verifyDrugref(String webAppsPath, String homePath) {
+    protected String verifyDrugref(String webAppsPath) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -287,7 +305,7 @@ public class Audit extends Action {
         while (!files.empty()) {
             String file = files.pop();
             output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += verifyDrugrefProperties(homePath + file + ".properties");
+            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file + ".properties");
         }
         return output;
     }

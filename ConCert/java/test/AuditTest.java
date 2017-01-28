@@ -4,6 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import oscar.OscarProperties;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -12,8 +15,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.apache.commons.io.FileUtils;
-
 import java.lang.reflect.Field;
+import oscar.OscarProperties;
 
 public class AuditTest {
 
@@ -28,16 +31,19 @@ public class AuditTest {
     @Before
     public void initialize() throws IOException, NoSuchFieldException, IllegalAccessException {
         File catalinaBaseFolder = folder.newFolder("catalinaBase");
-        catalinaBase = audit.getClass().getDeclaredField("catalinaBase");
-        catalinaBase.setAccessible(true);
-        catalinaBase.set(audit, catalinaBaseFolder);
         File catalinaHomeFolder = folder.newFolder("catalinaHome");
-        catalinaHome = audit.getClass().getDeclaredField("catalinaHome");
-        catalinaHome.setAccessible(true);
-        catalinaHome.set(audit, catalinaHomeFolder);
         String jvmVersionValue = "1.7.0_111";
+
+        catalinaBase = audit.getClass().getDeclaredField("catalinaBase");
+        catalinaHome = audit.getClass().getDeclaredField("catalinaHome");
         jvmVersion = audit.getClass().getDeclaredField("jvmVersion");
+
+        catalinaBase.setAccessible(true);
+        catalinaHome.setAccessible(true);
         jvmVersion.setAccessible(true);
+
+        catalinaBase.set(audit, catalinaBaseFolder);
+        catalinaHome.set(audit, catalinaHomeFolder);
         jvmVersion.set(audit, jvmVersionValue);
     }
 
@@ -50,6 +56,7 @@ public class AuditTest {
     public void isMatchTrueServerVersion() throws IOException {
         File correctFile = folder.newFile("correctInfo");
         FileUtils.writeStringToFile(correctFile, "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
+
         String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
         assertEquals(expectedResult,audit.serverVersion(correctFile.getPath()));
     }
@@ -58,6 +65,7 @@ public class AuditTest {
     public void isMatchFalseServerVersion() throws IOException {
         File notCorrectFile = folder.newFile("notCorrectInfo");
         FileUtils.writeStringToFile(notCorrectFile, "randomtag=");
+        
         String expectedResult = "Could not detect Ubuntu server version.";
         assertEquals(expectedResult, audit.serverVersion(notCorrectFile.getPath()));
     }
@@ -65,6 +73,7 @@ public class AuditTest {
     @Test
     public void exceptionServerVersion() throws IOException {
         File unreadableFile = folder.newFolder("fakeFile");
+
         String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
         assertEquals(expectedResult, audit.serverVersion(unreadableFile.getPath()));
     }
@@ -88,6 +97,7 @@ public class AuditTest {
     @Test
     public void matchVerifyTomcat() throws IOException, IllegalAccessException {
         String paramValue = "Apache Tomcat/7.0.52 (Ubuntu)";
+
         String expectedResult = "JVM Version: " + jvmVersion.get(audit) + "<br />"
                                     + "Tomcat version: " + paramValue + "<br />";
         assertEquals(expectedResult, audit.verifyTomcat(paramValue));
@@ -95,13 +105,23 @@ public class AuditTest {
 
     @Test
     public void emptyVerifyTomcat() {
-        String paramValue1 = "";
+        String paramValue = "";
+
         String expectedResult = "Please verify that Tomcat is setup correctly.";
-        assertEquals(expectedResult, audit.verifyTomcat(paramValue1));
+        assertEquals(expectedResult, audit.verifyTomcat(paramValue));
+    }
+
+    @Test
+    public void nullVerifyTomcat() throws IllegalAccessException {
+        String paramValue = null;
+        jvmVersion.set(audit, null);
+
+        String expectedResult = "Please verify that Tomcat is setup correctly.";
+        assertEquals(expectedResult, audit.verifyTomcat(paramValue));
     }
 
     /*
-    *  verifyOscar(String webAppsPath, String homePath):
+    *  verifyOscar(String webAppsPath):
     *  Verify all possible Oscar deployments.
     *  Grab all possible Oscar deployed folder names in root directory
     *  and push onto stack. Pop names off of the stack and verify
@@ -109,12 +129,15 @@ public class AuditTest {
     */
 
     @Test
-    public void nonEmptyVerifyOscar() throws IOException {
+    public void nonEmptyVerifyOscar() throws IOException, IllegalAccessException {
         File testingFolder = folder.newFolder("testingFolder");
+        File catalinaHomeFolder = new File(testingFolder.getPath() + "/");
+        catalinaHome.set(audit, catalinaHomeFolder);
         File oscar15Folder = new File(testingFolder.getPath() + "/oscar15");
         oscar15Folder.mkdir();
         File oscar15ClassesFolder = new File(testingFolder.getPath() + "/oscar15/WEB-INF/classes");
         oscar15ClassesFolder.mkdir();
+
         // put oscar_mcmaster.properties file in directory above
         File oscarMcmaster1 = new File(oscar15ClassesFolder.getPath() + "/oscar_mcmaster.properties");
         FileUtils.writeStringToFile(oscarMcmaster1, "HL7TEXT_LABS=true\n"
@@ -126,6 +149,7 @@ public class AuditTest {
         oscar15bcFolder.mkdir();
         File oscar15bcClassesFolder = new File(testingFolder.getPath() + "/oscar15_bc/WEB-INF/classes");
         oscar15bcClassesFolder.mkdir();
+
         // put oscar_mcmaster.properties file in directory above
         File oscarMcmaster2 = new File(oscar15bcClassesFolder.getPath() + "/oscar_mcmaster.properties");
         FileUtils.writeStringToFile(oscarMcmaster2, "HL7TEXT_LABS=true\n"
@@ -133,6 +157,7 @@ public class AuditTest {
                                                 + "TMP_DIR=/pathtotmpdir/\n"
                                                 + "drugref_url=/pathtodrugref/\n"
                                                 + "buildtag=oscar15BetaMaster-454");
+
         // create oscar15.properties file & oscar15_bc.properties file in testingFolder directory
         File oscar15 = new File(testingFolder.getPath() + "/oscar15.properties");
         File oscar15bc = new File(testingFolder.getPath() + "/oscar15_bc.properties");
@@ -146,7 +171,7 @@ public class AuditTest {
                                                 + "TMP_DIR=/pathtotmpdir/\n"
                                                 + "drugref_url=/pathtodrugref/\n"
                                                 + "buildtag=oscar15BetaMaster-454");
-        // put required information in each file
+
         String expectedResult = "<b>Currently checking \"oscar_mcmaster.properties\" file for \"oscar15_bc\"...</b><br />"
                                     + "Oscar build and version: oscar15BetaMaster-454<br />"
                                     + "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
@@ -171,16 +196,19 @@ public class AuditTest {
                                     + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
    + "\"HL7TEXT_LABS\" tag is configured as: true<br />";
-        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/"));
     }
 
     @Test
-    public void emptyVerifyOscar() throws IOException {
+    public void emptyVerifyOscar() throws IOException, IllegalAccessException {
         File testingFolder = folder.newFolder("testingFolder");
+        File catalinaHomeFolder = new File(testingFolder.getPath() + "/");
+        catalinaHome.set(audit, catalinaHomeFolder);
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
+
         String expectedResult = "Could not find any properties files for Oscar.<br />";
-        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/"));
     }
 
     @Test
@@ -190,8 +218,9 @@ public class AuditTest {
         File testingFolder = folder.newFolder("testingFolder");
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
+
         String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/"));
     }
 
     @Test
@@ -203,8 +232,9 @@ public class AuditTest {
         File testingFolder = folder.newFolder("testingFolder");
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
+
         String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyOscar(testingFolder.getPath() + "/"));
     }
 
     /*
@@ -216,6 +246,7 @@ public class AuditTest {
     public void isMatchTrueOscarBuild() throws IOException {
         File correctFile = folder.newFile("correctInfo.properties");
         FileUtils.writeStringToFile(correctFile, "buildtag=oscar15BetaMaster-454");
+
         String expectedResult = "Oscar build and version: oscar15BetaMaster-454<br />";
         assertEquals(expectedResult, audit.oscarBuild(correctFile.getPath()));
     }
@@ -224,20 +255,15 @@ public class AuditTest {
     public void isMatchFalseOscarBuild() throws IOException {
         File notCorrectFile = folder.newFile("notCorrectInfo.properties");
         FileUtils.writeStringToFile(notCorrectFile, "#buildtag=oscar15BetaMaster-454");
+
         String expectedResult = "Oscar build/version cannot be found.<br />";
         assertEquals(expectedResult, audit.oscarBuild(notCorrectFile.getPath()));
     }
 
     @Test
-    public void exception1OscarBuild() throws IOException {
-        File unreadableFile = folder.newFile("file.txt");
-        String expectedResult = "Oscar build/version cannot be found.<br />";
-        assertEquals(expectedResult, audit.oscarBuild(unreadableFile.getPath()));
-    }
-
-    @Test
-    public void exception2OscarBuild() throws IOException {
+    public void exceptionOscarBuild() throws IOException {
         File unreadableFile = folder.newFolder("fakeFile");
+
         String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
         assertEquals(expectedResult, audit.oscarBuild(unreadableFile.getPath()));
     }
@@ -258,6 +284,7 @@ public class AuditTest {
                                                 + "SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
                                                 + "drugref_url=/pathtodrugref/");
+
         String expectedResult = "\"drugref_url\" tag is configured as: /pathtodrugref/<br />"
                                     + "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
@@ -273,6 +300,7 @@ public class AuditTest {
                                                 + "#SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
                                                 + "#drugref_url=/pathtodrugref/");
+
         String expectedResult = "\"TMP_DIR\" tag is configured as: /pathtotmpdir/<br />"
                                     + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is not configured properly.<br />"
@@ -288,6 +316,7 @@ public class AuditTest {
                                                 + "#SINGLE_PAGE_CHART=yes\n"
                                                 + "#TMP_DIR=/pathtotmpdir/\n"
                                                 + "#drugref_url=/pathtodrugref/");
+
         String expectedResult = "\"HL7TEXT_LABS\" tag is not configured properly.<br />"
                                     + "\"SINGLE_PAGE_CHART\" tag is not configured properly.<br />"
                                     + "\"TMP_DIR\" tag is not configured properly.<br />"
@@ -298,12 +327,13 @@ public class AuditTest {
     @Test
     public void exceptionVerifyOscarProperties() throws IOException {
         File unreadableFile = folder.newFolder("fakeFile");
+
         String expectedResult = "Could not read properties file to verify Oscar tags.";      
         assertEquals(expectedResult, audit.verifyOscarProperties(unreadableFile.getPath()));
     }
 
     /*
-    *  verifyDrugRef(String webAppsPath, String homePath):
+    *  verifyDrugRef(String webAppsPath):
     *  Verify all possible Drugref deployments.
     *  Grab all possible Drugref deployed folder names in root directory
     *  and push onto stack. Pop names off of the stack and verify
@@ -311,12 +341,15 @@ public class AuditTest {
     */
 
     @Test
-    public void nonEmptyVerifyDrugref() throws IOException {
+    public void nonEmptyVerifyDrugref() throws IOException, IllegalAccessException {
         File testingFolder = folder.newFolder("testingFolder");
+        File catalinaHomeFolder = new File(testingFolder.getPath() + "/");
+        catalinaHome.set(audit, catalinaHomeFolder);
         File drugref10Folder = new File(testingFolder.getPath() + "/drugref10");
         drugref10Folder.mkdir();
         File drugref10ontFolder = new File(testingFolder.getPath() + "/drugref10_ont");
         drugref10ontFolder.mkdir();
+
         File drugref10 = new File(testingFolder.getPath() + "/drugref10.properties");
         File drugref10ont = new File(testingFolder.getPath() + "/drugref10_ont.properties");
         FileUtils.writeStringToFile(drugref10, "db_user=root\n"
@@ -325,6 +358,7 @@ public class AuditTest {
         FileUtils.writeStringToFile(drugref10ont, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "db_driver=com.mysql.jdbc.Driver");
+
         String expectedResult = "<b>Currently checking \"drugref10_ont.properties\" file...</b><br />" 
                                     + "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
@@ -333,16 +367,19 @@ public class AuditTest {
                                     + "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />";
-        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/"));
     }
 
     @Test
-    public void emptyVerifyDrugref() throws IOException {
+    public void emptyVerifyDrugref() throws IOException, IllegalAccessException {
         File testingFolder = folder.newFolder("testingFolder");
+        File catalinaHomeFolder = new File(testingFolder.getPath() + "/");
+        catalinaHome.set(audit, catalinaHomeFolder);
         File randomFolder = new File(testingFolder.getPath() + "/foobar");
         randomFolder.mkdir();
+
         String expectedResult = "Could not find any properties files for Drugref.";
-        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/"));
     }
 
     @Test
@@ -350,8 +387,9 @@ public class AuditTest {
         catalinaBase.set(audit, null);
         catalinaHome.set(audit, null);
         File testingFolder = folder.newFolder("testingFolder");
+
         String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/"));
     }
 
     @Test
@@ -361,8 +399,9 @@ public class AuditTest {
         catalinaBase.set(audit, catalinaBaseFolder);
         catalinaHome.set(audit, catalinaHomeFolder);
         File testingFolder = folder.newFolder("testingFolder");
+
         String expectedResult = "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/", testingFolder.getPath() + "/"));
+        assertEquals(expectedResult, audit.verifyDrugref(testingFolder.getPath() + "/"));
     }
     /*
     *  verifyDrugRefProperties(String fileName):
@@ -378,6 +417,7 @@ public class AuditTest {
         FileUtils.writeStringToFile(correctFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "db_driver=com.mysql.jdbc.Driver");
+
         String expectedResult = "\"db_driver\" tag is configured as: com.mysql.jdbc.Driver<br />"
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />";
@@ -391,6 +431,7 @@ public class AuditTest {
         FileUtils.writeStringToFile(semiCorrectFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "#db_driver=com.mysql.jdbc.Driver");
+
         String expectedResult = "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />"
                                     + "\"db_driver\" tag is not configured properly.<br />";
@@ -404,6 +445,7 @@ public class AuditTest {
         FileUtils.writeStringToFile(semiCorrectFile, "#db_user=root\n"
                                                 + "#db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "#db_driver=com.mysql.jdbc.Driver");
+
         String expectedResult = "\"db_user\" tag is not configured properly.<br />"
                                     + "\"db_url\" tag is not configured properly.<br />"
                                     + "\"db_driver\" tag is not configured properly.<br />";
@@ -413,6 +455,7 @@ public class AuditTest {
     @Test
     public void exceptionVerifyDrugrefProperties() throws IOException {
         File unreadableFile = folder.newFolder("fakeFile");
+
         String expectedResult = "Could not read properties file to verify Drugref tags.";      
         assertEquals(expectedResult, audit.verifyDrugrefProperties(unreadableFile.getPath()));
     }
@@ -421,6 +464,31 @@ public class AuditTest {
     *  tomcatReinforcement():
     *  Read "xmx" and "xms" values of Tomcat.
     */
+
+    @Test
+    public void emptyPathTomcatReinforcement() throws IOException, IllegalAccessException {
+        File catalinaBaseFolder = new File("");
+        catalinaBase.set(audit, catalinaBaseFolder);
+
+        String expectedResult = "Please verify that your \"catalina.base\" directory is setup correctly.";
+        assertEquals(expectedResult, audit.tomcatReinforcement());
+    }
+
+    @Test
+    public void nullTomcatReinforcement() throws IOException, IllegalAccessException {
+        catalinaBase.set(audit, null);
+
+        String expectedResult = "Please verify that your \"catalina.base\" directory is setup correctly.";
+        assertEquals(expectedResult, audit.tomcatReinforcement());
+    }
+
+    @Test
+    public void exceptionTomcatReinforcement() throws IOException {
+        File unreadableFile = folder.newFolder("fakeFile");
+
+        String expectedResult = "Could not find Tomcat process to detect amount of memory allocated.";
+        assertEquals(expectedResult, audit.tomcatReinforcement());
+    }
 
     /******* TEST METHODS HERE *******/
 
@@ -439,10 +507,12 @@ public class AuditTest {
         oscar15bcFolder.mkdir();
         File oscar3fooFolder = new File(testingFolder.getPath() + "/oscar3foo");
         oscar3fooFolder.mkdir();
+
         Stack<String> expectedStack = new Stack<String>();
         expectedStack.push("oscar15");
         expectedStack.push("oscar15_bc");
         expectedStack.push("oscar3foo");
+
         assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
 
@@ -455,14 +525,17 @@ public class AuditTest {
         randomFolder2.mkdir();
         File oscar10Folder = new File(testingFolder.getPath() + "/oscar10");
         oscar10Folder.mkdir();
+
         Stack<String> expectedStack = new Stack<String>();
         expectedStack.push("oscar10");
+
         assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
 
     @Test
     public void noFileListGrabFiles() throws IOException {
         File testingFolder = folder.newFolder("testingFolder");
+
         Stack<String> expectedStack = new Stack<String>(); // empty stack
         assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
@@ -472,6 +545,7 @@ public class AuditTest {
         catalinaBase = null;
         catalinaHome = null;
         jvmVersion = null;
+
         assertNull(catalinaBase);
         assertNull(catalinaHome);
         assertNull(jvmVersion);
