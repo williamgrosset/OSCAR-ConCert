@@ -36,30 +36,6 @@ public class Audit extends Action {
         jvmVersion = getJvmVersion();
     }
 
-    private String getJvmVersion() {
-        try {
-            return System.getProperty("java.runtime.version");
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private File getCatalinaBase() {
-        try {
-            return new File(System.getProperty("catalina.base"));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private File getCatalinaHome() {
-        try {
-            return new File(System.getProperty("catalina.home"));
-        } catch (Exception e) {
-            return null;
-        }
-    }
-    
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
             if (servletRequest.getSession().getAttribute("userrole") == null)
@@ -83,6 +59,45 @@ public class Audit extends Action {
         servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps/"));
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
+    }
+
+    /*
+    *  Retrieve catalina base directory from system properties. 
+    *
+    *  @return catalinaBase: File object for catalina base directory.
+    */
+    private File getCatalinaBase() {
+        try {
+            return new File(System.getProperty("catalina.base"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /*
+    *  Retrieve catalina home directory from system properties. 
+    *
+    *  @return catalinaHome: File object for catalina home directory.
+    */
+    private File getCatalinaHome() {
+        try {
+            return new File(System.getProperty("catalina.home"));
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /*
+    *  Retrieve JVM version from system properties. 
+    *
+    *  @return jvmVersion: String value for JVM version.
+    */
+    private String getJvmVersion() {
+        try {
+            return System.getProperty("java.runtime.version");
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /*

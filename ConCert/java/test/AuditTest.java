@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Stack;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import oscar.OscarProperties;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -16,7 +15,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.apache.commons.io.FileUtils;
 import java.lang.reflect.Field;
-import oscar.OscarProperties;
 
 public class AuditTest {
 
@@ -464,6 +462,9 @@ public class AuditTest {
     *  tomcatReinforcement():
     *  Read "xmx" and "xms" values of Tomcat.
     */
+    
+    /*** NEED matchTomcatReinforcement()   ***
+     *** NEED noMatchTomcatReinforcement() ***/
 
     @Test
     public void emptyPathTomcatReinforcement() throws IOException, IllegalAccessException {
@@ -489,8 +490,6 @@ public class AuditTest {
         String expectedResult = "Could not find Tomcat process to detect amount of memory allocated.";
         assertEquals(expectedResult, audit.tomcatReinforcement());
     }
-
-    /******* TEST METHODS HERE *******/
 
     /*
     *  grabFiles(File directory, String regex):
