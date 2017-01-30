@@ -29,16 +29,19 @@ public class Audit extends Action {
 
     private File catalinaBase;
     private File catalinaHome;
+    private File lsbRelease;
     private String jvmVersion;
+    private String tomcatVersion;
 
     public Audit() {
         catalinaBase = getCatalinaBase();
         catalinaHome = getCatalinaHome();
+        lsbRelease = getLsbRelease();
         jvmVersion = getJvmVersion();
+        tomcatVersion = "";
     }
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-        String tomcatVersion = "";
         try {
             if (servletRequest.getSession().getAttribute("userrole") == null)
                 servletResponse.sendRedirect("../logout.jsp");
@@ -54,9 +57,9 @@ public class Audit extends Action {
             return actionMapping.findForward("unauthorized");
         }
 
-        servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
+        servletRequest.setAttribute("serverVersion", serverVersion());
         servletRequest.setAttribute("databaseInfo", databaseInfo());
-        servletRequest.setAttribute("verifyTomcat", verifyTomcat(tomcatVersion));
+        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
         servletRequest.setAttribute("verifyOscar", verifyOscar(catalinaBase.getPath() + "/webapps/"));
         servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps/"));
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
@@ -90,6 +93,19 @@ public class Audit extends Action {
     }
 
     /*
+    *  Retrieve "lsb-release" file from "/etc" directory. 
+    *
+    *  @return lsbRelease: File object for "/etc/lsb-release".
+    */
+    private File getLsbRelease() {
+        try {
+            return new File("/etc/lsb-release");
+        } catch (Exception e) {
+            return new File("");
+        }
+    }
+
+    /*
     *  Retrieve JVM version from system properties. 
     *
     *  @return jvmVersion: String value for JVM version.
@@ -98,7 +114,7 @@ public class Audit extends Action {
         try {
             return System.getProperty("java.runtime.version");
         } catch (Exception e) {
-            return null;
+            return "";
         }
     }
 
@@ -107,10 +123,13 @@ public class Audit extends Action {
     *
     *  @return output: Ubuntu server version.
     */
-    protected String serverVersion(String lsbPath) {
+    protected String serverVersion() {
+        if (lsbRelease == null || lsbRelease.getPath().equals("")) {
+            return "Could not read \"lsb-release\" file to detect Ubuntu server version.";
+        }
+
         try {
             String line = "";
-            File lsbRelease = new File(lsbPath);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(lsbRelease);
             boolean isMatch = false;
 
@@ -136,7 +155,7 @@ public class Audit extends Action {
     protected String databaseInfo() {
         try {
             String dbType = OscarProperties.getInstance().getProperty("db_type");
-            if (dbType.equals("") || dbType == null) {
+            if (dbType == null || dbType.equals("")) {
                 return "Cannot determine database type. \"db_type\" tag is not configured properly.";
             }
 
@@ -156,16 +175,16 @@ public class Audit extends Action {
     *  Extract JVM version from system properties and server information 
     *  from servlet.
     *
-    *  @param serverInfo: Server information from our servlet.
     *  @return output: JVM and Tomcat version information.
     */
-    protected String verifyTomcat(String serverInfo) {
-        if (jvmVersion == null || serverInfo == null || serverInfo.equals(""))
+    protected String verifyTomcat() {
+        if (jvmVersion == null || tomcatVersion == null || jvmVersion.equals("")
+                || tomcatVersion.equals(""))
             return "Please verify that Tomcat is setup correctly.";
 
         String output = "";
         output += "JVM Version: " + jvmVersion + "<br />";
-        output += "Tomcat version: " + serverInfo + "<br />";
+        output += "Tomcat version: " + tomcatVersion + "<br />";
         return output;
     }
 
