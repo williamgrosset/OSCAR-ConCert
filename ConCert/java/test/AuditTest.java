@@ -4,8 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.File;
 import java.io.IOException;
 import java.util.Stack;
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -80,8 +78,7 @@ public class AuditTest {
     *  databaseInfo():
     *  Retrieve url, username, and password information from Oscar properties
     *  to make a connection with our database. From our connection, we can
-    *  inspect the DBMS and retrieve which database we are connected to and
-    *  the version.
+    *  retrieve which database we are connected to and the database version.
     */
 
     /******* TEST METHODS HERE *******/
@@ -271,7 +268,7 @@ public class AuditTest {
     *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and
     *  "drugref_url" tags of Oscar properties file.
     *
-    *  Note: There are 16 unique permutations for the isMatch behavior of this method.
+    *  Note: There are 16 unique permutations for the 'isMatch' behavior of this method.
     */
 
     // isMatch1, isMatch2, isMatch3, isMatch4
@@ -405,7 +402,7 @@ public class AuditTest {
     *  verifyDrugRefProperties(String fileName):
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
     *
-    *  Note: There are 9 unique permutations for the isMatch behavior of this method.
+    *  Note: There are 9 unique permutations for the 'isMatch' behavior of this method.
     */
 
     // isMatch1, isMatch2, isMatch3

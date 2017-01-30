@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.File;
 import java.io.IOException;
 import org.apache.commons.io.input.ReversedLinesFileReader;
+
 import java.util.Arrays;
 import java.util.Stack;
 import java.util.regex.Matcher;
@@ -37,9 +38,12 @@ public class Audit extends Action {
     }
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+        String tomcatVersion = "";
         try {
             if (servletRequest.getSession().getAttribute("userrole") == null)
                 servletResponse.sendRedirect("../logout.jsp");
+
+            tomcatVersion = servletRequest.getServletContext().getServerInfo();
         } catch (Exception e) {
             return actionMapping.findForward("failure");
         }
@@ -49,8 +53,6 @@ public class Audit extends Action {
         if (!roleName.contains("admin")) {
             return actionMapping.findForward("unauthorized");
         }
-
-        String tomcatVersion = servletRequest.getServletContext().getServerInfo();
 
         servletRequest.setAttribute("serverVersion", serverVersion("/etc/lsb-release"));
         servletRequest.setAttribute("databaseInfo", databaseInfo());
@@ -70,7 +72,7 @@ public class Audit extends Action {
         try {
             return new File(System.getProperty("catalina.base"));
         } catch (Exception e) {
-            return null;
+            return new File("");
         }
     }
 
@@ -83,7 +85,7 @@ public class Audit extends Action {
         try {
             return new File(System.getProperty("catalina.home"));
         } catch (Exception e) {
-            return null;
+            return new File("");
         }
     }
 
@@ -127,8 +129,7 @@ public class Audit extends Action {
     /*
     *  Retrieve url, username, and password information from Oscar properties
     *  to make a connection with our database. From our connection, we can 
-    *  inspect the DBMS and retrieve which database we are connected and the
-    *  version.
+    *  retrieve which database we are connected to and the database version.
     *
     *  @return output: Database name and version.
     */
@@ -142,6 +143,7 @@ public class Audit extends Action {
             String dbUri = OscarProperties.getInstance().getProperty("db_uri");
             String dbUserName = OscarProperties.getInstance().getProperty("db_username");
             String dbPassWord = OscarProperties.getInstance().getProperty("db_password");
+
             Connection connection = DriverManager.getConnection(dbUri, dbUserName, dbPassWord); 
             DatabaseMetaData metaData = connection.getMetaData();
             return metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
@@ -174,7 +176,6 @@ public class Audit extends Action {
     *  each properties file that exists in "catalinaHome" directory.
     *
     *  @param webAppsPath: Directory path to locate Oscar deployments.
-    *  @param homePath: Directory path to properties file.
     *  @return output: Combined output of Oscar build and properties information
     *  for each properties file that exists.
     */
@@ -211,10 +212,10 @@ public class Audit extends Action {
     */
     protected String oscarBuild(String fileName) {
         try {
+            String line = "";
             File oscar = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
             boolean isMatch = false;
-            String line = "";
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line))
@@ -278,6 +279,7 @@ public class Audit extends Action {
                 if (flag1 && flag2 && flag3 && flag4)
                     break;
             }
+            
             if (!flag1)
                 output += "\"HL7TEXT_LABS\" tag is not configured properly." + "<br />";
             if (!flag2)
@@ -299,7 +301,6 @@ public class Audit extends Action {
     *  each properties file that exists in "catalinaHome" directory.
     *
     *  @param webAppsPath: Directory path to locate Drugref deployments.
-    *  @param homePath: Directory path to properties file.
     *  @return output: Combined output of Drugref properties information
     *  for each properties file that exists.
     */
@@ -366,6 +367,7 @@ public class Audit extends Action {
                 if (flag1 && flag2 && flag3)
                     break;
             }
+
             if (!flag1)
                 output += "\"db_user\" tag is not configured properly." + "<br />";
             if (!flag2)
@@ -428,6 +430,7 @@ public class Audit extends Action {
                 if (flag1 && flag2)
                     break;
             }
+
             if (!flag1) {
                 output += "Could not detect Xmx value." + "<br />";
             }

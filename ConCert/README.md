@@ -4,7 +4,7 @@ The objective of this project (nicknamed ConCert - for Continuous Certification)
 
 ### Contributor
 William Grosset (100-hour work term) at [LEAD Lab](http://leadlab.ca/about-us/). Supervised by Dr. Raymond Rusk and Dr. Jens Weber.  
-The accepted feature request via JIRA can be found [here](https://oscaremr.atlassian.net/browse/OSCAREMR-6051/).
+The accepted feature request (via JIRA) can be found [here](https://oscaremr.atlassian.net/browse/OSCAREMR-6051/).
 
 ### ConCert
 Currently, the ConCert project audits the OSCAR deployment environment:
@@ -15,7 +15,7 @@ Currently, the ConCert project audits the OSCAR deployment environment:
 * OSCAR/Drugref file properties
 * Tomcat memory allocation
 
-This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All **JUnit tests** can be found in the ```/java/test/``` directory of ConCert.
+This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All 31 **JUnit tests** can be found in the ```/java/test/``` directory of ConCert.
 
 ### Design Decisions
 1. Why utilize a **Stack** when grabbing and sorting files? *(java/Audit.java)*<br><br>
@@ -78,10 +78,6 @@ The **JSP** file *(oscarAudit.jsp)* represents our view (V). This file displays 
 Auditing of hardware, network requirements, and interfaces to external providers (i.e. labs being received, OLIS setup correctly).
 
 ### Screenshots
-#### Mac OS X (Console Test):
-![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/ConCert/screenshots/osx_test.png "Mac OS X")
-#### Windows (Console Test):
-![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/ConCert/screenshots/windows_test.png "Windows")
 #### Java Servlet (Audit Test Page):
 ![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/ConCert/screenshots/jsp_test.png "JSP")
 #### Administration Page
