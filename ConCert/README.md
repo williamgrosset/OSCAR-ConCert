@@ -77,8 +77,5 @@ The **JSP** file *(oscarAudit.jsp)* represents our view (V). This file displays 
 ### Where do we go from here?
 Auditing of hardware, network requirements, and interfaces to external providers (i.e. labs being received, OLIS setup correctly).
 
-### Screenshots
-#### Java Servlet (Audit Test Page):
-![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/ConCert/screenshots/jsp_test.png "JSP")
-#### Administration Page
-![alt-test](https://github.com/williamgrosset/OSCAR-ConCert/blob/master/ConCert/screenshots/administration.png "OSCAR Audit")
+### Spring 2017 Update
+I am now working as a full-time co-op programmer with the LEAD Lab for the Spring term. The next project I will be working on in is integrating this existing feature to allow for admin remote login.
