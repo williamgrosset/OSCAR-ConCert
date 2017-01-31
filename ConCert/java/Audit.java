@@ -3,6 +3,7 @@ package oscar.util;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
@@ -124,11 +125,10 @@ public class Audit extends Action {
     *  @return output: Ubuntu server version.
     */
     protected String serverVersion() {
-        if (lsbRelease == null || lsbRelease.getPath().equals("")) {
-            return "Could not read \"lsb-release\" file to detect Ubuntu server version.";
-        }
-
         try {
+            if (lsbRelease == null || lsbRelease.getPath().equals(""))
+                throw new FileNotFoundException();
+
             String line = "";
             ReversedLinesFileReader rf = new ReversedLinesFileReader(lsbRelease);
             boolean isMatch = false;

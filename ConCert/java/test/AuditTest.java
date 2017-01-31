@@ -74,6 +74,14 @@ public class AuditTest {
         String expectedResult = "Could not detect Ubuntu server version.";
         assertEquals(expectedResult, audit.serverVersion());
     }
+
+    @Test
+    public void emptyPathServerVersion() throws IOException, IllegalAccessException {
+        lsbRelease.set(audit, new File(""));
+
+        String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
+        assertEquals(expectedResult, audit.serverVersion());
+    }
     
     @Test
     public void exceptionServerVersion() throws IOException, IllegalAccessException {
