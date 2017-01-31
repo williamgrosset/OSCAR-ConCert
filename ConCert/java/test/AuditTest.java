@@ -19,7 +19,9 @@ public class AuditTest {
     Audit audit = new Audit();
     private Field catalinaBase;
     private Field catalinaHome;
+    private Field lsbRelease;
     private Field jvmVersion;
+    private Field tomcatVersion;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -28,33 +30,40 @@ public class AuditTest {
     public void initialize() throws IOException, NoSuchFieldException, IllegalAccessException {
         File catalinaBaseFolder = folder.newFolder("catalinaBase");
         File catalinaHomeFolder = folder.newFolder("catalinaHome");
+        File lsbReleaseFile = folder.newFile("lsb-release");
         String jvmVersionValue = "1.7.0_111";
+        String tomcatVersionValue = "Apache Tomcat/7.0.52 (Ubuntu)";
 
         catalinaBase = audit.getClass().getDeclaredField("catalinaBase");
         catalinaHome = audit.getClass().getDeclaredField("catalinaHome");
+        lsbRelease = audit.getClass().getDeclaredField("lsbRelease");
         jvmVersion = audit.getClass().getDeclaredField("jvmVersion");
+        tomcatVersion = audit.getClass().getDeclaredField("tomcatVersion");
 
         catalinaBase.setAccessible(true);
         catalinaHome.setAccessible(true);
+        lsbRelease.setAccessible(true);
         jvmVersion.setAccessible(true);
+        tomcatVersion.setAccessible(true);
 
         catalinaBase.set(audit, catalinaBaseFolder);
         catalinaHome.set(audit, catalinaHomeFolder);
+        lsbRelease.set(audit, lsbReleaseFile);
         jvmVersion.set(audit, jvmVersionValue);
+        tomcatVersion.set(audit, tomcatVersionValue);
     }
 
     /*
-    *  serverVersion(String fileName):
+    *  serverVersion():
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
     */
  
     @Test
-    public void isMatchTrueServerVersion() throws IOException {
-        File correctFile = folder.newFile("correctInfo");
-        FileUtils.writeStringToFile(correctFile, "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
+    public void isMatchTrueServerVersion() throws IOException, IllegalAccessException {
+        FileUtils.writeStringToFile((File)lsbRelease.get(audit), "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
 
         String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
-        assertEquals(expectedResult,audit.serverVersion(correctFile.getPath()));
+        assertEquals(expectedResult,audit.serverVersion());
     }
 
     @Test
@@ -63,15 +72,15 @@ public class AuditTest {
         FileUtils.writeStringToFile(notCorrectFile, "randomtag=");
         
         String expectedResult = "Could not detect Ubuntu server version.";
-        assertEquals(expectedResult, audit.serverVersion(notCorrectFile.getPath()));
+        assertEquals(expectedResult, audit.serverVersion());
     }
     
     @Test
-    public void exceptionServerVersion() throws IOException {
-        File unreadableFile = folder.newFolder("fakeFile");
+    public void exceptionServerVersion() throws IOException, IllegalAccessException {
+        lsbRelease.set(audit, null);
 
         String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
-        assertEquals(expectedResult, audit.serverVersion(unreadableFile.getPath()));
+        assertEquals(expectedResult, audit.serverVersion());
     }
 
     /*
@@ -84,35 +93,31 @@ public class AuditTest {
     /******* TEST METHODS HERE *******/
 
     /*
-    *  verifyTomcat(String serverInfo):
+    *  verifyTomcat():
     *  Extract JVM version from system properties and server information
     *  from servlet.
     */
 
     @Test
     public void matchVerifyTomcat() throws IOException, IllegalAccessException {
-        String paramValue = "Apache Tomcat/7.0.52 (Ubuntu)";
-
         String expectedResult = "JVM Version: " + jvmVersion.get(audit) + "<br />"
-                                    + "Tomcat version: " + paramValue + "<br />";
-        assertEquals(expectedResult, audit.verifyTomcat(paramValue));
+                                    + "Tomcat version: " + tomcatVersion.get(audit) + "<br />";
+        assertEquals(expectedResult, audit.verifyTomcat());
     }
 
     @Test
-    public void emptyVerifyTomcat() {
-        String paramValue = "";
-
+    public void emptyVerifyTomcat() throws IllegalAccessException {
+        tomcatVersion.set(audit, "");
         String expectedResult = "Please verify that Tomcat is setup correctly.";
-        assertEquals(expectedResult, audit.verifyTomcat(paramValue));
+        assertEquals(expectedResult, audit.verifyTomcat());
     }
 
     @Test
     public void nullVerifyTomcat() throws IllegalAccessException {
-        String paramValue = null;
         jvmVersion.set(audit, null);
 
         String expectedResult = "Please verify that Tomcat is setup correctly.";
-        assertEquals(expectedResult, audit.verifyTomcat(paramValue));
+        assertEquals(expectedResult, audit.verifyTomcat());
     }
 
     /*
