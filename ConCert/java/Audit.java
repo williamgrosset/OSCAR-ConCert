@@ -482,8 +482,8 @@ public class Audit extends Action {
     *  @return files: Stack of properties files to be verified individually.
     */
     protected Stack<String> grabFiles(File directory, String regex) {
-        String[] fileList = directory.list();
         Stack<String> files = new Stack<String>();
+        String[] fileList = directory.list();
 
         // We did not find a file
         if (fileList == null || fileList.length == 0) {

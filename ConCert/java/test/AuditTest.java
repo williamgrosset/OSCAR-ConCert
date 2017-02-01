@@ -84,7 +84,7 @@ public class AuditTest {
     }
     
     @Test
-    public void exceptionServerVersion() throws IOException, IllegalAccessException {
+    public void nullServerVersion() throws IOException, IllegalAccessException {
         lsbRelease.set(audit, null);
 
         String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
@@ -124,6 +124,7 @@ public class AuditTest {
     @Test
     public void nullVerifyTomcat() throws IllegalAccessException {
         jvmVersion.set(audit, null);
+        tomcatVersion.set(audit, null);
 
         String expectedResult = "Please verify that Tomcat is setup correctly.";
         assertEquals(expectedResult, audit.verifyTomcat());
@@ -552,14 +553,26 @@ public class AuditTest {
         assertEquals(expectedStack, audit.grabFiles(testingFolder, "^(oscar[0-9]*\\w*)$"));
     }
 
+    @Test
+    public void nonFolderListGrabFiles() throws IOException {
+        File testingFile = folder.newFile("testingFile.txt");
+
+        Stack<String> expectedStack = new Stack<String>(); // empty stack
+        assertEquals(expectedStack, audit.grabFiles(testingFile, "^(oscar[0-9]*\\w*)$"));
+    }
+
     @After
     public void tearDown() {
         catalinaBase = null;
         catalinaHome = null;
+        lsbRelease = null;
         jvmVersion = null;
+        tomcatVersion = null;
 
         assertNull(catalinaBase);
         assertNull(catalinaHome);
+        assertNull(lsbRelease);
         assertNull(jvmVersion);
+        assertNull(tomcatVersion);
     }
 }
