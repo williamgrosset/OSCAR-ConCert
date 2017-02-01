@@ -95,7 +95,7 @@ public class AuditTest {
     *  databaseInfo():
     *  Retrieve url, username, and password information from Oscar properties
     *  to make a connection with our database. From our connection, we can
-    *  retrieve which database we are connected to and the database version.
+    *  retrieve which database type we are connected to and the database version.
     */
 
     /******* TEST METHODS HERE *******/
@@ -115,6 +115,7 @@ public class AuditTest {
 
     @Test
     public void emptyVerifyTomcat() throws IllegalAccessException {
+        jvmVersion.set(audit, "");
         tomcatVersion.set(audit, "");
         String expectedResult = "Please verify that Tomcat is setup correctly.";
         assertEquals(expectedResult, audit.verifyTomcat());
@@ -470,7 +471,9 @@ public class AuditTest {
 
     /*
     *  tomcatReinforcement():
-    *  Read "xmx" and "xms" values of Tomcat.
+    *  Run "ps -ef | grep $tomcat", with $tomcat being the tomcat folder
+    *  found in catalinaBase.getPath(). Read "xmx" and "xms" values of 
+    *  the running Tomcat application.
     */
     
     /*** NEED matchTomcatReinforcement()   ***

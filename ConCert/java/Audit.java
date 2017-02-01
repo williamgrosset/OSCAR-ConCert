@@ -148,7 +148,7 @@ public class Audit extends Action {
     /*
     *  Retrieve url, username, and password information from Oscar properties
     *  to make a connection with our database. From our connection, we can 
-    *  retrieve which database we are connected to and the database version.
+    *  retrieve which database type we are connected to and the database version.
     *
     *  @return output: Database name and version.
     */
@@ -227,6 +227,7 @@ public class Audit extends Action {
     /*
     *  Read Oscar buildtag of properties file.
     *
+    *  @param fileName: Path to properties file.
     *  @return output: Current build and version of Oscar.
     */
     protected String oscarBuild(String fileName) {
@@ -254,6 +255,7 @@ public class Audit extends Action {
     *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and
     *  "drugref_url" tags of Oscar properties file.
     *
+    *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Oscar properties 
     *  file.
     */
@@ -349,6 +351,7 @@ public class Audit extends Action {
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref 
     *  properties file.
     *
+    *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Drugref properties 
     *  file.
     */
@@ -400,7 +403,9 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read "xmx" and "xms" values of Tomcat.
+    *  Run "ps -ef | grep $tomcat", with $tomcat being the tomcat folder
+    *  found in catalinaBase.getPath(). Read "xmx" and "xms" values of 
+    *  the running Tomcat application.
     *
     *  @return output: Xmx (maximum memory allocation) value followed by Xms 
     *  (minimum memory allocation) value.
