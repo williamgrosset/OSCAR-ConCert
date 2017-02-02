@@ -2,10 +2,10 @@ package oscar.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.util.Arrays;
 import java.util.Stack;
