@@ -22,13 +22,13 @@
  * Ontario, Canada
  */
 
+
 package oscar.util;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.util.Arrays;
@@ -44,12 +44,14 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.DriverManager;
-import java.sql.DatabaseMetaData;
-import oscar.OscarProperties;
+//import java.sql.Connection;
+//import java.sql.DriverManager;
+//import java.sql.DatabaseMetaData;
+//import oscar.OscarProperties;
 
+/*
+*  Author: William Grosset (github.com/williamgrosset)
+*/
 public class Audit extends Action {
 
     private File catalinaBase;
@@ -71,7 +73,7 @@ public class Audit extends Action {
             if (servletRequest.getSession().getAttribute("userrole") == null)
                 servletResponse.sendRedirect("../logout.jsp");
 
-            tomcatVersion = servletRequest.getServletContext().getServerInfo();
+            tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
         } catch (Exception e) {
             return actionMapping.findForward("failure");
         }
@@ -177,6 +179,8 @@ public class Audit extends Action {
     *  @return output: Database name and version.
     */
     protected String databaseInfo() {
+        return "THIS IS TEMPORARY (currently changing from JDBC to JPA)";
+        /*
         try {
             String dbType = OscarProperties.getInstance().getProperty("db_type");
             if (dbType == null || dbType.equals("")) {
@@ -192,8 +196,9 @@ public class Audit extends Action {
             return metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
         } catch (Exception e) {
             return "Cannot determine database name and version.";
-        }
+        }*/
     }
+    
 
     /*
     *  Extract JVM version from system properties and server information 
