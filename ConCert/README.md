@@ -15,7 +15,7 @@ Currently, the ConCert project audits the OSCAR deployment environment:
 * OSCAR/Drugref file properties
 * Tomcat memory allocation
 
-This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All 33 **JUnit tests** can be found in the ```/java/test/``` directory of ConCert.
+This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All 37 **JUnit tests** can be found in the ```/test``` directory of ConCert.
 
 ### Design Decisions
 1. Why utilize a **Stack** when grabbing and sorting files? *(java/Audit.java)*<br><br>
