@@ -22,11 +22,8 @@
  * Ontario, Canada
  */
 
-
 package oscar.util;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import org.apache.commons.io.input.ReversedLinesFileReader;
@@ -50,13 +47,14 @@ import org.apache.struts.action.ActionMapping;
 //import oscar.OscarProperties;
 
 /*
-*  Author: William Grosset (github.com/williamgrosset)
+*  github.com/williamgrosset
 */
 public class Audit extends Action {
 
     private File catalinaBase;
     private File catalinaHome;
     private File lsbRelease;
+    private File tomcatSettings;
     private String jvmVersion;
     private String tomcatVersion;
 
@@ -64,6 +62,7 @@ public class Audit extends Action {
         catalinaBase = getCatalinaBase();
         catalinaHome = getCatalinaHome();
         lsbRelease = getLsbRelease();
+        tomcatSettings = getTomcatSettings();
         jvmVersion = getJvmVersion();
         tomcatVersion = "";
     }
@@ -133,6 +132,26 @@ public class Audit extends Action {
     }
 
     /*
+    *  Retrieve Tomcat settings file from "/etc/default" directory. 
+    *
+    *  @return tomcatSettings: File object for "/etc/default/$tomcat" with
+    *  $tomcat being the current Tomcat web container for this application.
+    */
+    private File getTomcatSettings() {
+        try {
+            if (catalinaBase == null || catalinaBase.getPath().equals(""))
+                throw new FileNotFoundException();
+
+            Pattern tomcatVersion = Pattern.compile(".*(tomcat[0-9]+)");
+            Matcher tomcatMatch = tomcatVersion.matcher(catalinaBase.getPath());
+            tomcatMatch.matches();
+            return new File("/etc/default/" + tomcatMatch.group(1));
+        } catch (Exception e) {
+            return new File("");
+        }
+    }
+
+    /*
     *  Retrieve JVM version from system properties. 
     *
     *  @return jvmVersion: String value for JVM version.
@@ -147,6 +166,9 @@ public class Audit extends Action {
 
     /*
     *  Read "/etc/lsb-release" file and extract Ubuntu server version.
+    *  NOTE: Majority of my methods require the ReversedLinesFilerReader class.
+    *  Since I did not want to require another import for the default file reader,
+    *  I went ahead and used ReversedLinesFileReader anyways.
     *
     *  @return output: Ubuntu server version.
     */
@@ -179,7 +201,7 @@ public class Audit extends Action {
     *  @return output: Database name and version.
     */
     protected String databaseInfo() {
-        return "THIS IS TEMPORARY (currently changing from JDBC to JPA)";
+        return "This is temporary.";
         /*
         try {
             String dbType = OscarProperties.getInstance().getProperty("db_type");
@@ -432,25 +454,19 @@ public class Audit extends Action {
     }
 
     /*
-    *  Run "ps -ef | grep $tomcat", with $tomcat being the tomcat folder
-    *  found in catalinaBase.getPath(). Read "xmx" and "xms" values of 
-    *  the running Tomcat application.
+    *  Read through the Tomcat settings file and output the Xmx and Xms values
+    *  to the user.
     *
     *  @return output: Xmx (maximum memory allocation) value followed by Xms 
     *  (minimum memory allocation) value.
     */
     protected String tomcatReinforcement() {
-        if (catalinaBase == null || catalinaBase.getPath().equals(""))
+        if (catalinaBase == null || tomcatSettings == null 
+                || catalinaBase.getPath().equals("")
+                || tomcatSettings.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
 
         try {
-            Pattern tomcatVersion = Pattern.compile(".*(tomcat[0-9]+)");
-            Matcher tomcatMatch = tomcatVersion.matcher(catalinaBase.getPath());
-            tomcatMatch.matches(); // necessary for group() method to be run correctly
-            String tomcat = tomcatMatch.group(1);
-            Process p = Runtime.getRuntime().exec(new String[]{"sh", "-c", "/bin/ps -ef | /bin/grep " + tomcat});
-            BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-
             String output = "";
             String line = "";
             String xmx = "";
@@ -461,8 +477,9 @@ public class Audit extends Action {
             boolean flag2 = false;
             Pattern xmxPattern = Pattern.compile(".*(Xmx[0-9]+m).*");
             Pattern xmsPattern = Pattern.compile(".*(Xms[0-9]+m).*");
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
 
-            while ((line = br.readLine()) != null) {
+            while ((line = rf.readLine()) != null) {
                 Matcher xmxMatch = xmxPattern.matcher(line);
                 isMatch1 = xmxMatch.matches();
                 Matcher xmsMatch = xmsPattern.matcher(line);
@@ -490,10 +507,9 @@ public class Audit extends Action {
             if (!flag2) {
                 output += "Could not detect Xms value." + "<br />";
             }
-            p.destroy();
             return output;
         } catch (Exception e) {
-            return "Could not find Tomcat process to detect amount of memory allocated.";
+            return "Could not detect Tomcat memory allocation in settings file.";
         }
     }
 
