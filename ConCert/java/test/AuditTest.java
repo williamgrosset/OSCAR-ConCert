@@ -44,6 +44,7 @@ public class AuditTest {
     private Field catalinaBase;
     private Field catalinaHome;
     private Field lsbRelease;
+    private Field tomcatSettings;
     private Field jvmVersion;
     private Field tomcatVersion;
 
@@ -55,24 +56,28 @@ public class AuditTest {
         File catalinaBaseFolder = folder.newFolder("catalinaBase");
         File catalinaHomeFolder = folder.newFolder("catalinaHome");
         File lsbReleaseFile = folder.newFile("lsb-release");
+        File tomcatSettingsFile = folder.newFile("tomcat411");
         String jvmVersionValue = "1.7.0_111";
         String tomcatVersionValue = "Apache Tomcat/7.0.52 (Ubuntu)";
 
         catalinaBase = audit.getClass().getDeclaredField("catalinaBase");
         catalinaHome = audit.getClass().getDeclaredField("catalinaHome");
         lsbRelease = audit.getClass().getDeclaredField("lsbRelease");
+        tomcatSettings = audit.getClass().getDeclaredField("tomcatSettings");
         jvmVersion = audit.getClass().getDeclaredField("jvmVersion");
         tomcatVersion = audit.getClass().getDeclaredField("tomcatVersion");
 
         catalinaBase.setAccessible(true);
         catalinaHome.setAccessible(true);
         lsbRelease.setAccessible(true);
+        tomcatSettings.setAccessible(true);
         jvmVersion.setAccessible(true);
         tomcatVersion.setAccessible(true);
 
         catalinaBase.set(audit, catalinaBaseFolder);
         catalinaHome.set(audit, catalinaHomeFolder);
         lsbRelease.set(audit, lsbReleaseFile);
+        tomcatSettings.set(audit, tomcatSettingsFile);
         jvmVersion.set(audit, jvmVersionValue);
         tomcatVersion.set(audit, tomcatVersionValue);
     }
@@ -500,13 +505,28 @@ public class AuditTest {
     *  the running Tomcat application.
     */
     
-    /*** NEED matchTomcatReinforcement()   ***
-     *** NEED noMatchTomcatReinforcement() ***/
+    @Test
+    public void isMatchTrueTomcatReinforcement() throws IOException, IllegalAccessException {
+        FileUtils.writeStringToFile((File)tomcatSettings.get(audit), "-Djava.awt.headless=true -Xmx1024m -Xms256m -XX");
+
+        String expectedResult = "Xmx value: 1024m<br />Xms value: 256m<br />";
+        assertEquals(expectedResult, audit.tomcatReinforcement());
+    }
+
+    @Test
+    public void isMatchFalseTomcatReinforcement() throws IOException, IllegalAccessException {
+        FileUtils.writeStringToFile((File)tomcatSettings.get(audit), "nothing in this file we need");
+
+        String expectedResult = "Could not detect Xmx value.<br />Could not detect Xms value.<br />";
+        assertEquals(expectedResult, audit.tomcatReinforcement());
+    }
 
     @Test
     public void emptyPathTomcatReinforcement() throws IOException, IllegalAccessException {
         File catalinaBaseFolder = new File("");
         catalinaBase.set(audit, catalinaBaseFolder);
+        File tomcatSettingsFile = new File("");
+        tomcatSettings.set(audit, tomcatSettingsFile);
 
         String expectedResult = "Please verify that your \"catalina.base\" directory is setup correctly.";
         assertEquals(expectedResult, audit.tomcatReinforcement());
@@ -515,16 +535,18 @@ public class AuditTest {
     @Test
     public void nullTomcatReinforcement() throws IOException, IllegalAccessException {
         catalinaBase.set(audit, null);
+        tomcatSettings.set(audit, null);
 
         String expectedResult = "Please verify that your \"catalina.base\" directory is setup correctly.";
         assertEquals(expectedResult, audit.tomcatReinforcement());
     }
 
     @Test
-    public void exceptionTomcatReinforcement() throws IOException {
-        File unreadableFile = folder.newFolder("fakeFile");
+    public void exceptionTomcatReinforcement() throws IOException, IllegalAccessException {
+        File tomcatSettingsFolder = folder.newFolder("aRandomFolder");
+        tomcatSettings.set(audit, tomcatSettingsFolder);
 
-        String expectedResult = "Could not find Tomcat process to detect amount of memory allocated.";
+        String expectedResult = "Could not detect Tomcat memory allocation in Tomcat settings file.";
         assertEquals(expectedResult, audit.tomcatReinforcement());
     }
 

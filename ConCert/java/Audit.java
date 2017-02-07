@@ -182,6 +182,9 @@ public class Audit extends Action {
             boolean isMatch = false;
 
             while ((line = rf.readLine()) != null) {
+                if (Pattern.matches("^(#).*", line))
+                    continue;
+
                 isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
                 if (isMatch) {
                     return line.substring(20);
@@ -461,11 +464,9 @@ public class Audit extends Action {
     *  (minimum memory allocation) value.
     */
     protected String tomcatReinforcement() {
-        if (catalinaBase == null || tomcatSettings == null 
-                || catalinaBase.getPath().equals("")
+        if (catalinaBase == null || tomcatSettings == null || catalinaBase.getPath().equals("")
                 || tomcatSettings.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
-
         try {
             String output = "";
             String line = "";
@@ -480,6 +481,9 @@ public class Audit extends Action {
             ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
 
             while ((line = rf.readLine()) != null) {
+                if (Pattern.matches("^(#).*", line))
+                    continue;
+
                 Matcher xmxMatch = xmxPattern.matcher(line);
                 isMatch1 = xmxMatch.matches();
                 Matcher xmsMatch = xmsPattern.matcher(line);
@@ -509,7 +513,7 @@ public class Audit extends Action {
             }
             return output;
         } catch (Exception e) {
-            return "Could not detect Tomcat memory allocation in settings file.";
+            return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
     }
 
