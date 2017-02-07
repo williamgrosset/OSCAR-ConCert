@@ -310,8 +310,6 @@ public class AuditTest {
     *  verifyOscarProperties(String fileName):
     *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and
     *  "drugref_url" tags of Oscar properties file.
-    *
-    *  Note: There are 16 unique permutations for the 'isMatch' behavior of this method.
     */
 
     // isMatch1, isMatch2, isMatch3, isMatch4
@@ -444,8 +442,6 @@ public class AuditTest {
     /*
     *  verifyDrugRefProperties(String fileName):
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
-    *
-    *  Note: There are 9 unique permutations for the 'isMatch' behavior of this method.
     */
 
     // isMatch1, isMatch2, isMatch3
@@ -500,9 +496,8 @@ public class AuditTest {
 
     /*
     *  tomcatReinforcement():
-    *  Run "ps -ef | grep $tomcat", with $tomcat being the tomcat folder
-    *  found in catalinaBase.getPath(). Read "xmx" and "xms" values of 
-    *  the running Tomcat application.
+    *  Read through the Tomcat settings file and output the Xmx and Xms values
+    *  to the user.
     */
     
     @Test
