@@ -483,35 +483,4 @@ public class Audit extends Action {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
     }
-
-    /////////////////////////////////
-    //////// HELPER METHOD(S) ///////
-    /////////////////////////////////
-
-    /*
-    *  Loop through folders/files in directory and push all possible files 
-    *  (using pattern matching) onto the Stack.
-    *
-    *  @param directory: Webapps directory of Tomcat.
-    *  @param regex: Used for pattern matching on finding Oscar and Drugref 
-    *  deployed folders.
-    *  @return files: Stack of properties files to be verified individually.
-    */
-    protected Stack<String> grabFiles(File directory, String regex) {
-        Stack<String> files = new Stack<String>();
-        String[] fileList = directory.list();
-
-        // We did not find a file
-        if (fileList == null || fileList.length == 0) {
-            return files;
-        }
-
-        Arrays.sort(fileList);
-        for (int i = 0; i < fileList.length; i++) {
-            if (Pattern.matches(regex, fileList[i])) {
-                files.push(fileList[i]);
-            }
-        }
-        return files;
-    }
 }
