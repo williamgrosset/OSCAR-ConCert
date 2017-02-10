@@ -41,11 +41,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.DatabaseMetaData;
-//import oscar.OscarProperties;
-
 /*
 *  github.com/williamgrosset
 */
@@ -57,6 +52,7 @@ public class Audit extends Action {
     private File tomcatSettings;
     private String jvmVersion;
     private String tomcatVersion;
+    private String webAppName;
 
     public Audit() {
         catalinaBase = getCatalinaBase();
@@ -65,6 +61,7 @@ public class Audit extends Action {
         tomcatSettings = getTomcatSettings();
         jvmVersion = getJvmVersion();
         tomcatVersion = "";
+        webAppName = "";
     }
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -73,6 +70,7 @@ public class Audit extends Action {
                 servletResponse.sendRedirect("../logout.jsp");
 
             tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
+            webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
         } catch (Exception e) {
             return actionMapping.findForward("failure");
         }
@@ -205,23 +203,6 @@ public class Audit extends Action {
     */
     protected String databaseInfo() {
         return "This is temporary.";
-        /*
-        try {
-            String dbType = OscarProperties.getInstance().getProperty("db_type");
-            if (dbType == null || dbType.equals("")) {
-                return "Cannot determine database type. \"db_type\" tag is not configured properly.";
-            }
-
-            String dbUri = OscarProperties.getInstance().getProperty("db_uri");
-            String dbUserName = OscarProperties.getInstance().getProperty("db_username");
-            String dbPassWord = OscarProperties.getInstance().getProperty("db_password");
-
-            Connection connection = DriverManager.getConnection(dbUri, dbUserName, dbPassWord); 
-            DatabaseMetaData metaData = connection.getMetaData();
-            return metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
-        } catch (Exception e) {
-            return "Cannot determine database name and version.";
-        }*/
     }
     
 
@@ -243,38 +224,28 @@ public class Audit extends Action {
     }
 
     /*
-    *  Verify all possible Oscar deployments.
-    *  Grab all possible Oscar deployed folder names in root directory 
-    *  and push onto stack. Pop names off of the stack and verify 
-    *  each properties file that exists in "catalinaHome" directory.
+    *  Verify the current Oscar instance. Check build, version, and installation
+    *  properties of the default properties file in the WAR and properties file
+    *  found in Tomcat's catalinaHome directory.
     *
-    *  @param webAppsPath: Directory path to locate Oscar deployments.
-    *  @return output: Combined output of Oscar build and properties information
-    *  for each properties file that exists.
+    *  @param webAppsPath: Directory path for Tomcat webapps directory.
+    *  @return output: Combined output of Oscar build and properties information.
     */
     protected String verifyOscar(String webAppsPath) {
-        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
+        if (catalinaBase == null || catalinaHome == null || webAppName == null 
+                || catalinaBase.getPath().equals("") || webAppName.equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         }
 
         String output = "";
-        File webApps = new File(webAppsPath);
-        Stack<String> files = grabFiles(webApps, "^(oscar[0-9]*\\w*)$");
+        output += "<b>Currently checking \"oscar_mcmaster.properties\" file for \"" + webAppName + "\"..." + "</b><br />";
+        output += oscarBuild(webAppsPath + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+        output += verifyOscarProperties(webAppsPath + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+        output += "<b>Currently checking \"" + webAppName + ".properties\" file..." + "</b><br />";
+        output += oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties");
+        output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
 
-        if (files.empty()) {
-            return "Could not find any properties files for Oscar." + "<br />";
-        }
-        // Verify files on the Stack
-        while (!files.empty()) {
-            String file = files.pop();
-            output += "<b>Currently checking \"oscar_mcmaster.properties\" file for \"" + file + "\"..." + "</b><br />";
-            output += oscarBuild(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
-            output += verifyOscarProperties(webAppsPath + file + "/WEB-INF/classes/oscar_mcmaster.properties");
-            output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += oscarBuild(catalinaHome.getPath() + "/" + file + ".properties");
-            output += verifyOscarProperties(catalinaHome.getPath() + "/" + file + ".properties");
-        }
         return output;
     }
 
