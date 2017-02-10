@@ -41,10 +41,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-//import java.sql.Connection;
-//import java.sql.DriverManager;
-//import java.sql.DatabaseMetaData;
-//import oscar.OscarProperties;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.DatabaseMetaData;
+import oscar.OscarProperties;
 
 /*
 *  github.com/williamgrosset
@@ -204,8 +204,6 @@ public class MultiInstanceAudit extends Action {
     *  @return output: Database name and version.
     */
     protected String databaseInfo() {
-        return "This is temporary.";
-        /*
         try {
             String dbType = OscarProperties.getInstance().getProperty("db_type");
             if (dbType == null || dbType.equals("")) {
@@ -221,7 +219,7 @@ public class MultiInstanceAudit extends Action {
             return metaData.getDatabaseProductName() + ": " + metaData.getDatabaseProductVersion();
         } catch (Exception e) {
             return "Cannot determine database name and version.";
-        }*/
+        }
     }
     
 
