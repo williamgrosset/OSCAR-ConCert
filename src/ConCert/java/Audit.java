@@ -53,6 +53,7 @@ public class Audit extends Action {
     private String jvmVersion;
     private String tomcatVersion;
     private String webAppName;
+    private String drugrefUrl;
 
     public Audit() {
         catalinaBase = getCatalinaBase();
@@ -62,6 +63,7 @@ public class Audit extends Action {
         jvmVersion = getJvmVersion();
         tomcatVersion = "";
         webAppName = "";
+        drugrefUrl = "";
     }
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -84,7 +86,7 @@ public class Audit extends Action {
         servletRequest.setAttribute("serverVersion", serverVersion());
         servletRequest.setAttribute("databaseInfo", databaseInfo());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        servletRequest.setAttribute("verifyOscar", verifyOscar(catalinaBase.getPath() + "/webapps/"));
+        servletRequest.setAttribute("verifyOscar", verifyOscar());
         servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps/"));
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
@@ -228,10 +230,9 @@ public class Audit extends Action {
     *  properties of the default properties file in the WAR and properties file
     *  found in Tomcat's catalinaHome directory.
     *
-    *  @param webAppsPath: Directory path for Tomcat webapps directory.
     *  @return output: Combined output of Oscar build and properties information.
     */
-    protected String verifyOscar(String webAppsPath) {
+    protected String verifyOscar() {
         if (catalinaBase == null || catalinaHome == null || webAppName == null 
                 || catalinaBase.getPath().equals("") || webAppName.equals("")
                 || catalinaHome.getPath().equals("")) {
@@ -240,8 +241,8 @@ public class Audit extends Action {
 
         String output = "";
         output += "<b>Currently checking \"oscar_mcmaster.properties\" file for \"" + webAppName + "\"..." + "</b><br />";
-        output += oscarBuild(webAppsPath + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-        output += verifyOscarProperties(webAppsPath + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+        output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+        output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
         output += "<b>Currently checking \"" + webAppName + ".properties\" file..." + "</b><br />";
         output += oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties");
         output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
@@ -321,6 +322,7 @@ public class Audit extends Action {
                 if (isMatch4) { // drugref_url=
                     flag4 = true;
                     output += "\"drugref_url\" tag is configured as: " + line.substring(12) + "<br />";
+                    drugrefUrl = line.substring(12);
                 }
                 if (flag1 && flag2 && flag3 && flag4)
                     break;
@@ -357,18 +359,17 @@ public class Audit extends Action {
         }
 
         String output = "";
-        File webApps = new File(webAppsPath);
-        Stack<String> files = grabFiles(webApps, "^(drugref[0-9]*\\w*)$");
 
-        if (files.empty()) {
-            return "Could not find any properties files for Drugref.";
+        if (drugrefUrl.equals("")) {
+            return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
+        output = drugrefUrl;
         // Verify files on the Stack
-        while (!files.empty()) {
-            String file = files.pop();
-            output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file + ".properties");
-        }
+        //while (!files.empty()) {
+            //String file = files.pop();
+            //output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
+            //output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file + ".properties");
+        //}
         return output;
     }
 
