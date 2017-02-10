@@ -87,7 +87,7 @@ public class Audit extends Action {
         servletRequest.setAttribute("databaseInfo", databaseInfo());
         servletRequest.setAttribute("verifyTomcat", verifyTomcat());
         servletRequest.setAttribute("verifyOscar", verifyOscar());
-        servletRequest.setAttribute("verifyDrugref", verifyDrugref(catalinaBase.getPath() + "/webapps/"));
+        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
     }
@@ -343,33 +343,28 @@ public class Audit extends Action {
     }
 
     /*
-    *  Verify all Drugref deployments.
-    *  Grab all possible Drugref deployed folder names in root directory 
-    *  and push onto stack. Pop names off of the stack and verify 
-    *  each properties file that exists in "catalinaHome" directory.
+    *  Verify the current Drugref instance. Check installation properties of 
+    *  the properties file found in Tomcat's catalinaHome directory.
     *
-    *  @param webAppsPath: Directory path to locate Drugref deployments.
-    *  @return output: Combined output of Drugref properties information
-    *  for each properties file that exists.
+    *  @return output: Output of Drugref properties information.
     */
-    protected String verifyDrugref(String webAppsPath) {
+    protected String verifyDrugref() {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         }
-
-        String output = "";
-
         if (drugrefUrl.equals("")) {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
-        output = drugrefUrl;
-        // Verify files on the Stack
-        //while (!files.empty()) {
-            //String file = files.pop();
-            //output += "<b>Currently checking \"" + file + ".properties\" file..." + "</b><br />";
-            //output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + file + ".properties");
-        //}
+
+        // Grab deployed Drugref folder name and use as file name for the properties file
+        Pattern p = Pattern.compile(".*://.*/(.*)/.*");
+        Matcher m = p.matcher(drugrefUrl);
+        m.matches();
+
+        String output = "";
+        output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
+        output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + m.group(1) + ".properties");
         return output;
     }
 
