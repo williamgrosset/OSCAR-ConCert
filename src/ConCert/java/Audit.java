@@ -93,9 +93,9 @@ public class Audit extends Action {
     }
 
     /*
-    *  Retrieve catalina base directory from system properties. 
+    *  Retrieve "catalina.base" directory from system properties. 
     *
-    *  @return catalinaBase: File object for catalina base directory.
+    *  @return catalinaBase: File object for "catalina.base" directory.
     */
     private File getCatalinaBase() {
         try {
@@ -106,9 +106,9 @@ public class Audit extends Action {
     }
 
     /*
-    *  Retrieve catalina home directory from system properties. 
+    *  Retrieve "catalina.home" directory from system properties. 
     *
-    *  @return catalinaHome: File object for catalina home directory.
+    *  @return catalinaHome: File object for "catalina.home" directory.
     */
     private File getCatalinaHome() {
         try {
@@ -142,8 +142,8 @@ public class Audit extends Action {
             if (catalinaBase == null || catalinaBase.getPath().equals(""))
                 throw new FileNotFoundException();
 
-            Pattern tomcatVersion = Pattern.compile(".*(tomcat[0-9]+)");
-            Matcher tomcatMatch = tomcatVersion.matcher(catalinaBase.getPath());
+            Pattern tomcatPattern = Pattern.compile(".*(tomcat[0-9]+)");
+            Matcher tomcatMatch = tomcatPattern.matcher(catalinaBase.getPath());
             tomcatMatch.matches();
             return new File("/etc/default/" + tomcatMatch.group(1));
         } catch (Exception e) {
@@ -158,7 +158,7 @@ public class Audit extends Action {
     */
     private String getJvmVersion() {
         try {
-            return System.getProperty("java.runtime.version");
+            return System.getProperty("java.version");
         } catch (Exception e) {
             return "";
         }
@@ -215,9 +215,10 @@ public class Audit extends Action {
     *  @return output: JVM and Tomcat version information.
     */
     protected String verifyTomcat() {
-        if (jvmVersion == null || tomcatVersion == null || jvmVersion.equals("")
-                || tomcatVersion.equals(""))
-            return "Please verify that Tomcat is setup correctly.";
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
+        if (jvmVersion == null || jvmVersion.equals(""))
+            return "Could not detect JVM version from system properties.";
 
         String output = "";
         output += "JVM Version: " + jvmVersion + "<br />";
@@ -228,24 +229,26 @@ public class Audit extends Action {
     /*
     *  Verify the current Oscar instance. Check build, version, and installation
     *  properties of the default properties file in the WAR and properties file
-    *  found in Tomcat's catalinaHome directory.
+    *  found in Tomcat's "catalina.home" directory.
     *
     *  @return output: Combined output of Oscar build and properties information.
     */
     protected String verifyOscar() {
-        if (catalinaBase == null || catalinaHome == null || webAppName == null 
-                || catalinaBase.getPath().equals("") || webAppName.equals("")
+        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         }
+        if (webAppName == null || webAppName.equals(""))
+            return "Could not detect the Oscar webapps directory name.";
 
         String output = "";
-        output += "<b>Currently checking \"oscar_mcmaster.properties\" file for \"" + webAppName + "\"..." + "</b><br />";
+        output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in deployed WAR..." + "</b><br />";
         output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
         output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-        output += "<b>Currently checking \"" + webAppName + ".properties\" file..." + "</b><br />";
+        output += "<b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
         output += oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties");
         output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
+        output += "<br ><b>NOTE:</b> The properties file found in the \"catalina.home\" directory overwrites the default properties file found in the deployed WAR.<br />";
 
         return output;
     }
@@ -271,7 +274,7 @@ public class Audit extends Action {
                     return "Oscar build and version: " + line.substring(9) + "<br />";
                 }
             }
-            return "Oscar build/version cannot be found." + "<br />";
+            return "Oscar build/version tag cannot be found." + "<br />";
         } catch (Exception e) {
             return "Could not read properties file to detect Oscar build.<br />";
         }
@@ -329,13 +332,13 @@ public class Audit extends Action {
             }
             
             if (!flag1)
-                output += "\"HL7TEXT_LABS\" tag is not configured properly." + "<br />";
+                output += "\"HL7TEXT_LABS\" tag cannot be found." + "<br />";
             if (!flag2)
-                output += "\"SINGLE_PAGE_CHART\" tag is not configured properly." + "<br />";
+                output += "\"SINGLE_PAGE_CHART\" tag cannot be found." + "<br />";
             if (!flag3)
-                output += "\"TMP_DIR\" tag is not configured properly." + "<br />";
+                output += "\"TMP_DIR\" tag cannot be found." + "<br />";
             if (!flag4)
-                output += "\"drugref_url\" tag is not configured properly." + "<br />";
+                output += "\"drugref_url\" tag cannot be found." + "<br />";
             return output;
         } catch (Exception e) {
             return "Could not read properties file to verify Oscar tags.";
@@ -344,7 +347,7 @@ public class Audit extends Action {
 
     /*
     *  Verify the current Drugref instance. Check installation properties of 
-    *  the properties file found in Tomcat's catalinaHome directory.
+    *  the properties file found in Tomcat's "catalina.home" directory.
     *
     *  @return output: Output of Drugref properties information.
     */
@@ -412,11 +415,11 @@ public class Audit extends Action {
             }
 
             if (!flag1)
-                output += "\"db_user\" tag is not configured properly." + "<br />";
+                output += "\"db_user\" tag cannot be found." + "<br />";
             if (!flag2)
-                output += "\"db_url\" tag is not configured properly." + "<br />";
+                output += "\"db_url\" tag cannot be found." + "<br />";
             if (!flag3)
-                output += "\"db_driver\" tag is not configured properly." + "<br />";
+                output += "\"db_driver\" tag cannot be found." + "<br />";
             return output;
         } catch (Exception e) {
             return "Could not read properties file to verify Drugref tags.";
@@ -431,9 +434,12 @@ public class Audit extends Action {
     *  (minimum memory allocation) value.
     */
     protected String tomcatReinforcement() {
-        if (catalinaBase == null || tomcatSettings == null || catalinaBase.getPath().equals("")
-                || tomcatSettings.getPath().equals(""))
+        if (catalinaBase == null || catalinaBase.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
+
+        if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
+            return "Could not detect Tomcat settings file in /etc/default/ directory."; 
+
         try {
             String output = "";
             String line = "";
