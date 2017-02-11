@@ -227,9 +227,9 @@ public class Audit extends Action {
     }
 
     /*
-    *  Verify the current Oscar instance. Check build, version, and installation
-    *  properties of the default properties file in the WAR and properties file
-    *  found in Tomcat's "catalina.home" directory.
+    *  Verify the current Oscar instance. Check build, version, and the default 
+    *  properties file in the WAR and properties file found in Tomcat's "catalina.home" 
+    *  directory.
     *
     *  @return output: Combined output of Oscar build and properties information.
     */
@@ -242,39 +242,56 @@ public class Audit extends Action {
             return "Could not detect the Oscar webapps directory name.";
 
         String output = "";
-        output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in deployed WAR..." + "</b><br />";
+        output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />";
         output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
         output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
         output += "<b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
-        output += oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties");
         output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
-        output += "<br ><b>NOTE:</b> The properties file found in the \"catalina.home\" directory overwrites the default properties file found in the deployed WAR.<br />";
+        output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
 
         return output;
     }
 
     /*
-    *  Read Oscar buildtag of properties file.
+    *  Read Oscar "buildtag" and "buildDateTime" of properties file.
     *
     *  @param fileName: Path to properties file.
-    *  @return output: Current build and version of Oscar.
+    *  @return output: Current Oscar build, version, and date of build.
     */
     protected String oscarBuild(String fileName) {
         try {
+            String output = "";
             String line = "";
             File oscar = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
-            boolean isMatch = false;
+            boolean isMatch1 = false;
+            boolean isMatch2 = false;
+            boolean flag1 = false;
+            boolean flag2 = false;
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line))
                     continue;
-                isMatch = Pattern.matches("^(buildtag=).*", line);
-                if (isMatch) {
-                    return "Oscar build and version: " + line.substring(9) + "<br />";
+                isMatch1 = Pattern.matches("^(buildtag=).*", line);
+                isMatch2 = Pattern.matches("^(buildDateTime=).*", line);
+                if (isMatch1) {
+                    flag1 = true;
+                    output += "<b>Oscar build and version: " + line.substring(9) + "</b><br />";
                 }
+                if (isMatch2) {
+                    flag2 = true;
+                    output += "<b>Oscar build date and time: " + line.substring(14) + "</b><br />";
+                }
+                if (flag1 && flag2)
+                    break;
             }
-            return "Oscar build/version tag cannot be found." + "<br />";
+
+            if (!flag1)
+                output += "<b>Could not detect Oscar build tag." + "</b><br />";
+            if (!flag2)
+                output += "<b>Could not detect Oscar build date and time." + "</b><br />";
+
+            return output;
         } catch (Exception e) {
             return "Could not read properties file to detect Oscar build.<br />";
         }
@@ -332,13 +349,13 @@ public class Audit extends Action {
             }
             
             if (!flag1)
-                output += "\"HL7TEXT_LABS\" tag cannot be found." + "<br />";
+                output += "Could not detect \"HL7TEXT_LABS\" tag." + "<br />";
             if (!flag2)
-                output += "\"SINGLE_PAGE_CHART\" tag cannot be found." + "<br />";
+                output += "Could not detect \"SINGLE_PAGE_CHART\" tag." + "<br />";
             if (!flag3)
-                output += "\"TMP_DIR\" tag cannot be found." + "<br />";
+                output += "Could not detect \"TMP_DIR\" tag." + "<br />";
             if (!flag4)
-                output += "\"drugref_url\" tag cannot be found." + "<br />";
+                output += "Could not detect \"drugref_url\" tag." + "<br />";
             return output;
         } catch (Exception e) {
             return "Could not read properties file to verify Oscar tags.";
@@ -346,8 +363,8 @@ public class Audit extends Action {
     }
 
     /*
-    *  Verify the current Drugref instance. Check installation properties of 
-    *  the properties file found in Tomcat's "catalina.home" directory.
+    *  Verify the current Drugref instance. Check the properties file found in 
+    *  Tomcat's "catalina.home" directory.
     *
     *  @return output: Output of Drugref properties information.
     */
@@ -415,11 +432,11 @@ public class Audit extends Action {
             }
 
             if (!flag1)
-                output += "\"db_user\" tag cannot be found." + "<br />";
+                output += "Could not detect \"db_user\" tag." + "<br />";
             if (!flag2)
-                output += "\"db_url\" tag cannot be found." + "<br />";
+                output += "Could not detect \"db_url\" tag." + "<br />";
             if (!flag3)
-                output += "\"db_driver\" tag cannot be found." + "<br />";
+                output += "Could not detect \"db_driver\" tag." + "<br />";
             return output;
         } catch (Exception e) {
             return "Could not read properties file to verify Drugref tags.";
