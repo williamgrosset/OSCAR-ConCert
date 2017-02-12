@@ -10,14 +10,15 @@ The accepted feature request (via JIRA) can be found [here](https://oscaremr.atl
 Currently, the ConCert project audits the OSCAR deployment environment:
 * Ubuntu supported version
 * Java/Open JDK version
-* Database product name and version
-* OSCAR build and version
+* OSCAR database type and version
+* OSCAR build version
 * OSCAR/Drugref file properties
 * Tomcat memory allocation
 
-This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All 35 **JUnit tests** can be found in the ```test/``` directory of ConCert.
+This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All 33 **JUnit tests** can be found in the ```test/``` directory of ConCert.
 
 ### Design Decisions
+### February 12th UPDATE: These notes are currently outdated and will be updated soon.
 1. Why utilize a **Stack** when grabbing and sorting files? *(java/Audit.java)*<br><br>
 It does not really matter what data structure we use here. I chose the **Stack** to simplify the verification process, so other developers have a clearer understanding. We could of chosen mostly any of the available data structures in the ```java.util.*``` package.
 
