@@ -228,8 +228,8 @@ public class Audit extends Action {
 
     /*
     *  Verify the current Oscar instance. Check build, version, and the default 
-    *  properties file in the WAR and properties file found in Tomcat's "catalina.home" 
-    *  directory.
+    *  properties file in the WAR and the properties file found in Tomcat's 
+    *  "catalina.home" directory.
     *
     *  @return output: Combined output of Oscar build and properties information.
     */

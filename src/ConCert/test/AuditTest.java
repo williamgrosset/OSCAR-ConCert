@@ -24,12 +24,11 @@
 
 package oscar.util;
 
-import java.io.FileNotFoundException;
+import java.util.Stack;
 import java.io.File;
 import java.io.IOException;
-import java.util.Stack;
+import java.io.FileNotFoundException;
 
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.After;
@@ -37,6 +36,7 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.apache.commons.io.FileUtils;
 import java.lang.reflect.Field;
+import static org.junit.Assert.*;
 
 public class AuditTest {
 
@@ -176,11 +176,10 @@ public class AuditTest {
     }
 
     /*
-    *  verifyOscar(String webAppsPath):
-    *  Verify all possible Oscar deployments.
-    *  Grab all possible Oscar deployed folder names in root directory
-    *  and push onto stack. Pop names off of the stack and verify
-    *  each properties file that exists in "catalinaHome" directory.
+    *  verifyOscar():
+    *  Verify the current Oscar instance. Check build, version, and the default
+    *  properties file in the WAR and the properties file found in Tomcat's 
+    *  "catalina.home" directory.
     */
 
     @Test
@@ -258,7 +257,7 @@ public class AuditTest {
 
     /*
     *  oscarBuild(String fileName):
-    *  Read Oscar buildtag of properties file.
+    *  Read Oscar "buildtag" and "buildDateTime" of properties file.
     */
 
     @Test
@@ -351,11 +350,9 @@ public class AuditTest {
     }
 
     /*
-    *  verifyDrugRef(String webAppsPath):
-    *  Verify all possible Drugref deployments.
-    *  Grab all possible Drugref deployed folder names in root directory
-    *  and push onto stack. Pop names off of the stack and verify
-    *  each properties file that exists in "catalinaHome" directory.
+    *  verifyDrugRef():
+    *  Verify the current Drugref instance. Check the properties file found in
+    *  Tomcat's "catalina.home" directory.
     */
 
     @Test
@@ -408,7 +405,8 @@ public class AuditTest {
     }
     /*
     *  verifyDrugRefProperties(String fileName):
-    *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
+    *  Read "db_user," "db_url," and "db_driver" tags of Drugref 
+    *  properties file.
     */
 
     // isMatch1, isMatch2, isMatch3
@@ -517,11 +515,15 @@ public class AuditTest {
         lsbRelease = null;
         jvmVersion = null;
         tomcatVersion = null;
+        webAppName = null;
+        drugrefUrl = null;
 
         assertNull(catalinaBase);
         assertNull(catalinaHome);
         assertNull(lsbRelease);
         assertNull(jvmVersion);
         assertNull(tomcatVersion);
+        assertNull(webAppName);
+        assertNull(drugrefUrl);
     }
 }
