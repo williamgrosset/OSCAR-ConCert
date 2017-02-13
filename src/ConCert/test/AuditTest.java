@@ -36,6 +36,9 @@ import org.apache.commons.io.FileUtils;
 import java.lang.reflect.Field;
 import static org.junit.Assert.*;
 
+/*
+*  github.com/williamgrosset
+*/
 public class AuditTest {
 
     Audit audit = new Audit();
@@ -89,7 +92,8 @@ public class AuditTest {
 
     /*
     *  serverVersion():
-    *  Read "/etc/lsb-release" file and extract Ubuntu server version.
+    *  Read "/etc/lsb-release" file and extract Linux server version. The
+    *  file should be available on Ubuntu and Debian distributions.
     */
  
     @Test
@@ -102,21 +106,21 @@ public class AuditTest {
     @Test
     public void isMatchFalseServerVersion() throws IOException, IllegalAccessException {
         FileUtils.writeStringToFile((File)lsbRelease.get(audit), "randomtag=");
-        String expectedResult = "Could not detect Ubuntu server version.";
+        String expectedResult = "Could not detect Linux server version.";
         assertEquals(expectedResult, audit.serverVersion());
     }
 
     @Test
     public void emptyPathServerVersion() throws IOException, IllegalAccessException {
         lsbRelease.set(audit, new File(""));
-        String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
+        String expectedResult = "Could not read \"lsb-release\" file to detect Linux server version.";      
         assertEquals(expectedResult, audit.serverVersion());
     }
     
     @Test
     public void nullServerVersion() throws IOException, IllegalAccessException {
         lsbRelease.set(audit, null);
-        String expectedResult = "Could not read \"lsb-release\" file to detect Ubuntu server version.";      
+        String expectedResult = "Could not read \"lsb-release\" file to detect Linux server version.";      
         assertEquals(expectedResult, audit.serverVersion());
     }
 
@@ -131,7 +135,7 @@ public class AuditTest {
 
     /*
     *  verifyTomcat():
-    *  Extract JVM version from system properties and server information
+    *  Extract JVM version from system properties and server version information 
     *  from servlet.
     */
 
@@ -463,6 +467,7 @@ public class AuditTest {
         File unreadableFile = Files.createTempDirectory("notAFile").toFile();
         String expectedResult = "Could not read properties file to verify Drugref tags.";      
         assertEquals(expectedResult, audit.verifyDrugrefProperties(unreadableFile.getPath()));
+        unreadableFile.deleteOnExit();
     }
 
     /*

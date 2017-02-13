@@ -27,9 +27,6 @@ package oscar.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import org.apache.commons.io.input.ReversedLinesFileReader;
-
-import java.util.Arrays;
-import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -165,12 +162,14 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read "/etc/lsb-release" file and extract Ubuntu server version.
+    *  Read "/etc/lsb-release" file and extract Linux server version. The
+    *  file should be available on Ubuntu and Debian distributions.
+    *
     *  NOTE: Majority of my methods require the ReversedLinesFilerReader class.
     *  Since I did not want to require another import for the default file reader,
     *  I went ahead and used ReversedLinesFileReader anyways.
     *
-    *  @return output: Ubuntu server version.
+    *  @return output: Linux server version.
     */
     protected String serverVersion() {
         try {
@@ -190,9 +189,9 @@ public class Audit extends Action {
                     return line.substring(20);
                 }
             }
-            return "Could not detect Ubuntu server version.";
+            return "Could not detect Linux server version.";
         } catch (Exception e) {
-            return "Could not read \"lsb-release\" file to detect Ubuntu server version.";
+            return "Could not read \"lsb-release\" file to detect Linux server version.";
         }
     }
 
@@ -209,7 +208,7 @@ public class Audit extends Action {
     
 
     /*
-    *  Extract JVM version from system properties and server information 
+    *  Extract JVM version from system properties and server version information 
     *  from servlet.
     *
     *  @return output: JVM and Tomcat version information.
@@ -248,7 +247,6 @@ public class Audit extends Action {
         output += "<b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
         output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
         output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
-
         return output;
     }
 
@@ -290,7 +288,6 @@ public class Audit extends Action {
                 output += "<b>Could not detect Oscar build tag." + "</b><br />";
             if (!flag2)
                 output += "<b>Could not detect Oscar build date and time." + "</b><br />";
-
             return output;
         } catch (Exception e) {
             return "Could not read properties file to detect Oscar build.<br />";
@@ -378,11 +375,10 @@ public class Audit extends Action {
         }
 
         // Grab deployed Drugref folder name and use as the file name for the properties file
+        String output = "";
         Pattern p = Pattern.compile(".*://.*/(.*)/.*");
         Matcher m = p.matcher(drugrefUrl);
         m.matches();
-
-        String output = "";
         output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
         output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + m.group(1) + ".properties");
         return output;
