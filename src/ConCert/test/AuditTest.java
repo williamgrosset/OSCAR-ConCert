@@ -32,10 +32,8 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 
 import org.junit.Before;
-//import org.junit.Rule;
 import org.junit.After;
 import org.junit.Test;
-//import org.junit.rules.TemporaryFolder;
 import org.apache.commons.io.FileUtils;
 import java.lang.reflect.Field;
 import static org.junit.Assert.*;
@@ -52,20 +50,11 @@ public class AuditTest {
     private Field webAppName;
     private Field drugrefUrl;
 
-    /*
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-    */
-
     @Before
     public void initialize() throws IOException, NoSuchFieldException, IllegalAccessException {
-        //File catalinaBaseFolder = folder.newFolder("catalinaBase");
         File catalinaBaseFolder = Files.createTempDirectory("catalinaBase").toFile();
-        //File catalinaHomeFolder = folder.newFolder("catalinaHome");
         File catalinaHomeFolder = Files.createTempDirectory("catalinaHome").toFile();
-        //File lsbReleaseFile = folder.newFile("lsb-release");
         File lsbReleaseFile = Files.createTempFile("lsb-release", null).toFile();
-        //File tomcatSettingsFile = folder.newFile("tomcat411");
         File tomcatSettingsFile = Files.createTempFile("tomcat411", null).toFile();
         String jvmVersionValue = "1.7.0_111";
         String tomcatVersionValue = "Apache Tomcat/7.0.52 (Ubuntu)";
@@ -192,7 +181,6 @@ public class AuditTest {
 
     @Test
     public void matchVerifyOscar() throws IOException, IllegalAccessException {
-        //File testingFolder = folder.newFolder("testingFolder");
         File testingFolder = Files.createTempDirectory("testingFolder").toFile();
         File catalinaHomeFolder = new File(testingFolder.getPath() + "/");
         File catalinaBaseFolder = catalinaHomeFolder;
@@ -201,7 +189,6 @@ public class AuditTest {
         File oscar15ClassesFolder = new File(testingFolder.getPath() + "/webapps/oscar15/WEB-INF/classes");
         oscar15ClassesFolder.mkdir();
 
-        // put oscar_mcmaster.properties file in directory above
         File oscarMcmaster = new File(oscar15ClassesFolder.getPath() + "/oscar_mcmaster.properties");
         FileUtils.writeStringToFile(oscarMcmaster, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
@@ -210,7 +197,6 @@ public class AuditTest {
                                                 + "buildtag=oscar15BetaMaster-454\n"
                                                 + "buildDateTime=2017-02-08 08:25 PM");
 
-        // create oscar15.properties file & oscar15_bc.properties file in testingFolder directory
         File oscar15 = new File(testingFolder.getPath() + "/oscar15.properties");
         FileUtils.writeStringToFile(oscar15, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
@@ -231,11 +217,11 @@ public class AuditTest {
                                     + "\"HL7TEXT_LABS\" tag is configured as: true<br />"
                                     + "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
         assertEquals(expectedResult, audit.verifyOscar());
+        testingFolder.deleteOnExit();
     }
 
     @Test
     public void emptyWebAppNameVerifyOscar() throws IOException, IllegalAccessException {
-        //File testingFolder = folder.newFolder("testingFolder");
         File testingFolder = Files.createTempDirectory("testingFolder").toFile();
         File catalinaHomeFolder = new File(testingFolder.getPath() + "/");
         catalinaHome.set(audit, catalinaHomeFolder);
@@ -243,6 +229,7 @@ public class AuditTest {
 
         String expectedResult = "Could not detect the Oscar webapps directory name.";
         assertEquals(expectedResult, audit.verifyOscar());
+        testingFolder.deleteOnExit();
     }
 
     @Test
@@ -272,7 +259,6 @@ public class AuditTest {
 
     @Test
     public void isMatchTrueOscarBuild() throws IOException {
-        //File correctFile = folder.newFile("correctInfo.properties");
         File correctFile = Files.createTempFile("correctInfo", ".properties").toFile();
         FileUtils.writeStringToFile(correctFile, "buildtag=oscar15BetaMaster-454\n"
                                                     + "buildDateTime=2017-02-08 08:25 PM");
@@ -280,25 +266,26 @@ public class AuditTest {
         String expectedResult = "<b>Oscar build date and time: 2017-02-08 08:25 PM</b><br />"
                                     + "<b>Oscar build and version: oscar15BetaMaster-454</b><br />";
         assertEquals(expectedResult, audit.oscarBuild(correctFile.getPath()));
+        correctFile.deleteOnExit();
     }
 
     @Test
     public void isMatchFalseOscarBuild() throws IOException {
-        //File notCorrectFile = folder.newFile("notCorrectInfo.properties");
         File notCorrectFile = Files.createTempFile("notCorrectInfo", ".properties").toFile();
         FileUtils.writeStringToFile(notCorrectFile, "#buildtag=oscar15BetaMaster-454");
 
         String expectedResult = "<b>Could not detect Oscar build tag.</b><br />"
                                     + "<b>Could not detect Oscar build date and time.</b><br />";
         assertEquals(expectedResult, audit.oscarBuild(notCorrectFile.getPath()));
+        notCorrectFile.deleteOnExit();
     }
 
     @Test
     public void exceptionOscarBuild() throws IOException {
-        //File unreadableFile = folder.newFolder("fakeFile");
         File unreadableFile = Files.createTempDirectory("notAFile").toFile();
         String expectedResult = "Could not read properties file to detect Oscar build.<br />";      
         assertEquals(expectedResult, audit.oscarBuild(unreadableFile.getPath()));
+        unreadableFile.deleteOnExit();
     }
 
     /*
@@ -310,7 +297,6 @@ public class AuditTest {
     // isMatch1, isMatch2, isMatch3, isMatch4
     @Test
     public void isMatchAllVerifyOscarProperties() throws IOException {
-        //File correctFile = folder.newFile("correctInfo.properties");
         File correctFile = Files.createTempFile("correctInfo", ".properties").toFile();
         FileUtils.writeStringToFile(correctFile, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
@@ -322,12 +308,12 @@ public class AuditTest {
                                     + "\"SINGLE_PAGE_CHART\" tag is configured as: yes<br />"
                                     + "\"HL7TEXT_LABS\" tag is configured as: true<br />";
         assertEquals(expectedResult, audit.verifyOscarProperties(correctFile.getPath()));
+        correctFile.deleteOnExit();
     }
 
     // isMatch1, !isMatch2, isMatch3, !isMatch4
     @Test
     public void isMatch13VerifyOscarProperties() throws IOException {
-        //File semiCorrectFile = folder.newFile("semiCorrectInfo.properties");
         File semiCorrectFile = Files.createTempFile("semiCorrectInfo", ".properties").toFile();
         FileUtils.writeStringToFile(semiCorrectFile, "HL7TEXT_LABS=true\n"
                                                 + "#SINGLE_PAGE_CHART=yes\n"
@@ -339,12 +325,12 @@ public class AuditTest {
                                     + "Could not detect \"SINGLE_PAGE_CHART\" tag.<br />"
                                     + "Could not detect \"drugref_url\" tag.<br />";
         assertEquals(expectedResult, audit.verifyOscarProperties(semiCorrectFile.getPath()));
+        semiCorrectFile.deleteOnExit();
     }
 
     // !isMatch1, !isMatch2, !isMatch3, !isMatch4
     @Test
     public void isMatchFalseVerifyOscarProperties() throws IOException {
-        //File notCorrectFile = folder.newFile("nonCorrectInfo.properties");
         File notCorrectFile = Files.createTempFile("notCorrectInfo", ".properties").toFile();
         FileUtils.writeStringToFile(notCorrectFile, "#HL7TEXT_LABS=true\n"
                                                 + "#SINGLE_PAGE_CHART=yes\n"
@@ -356,14 +342,15 @@ public class AuditTest {
                                     + "Could not detect \"TMP_DIR\" tag.<br />"
                                     + "Could not detect \"drugref_url\" tag.<br />";
         assertEquals(expectedResult, audit.verifyOscarProperties(notCorrectFile.getPath()));
+        notCorrectFile.deleteOnExit();
     }
 
     @Test
     public void exceptionVerifyOscarProperties() throws IOException {
-        //File unreadableFile = folder.newFolder("fakeFile");
         File unreadableFile = Files.createTempDirectory("notAFile").toFile();
         String expectedResult = "Could not read properties file to verify Oscar tags.";      
         assertEquals(expectedResult, audit.verifyOscarProperties(unreadableFile.getPath()));
+        unreadableFile.deleteOnExit();
     }
 
     /*
@@ -374,7 +361,6 @@ public class AuditTest {
 
     @Test
     public void matchVerifyDrugref() throws IOException, IllegalAccessException {
-        //File testingFolder = folder.newFolder("testingFolder");
         File testingFolder = Files.createTempDirectory("testingFolder").toFile();
         File catalinaHomeFolder = new File(testingFolder.getPath() + "/");
         catalinaHome.set(audit, catalinaHomeFolder);
@@ -389,11 +375,11 @@ public class AuditTest {
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />";
         assertEquals(expectedResult, audit.verifyDrugref());
+        testingFolder.deleteOnExit();
     }
 
     @Test
     public void emptyDrugrefUrlVerifyDrugref() throws IOException, IllegalAccessException {
-        //File testingFolder = folder.newFolder("testingFolder");
         File testingFolder = Files.createTempDirectory("testingFolder").toFile();
         File catalinaHomeFolder = new File(testingFolder.getPath()  + "/");
         catalinaHome.set(audit, catalinaHomeFolder);
@@ -401,6 +387,7 @@ public class AuditTest {
 
         String expectedResult = "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         assertEquals(expectedResult, audit.verifyDrugref());
+        testingFolder.deleteOnExit();
     }
 
     @Test
@@ -431,7 +418,6 @@ public class AuditTest {
     // isMatch1, isMatch2, isMatch3
     @Test
     public void isMatchAllVerifyDrugrefProperties() throws IOException {
-        //File correctFile = folder.newFile("correctInfo.properties");
         File correctFile = Files.createTempFile("correctInfo", ".properties").toFile();
         FileUtils.writeStringToFile(correctFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
@@ -441,12 +427,12 @@ public class AuditTest {
                                     + "\"db_url\" tag is configured as: jdbc:mysql://127.0.0.1:3306/drugref<br />"
                                     + "\"db_user\" tag is configured as: root<br />";
         assertEquals(expectedResult, audit.verifyDrugrefProperties(correctFile.getPath()));
+        correctFile.deleteOnExit();
     }
 
     // isMatch1, isMatch2, !isMatch3
     @Test
     public void isMatch12VerifyDrugrefProperties() throws IOException {
-        //File semiCorrectFile = folder.newFile("semiCorrectInfo.properties");
         File semiCorrectFile = Files.createTempFile("semiCorrectInfo", ".properties").toFile();
         FileUtils.writeStringToFile(semiCorrectFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
@@ -456,12 +442,12 @@ public class AuditTest {
                                     + "\"db_user\" tag is configured as: root<br />"
                                     + "Could not detect \"db_driver\" tag.<br />";
         assertEquals(expectedResult, audit.verifyDrugrefProperties(semiCorrectFile.getPath()));
+        semiCorrectFile.deleteOnExit();
     }
 
     // !isMatch1, !isMatch2, !isMatch3
     @Test
     public void isMatchFalseVerifyDrugrefProperties() throws IOException {
-        //File semiCorrectFile = folder.newFile("semiCorrectInfo.properties");
         File semiCorrectFile = Files.createTempFile("semiCorrectInfo", ".properties").toFile();
         FileUtils.writeStringToFile(semiCorrectFile, "#db_user=root\n"
                                                 + "#db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
@@ -471,11 +457,11 @@ public class AuditTest {
                                     + "Could not detect \"db_url\" tag.<br />"
                                     + "Could not detect \"db_driver\" tag.<br />";
         assertEquals(expectedResult, audit.verifyDrugrefProperties(semiCorrectFile.getPath()));
+        semiCorrectFile.deleteOnExit();
     }
 
     @Test
     public void exceptionVerifyDrugrefProperties() throws IOException {
-        //File unreadableFile = folder.newFolder("fakeFile");
         File unreadableFile = Files.createTempDirectory("notAFile").toFile();
         String expectedResult = "Could not read properties file to verify Drugref tags.";      
         assertEquals(expectedResult, audit.verifyDrugrefProperties(unreadableFile.getPath()));
@@ -523,17 +509,16 @@ public class AuditTest {
 
     @Test
     public void exceptionTomcatReinforcement() throws IOException, IllegalAccessException {
-        //File tomcatSettingsFolder = folder.newFolder("aRandomFolder");
         File tomcatSettingsFolder = Files.createTempDirectory("notAFile").toFile();
         tomcatSettings.set(audit, tomcatSettingsFolder);
 
         String expectedResult = "Could not detect Tomcat memory allocation in Tomcat settings file.";
         assertEquals(expectedResult, audit.tomcatReinforcement());
+        tomcatSettingsFolder.deleteOnExit();
     }
 
     @After
     public void tearDown() {
-        //folder.delete();
         catalinaBase = null;
         catalinaHome = null;
         lsbRelease = null;
