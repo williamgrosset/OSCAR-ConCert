@@ -24,12 +24,10 @@
 
 package oscar.util;
 
-import java.util.Stack;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
-import java.io.FileNotFoundException;
 
 import org.junit.Before;
 import org.junit.After;

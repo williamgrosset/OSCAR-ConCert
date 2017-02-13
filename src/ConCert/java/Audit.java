@@ -274,11 +274,11 @@ public class Audit extends Action {
                     continue;
                 isMatch1 = Pattern.matches("^(buildtag=).*", line);
                 isMatch2 = Pattern.matches("^(buildDateTime=).*", line);
-                if (isMatch1) {
+                if (isMatch1) { // buildtag=
                     flag1 = true;
                     output += "<b>Oscar build and version: " + line.substring(9) + "</b><br />";
                 }
-                if (isMatch2) {
+                if (isMatch2) { // buildDateTime=
                     flag2 = true;
                     output += "<b>Oscar build date and time: " + line.substring(14) + "</b><br />";
                 }
@@ -377,7 +377,7 @@ public class Audit extends Action {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
 
-        // Grab deployed Drugref folder name and use as file name for the properties file
+        // Grab deployed Drugref folder name and use as the file name for the properties file
         Pattern p = Pattern.compile(".*://.*/(.*)/.*");
         Matcher m = p.matcher(drugrefUrl);
         m.matches();
@@ -479,13 +479,13 @@ public class Audit extends Action {
                 Matcher xmsMatch = xmsPattern.matcher(line);
                 isMatch2 = xmsMatch.matches();
 
-                if (isMatch1) {
+                if (isMatch1) { // e.g. Xmx1024m
                     xmx = xmxMatch.group(1);
                     String[] xmxString = xmx.toString().split("x");
                     flag1 = true;
                     output += "Xmx value: " + xmxString[1] + "<br />";
                 }
-                if (isMatch2) {
+                if (isMatch2) { // e.g. Xms1024m
                     xms = xmsMatch.group(1);
                     String[] xmsString = xms.toString().split("s");
                     flag2 = true;
