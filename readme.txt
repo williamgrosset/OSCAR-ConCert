@@ -1,4 +1,4 @@
-*NOTE: This is a fork of the OSCAR repository to showcase my project (disregard the wrong Maven directory layout). The main repository can be found here: https://github.com/scoophealth/oscar. Please see the /src/ConCert directory for my project and further information.
+*NOTE: This is a fork of the OSCAR repository to showcase my project (disregard the wrong Maven directory layout). The main repository can be found here: https://github.com/scoophealth/oscar. Please see the ConCert/ directory for my project and further information.
 
 ======================
 OSCAR McMaster Project
