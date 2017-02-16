@@ -21,6 +21,7 @@
  * University of Victoria
  * Victoria, Canada
  */
+
 package oscar.util;
 
 import java.io.File;
@@ -54,8 +55,8 @@ public class AuditTest {
     public void initialize() throws IOException, NoSuchFieldException, IllegalAccessException {
         File catalinaBaseFolder = Files.createTempDirectory("catalinaBase").toFile();
         File catalinaHomeFolder = Files.createTempDirectory("catalinaHome").toFile();
-        File lsbReleaseFile = Files.createTempFile("fakelsbReleaseFile", null).toFile();
-        File tomcatSettingsFile = Files.createTempFile("tomcat411", null).toFile();
+        File lsbReleaseFile = File.createTempFile("fakelsbReleaseFile", null, new File("/tmp"));
+        File tomcatSettingsFile = File.createTempFile("tomcat411", null, new File("/tmp"));
         String jvmVersionValue = "1.7.0_111";
         String tomcatVersionValue = "Apache Tomcat/7.0.52 (Ubuntu)";
         String webAppNameValue = "oscar15";
@@ -264,7 +265,7 @@ public class AuditTest {
 
     @Test
     public void isMatchTrueOscarBuild() throws IOException {
-        File correctFile = Files.createTempFile("correctInfo", ".properties").toFile();
+        File correctFile = File.createTempFile("correctInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(correctFile, "buildtag=oscar15BetaMaster-454\n"
                                                     + "buildDateTime=2017-02-08 08:25 PM");
 
@@ -276,7 +277,7 @@ public class AuditTest {
 
     @Test
     public void isMatchFalseOscarBuild() throws IOException {
-        File notCorrectFile = Files.createTempFile("notCorrectInfo", ".properties").toFile();
+        File notCorrectFile = File.createTempFile("notCorrectInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(notCorrectFile, "#buildtag=oscar15BetaMaster-454");
 
         String expectedResult = "Could not detect Oscar build tag.<br />"
@@ -302,7 +303,7 @@ public class AuditTest {
     // isMatch1, isMatch2, isMatch3, isMatch4
     @Test
     public void isMatchAllVerifyOscarProperties() throws IOException {
-        File correctFile = Files.createTempFile("correctInfo", ".properties").toFile();
+        File correctFile = File.createTempFile("correctInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(correctFile, "HL7TEXT_LABS=true\n"
                                                 + "SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
@@ -319,7 +320,7 @@ public class AuditTest {
     // isMatch1, !isMatch2, isMatch3, !isMatch4
     @Test
     public void isMatch13VerifyOscarProperties() throws IOException {
-        File semiCorrectFile = Files.createTempFile("semiCorrectInfo", ".properties").toFile();
+        File semiCorrectFile = File.createTempFile("semiCorrectInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(semiCorrectFile, "HL7TEXT_LABS=true\n"
                                                 + "#SINGLE_PAGE_CHART=yes\n"
                                                 + "TMP_DIR=/pathtotmpdir/\n"
@@ -336,7 +337,7 @@ public class AuditTest {
     // !isMatch1, !isMatch2, !isMatch3, !isMatch4
     @Test
     public void isMatchFalseVerifyOscarProperties() throws IOException {
-        File notCorrectFile = Files.createTempFile("notCorrectInfo", ".properties").toFile();
+        File notCorrectFile = File.createTempFile("notCorrectInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(notCorrectFile, "#HL7TEXT_LABS=true\n"
                                                 + "#SINGLE_PAGE_CHART=yes\n"
                                                 + "#TMP_DIR=/pathtotmpdir/\n"
@@ -423,7 +424,7 @@ public class AuditTest {
     // isMatch1, isMatch2, isMatch3
     @Test
     public void isMatchAllVerifyDrugrefProperties() throws IOException {
-        File correctFile = Files.createTempFile("correctInfo", ".properties").toFile();
+        File correctFile = File.createTempFile("correctInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(correctFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "db_driver=com.mysql.jdbc.Driver");
@@ -438,7 +439,7 @@ public class AuditTest {
     // isMatch1, isMatch2, !isMatch3
     @Test
     public void isMatch12VerifyDrugrefProperties() throws IOException {
-        File semiCorrectFile = Files.createTempFile("semiCorrectInfo", ".properties").toFile();
+        File semiCorrectFile = File.createTempFile("semiCorrectInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(semiCorrectFile, "db_user=root\n"
                                                 + "db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "#db_driver=com.mysql.jdbc.Driver");
@@ -453,7 +454,7 @@ public class AuditTest {
     // !isMatch1, !isMatch2, !isMatch3
     @Test
     public void isMatchFalseVerifyDrugrefProperties() throws IOException {
-        File semiCorrectFile = Files.createTempFile("semiCorrectInfo", ".properties").toFile();
+        File semiCorrectFile = File.createTempFile("semiCorrectInfo", ".properties", new File("/tmp"));
         FileUtils.writeStringToFile(semiCorrectFile, "#db_user=root\n"
                                                 + "#db_url=jdbc:mysql://127.0.0.1:3306/drugref\n"
                                                 + "#db_driver=com.mysql.jdbc.Driver");
