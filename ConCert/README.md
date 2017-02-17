@@ -39,9 +39,9 @@ The Struts framework utilizes the Java Servlet API (Java Enterprise Edition) and
 The **Action class** *(Audit.java)* represents our model (M). This class contains our logic and processes the request by the client. Our Action class receives the appropriate data (calling our audit methods below) and then forwards the data back to the presentation layer. Overriding the execute method allows us to handle the HTTP request:
 ```java
 public ActionForward execute(ActionMapping actionMapping, ActionForm 
-                             actionForm, HttpServletRequest 
-                             servletRequest, HttpServletResponse 
-                             servletResponse) 
+                                actionForm, HttpServletRequest 
+                                servletRequest, HttpServletResponse 
+                                servletResponse) 
 {
     servletRequest.setAttribute("serverVersion", serverVersion());
     servletRequest.setAttribute("mysqlVersion", mysqlVersion());
@@ -56,9 +56,10 @@ public ActionForward execute(ActionMapping actionMapping, ActionForm
 
 The **struts-config** file *(struts-config.xml)* represents our controller (C). This file handles and designates the appropriate request by the client. The action element corresponds with the appropriate Action class. The controller forwards the request to the correct URL path that coordinates with the Action class:
 ```xml
-<action path="/admin/oscarAudit" scope="request" parameter="method" 
- validate="false" type="oscar.util.Audit">
+<action path="/admin/oscarAudit" scope="request" parameter="method" validate="false" type="oscar.util.Audit">
     <forward name="success" path="/admin/oscarAudit.jsp" />
+    <forward name="failure" path="/failure.jsp" />
+    <forward name="unauthorized" path="/securityError.jsp" />
 </action>
 ```
 
@@ -67,8 +68,8 @@ The **JSP** file *(oscarAudit.jsp)* represents our view (V). This file displays 
 <body>
     <h5>Server Version:</h5>
     <pre>${serverVersion}</pre>
-    <h5>MySQL Version:</h5>
-    <pre>${mysqlVersion}</pre>
+    <h5>Database Version:</h5>
+    <pre>${databaseVersion}</pre>
     <h5>Verify Tomcat:</h2>
     <pre>${verifyTomcat}</pre>
 ...
