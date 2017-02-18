@@ -18,19 +18,19 @@ Currently, the ConCert project audits the OSCAR deployment environment:
 This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All 33 **JUnit tests** can be found in the ```test/``` directory of ConCert.
 
 ### Design Decisions
-1. Why utilize a **Stack** when grabbing and sorting files? *(oldutil/MultiInstanceAudit.java)*<br><br>
+1. Why utilize a **Stack** when grabbing and sorting files? *(src/oldutil/MultiInstanceAudit.java)*<br><br>
 It does not really matter what data structure we use here. I chose the **Stack** to simplify the verification process, so other developers have a clearer understanding. We could of chosen mostly any of the available data structures in the ```java.util.*``` package.
 
-2. Why use a reverse line input stream? *(java/Audit.java)*<br><br> 
+2. Why use a reverse line input stream? *(src/java/Audit.java)*<br><br> 
 Since configured parameters in properties files can be overwritten sequentially, we can make an easy optimization to read the executed parameters bottom-up. We begin at the end of the file, find our desired tags and break when we have collected the information needed. Also, this makes the code more maintainable and robust without requiring extra checks if we were to read top-bottom.
 
-3. How are you checking for Tomcat reinforcement? *(java/Audit.java)*<br><br> 
+3. How are you checking for Tomcat reinforcement? *(src/java/Audit.java)*<br><br> 
 ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size. See ```tomcatReinforcement()``` method for further details.
 
-4. Why is there a ```<br />``` (and sometimes ```<b>```) tag after every output line? *(java/Audit.java)*<br><br> 
+4. Why is there a ```<br />``` (and sometimes ```<b>```) tag after every output line? *(src/java/Audit.java)*<br><br> 
 The browser will interpret these characters as HTML tags, allowing for breaks between lines. Using the ```\n``` escape sequence will not render correctly.
 
-5. Why use JSTL tags on JSPs? *(jsp/oscarAudit.jsp)*<br><br> 
+5. Why use JSTL tags on JSPs? *(src/jsp/oscarAudit.jsp)*<br><br> 
 Keeping code readable, maintainable, and easily understood is crucial for the development of an open source project. JSTL allows us to encapsulate and hide away the details of the main Java work away from the view. Also, this keeps the Java code seperate from mixing with HTML.
 
 ### Utilizing the Struts framework
@@ -78,4 +78,4 @@ The **JSP** file *(oscarAudit.jsp)* represents our view (V). This file displays 
 Auditing of hardware, network requirements, and interfaces to external providers (i.e. labs being received, OLIS setup correctly).
 
 ### Spring 2017 Update
-I am now working as a full-time co-op programmer with the LEAD Lab for the Spring term. The next project I will be working on in is integrating this existing feature to allow for admin remote login.
+I am now working as a full-time co-op programmer with the LEAD Lab for the Spring term.
