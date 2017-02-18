@@ -276,17 +276,21 @@ public class Audit extends Action {
             boolean flag2 = false;
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line))
-                    continue;
+                if (Pattern.matches("^(#).*", line)) continue;
                 isMatch1 = Pattern.matches("^(buildtag=).*", line);
                 isMatch2 = Pattern.matches("^(buildDateTime=).*", line);
-                if (isMatch1) { // buildtag=
-                    flag1 = true;
-                    output += "Oscar build and version: " + line.substring(9) + "<br />";
+
+                if (!flag1) {
+                    if (isMatch1) { // buildtag=
+                        flag1 = true;
+                        output += "Oscar build and version: " + line.substring(9) + "<br />";
+                    }
                 }
-                if (isMatch2) { // buildDateTime=
-                    flag2 = true;
-                    output += "Oscar build date and time: " + line.substring(14) + "<br />";
+                if (!flag2) {
+                    if (isMatch2) { // buildDateTime=
+                        flag2 = true;
+                        output += "Oscar build date and time: " + line.substring(14) + "<br />";
+                    }
                 }
                 if (flag1 && flag2)
                     break;
@@ -326,28 +330,36 @@ public class Audit extends Action {
             boolean flag4 = false;
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line))
-                    continue;
+                if (Pattern.matches("^(#).*", line)) continue;
                 isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", line);
                 isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", line);
                 isMatch3 = Pattern.matches("^(TMP_DIR(=|:)).*", line);
                 isMatch4 = Pattern.matches("^(drugref_url=).*", line);
-                if (isMatch1) { // HL7TEXT_LABS=
-                    flag1 = true;
-                    output += "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(13) + "<br />";
+
+                if (!flag1) {
+                    if (isMatch1) { // HL7TEXT_LABS=
+                        flag1 = true;
+                        output += "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(13) + "<br />";
+                    }
                 }
-                if (isMatch2) { // SINGLE_PAGE_CHART=
-                    flag2 = true;
-                    output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + line.substring(18) + "<br />";
+                if (!flag2) {
+                    if (isMatch2) { // SINGLE_PAGE_CHART=
+                        flag2 = true;
+                        output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + line.substring(18) + "<br />";
+                    }
                 }
-                if (isMatch3) { // TMP_DIR=
-                    flag3 = true;
-                    output += "\"TMP_DIR\" tag is configured as: " + line.substring(8) + "<br />";
+                if (!flag3) {
+                    if (isMatch3) { // TMP_DIR=
+                        flag3 = true;
+                        output += "\"TMP_DIR\" tag is configured as: " + line.substring(8) + "<br />";
+                    }
                 }
-                if (isMatch4) { // drugref_url=
-                    flag4 = true;
-                    output += "\"drugref_url\" tag is configured as: " + line.substring(12) + "<br />";
-                    drugrefUrl = line.substring(12);
+                if (!flag4) {
+                    if (isMatch4) { // drugref_url=
+                        flag4 = true;
+                        output += "\"drugref_url\" tag is configured as: " + line.substring(12) + "<br />";
+                        drugrefUrl = line.substring(12);
+                    }
                 }
                 if (flag1 && flag2 && flag3 && flag4)
                     break;
@@ -414,22 +426,28 @@ public class Audit extends Action {
             boolean flag3 = false;
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line))
-                    continue;
+                if (Pattern.matches("^(#).*", line)) continue;
                 isMatch1 = Pattern.matches("^(db_user=).*", line);
                 isMatch2 = Pattern.matches("^(db_url=).*", line);
                 isMatch3 = Pattern.matches("^(db_driver=).*", line);
-                if (isMatch1) { // db_user=
-                    flag1 = true;
-                    output += "\"db_user\" tag is configured as: " + line.substring(8) + "<br />";
+
+                if (!flag1) {
+                    if (isMatch1) { // db_user=
+                        flag1 = true;
+                        output += "\"db_user\" tag is configured as: " + line.substring(8) + "<br />";
+                    }
                 }
-                if (isMatch2) { // db_url=
-                    flag2 = true;
-                    output += "\"db_url\" tag is configured as: " + line.substring(7) + "<br />";
+                if (!flag2) {
+                    if (isMatch2) { // db_url=
+                        flag2 = true;
+                        output += "\"db_url\" tag is configured as: " + line.substring(7) + "<br />";
+                    }
                 }
-                if (isMatch3) { // db_driver=
-                    flag3 = true;
-                    output += "\"db_driver\" tag is configured as: " + line.substring(10) + "<br />";
+                if (!flag3) {
+                    if (isMatch3) { // db_driver=
+                        flag3 = true;
+                        output += "\"db_driver\" tag is configured as: " + line.substring(10) + "<br />";
+                    }
                 }
                 if (flag1 && flag2 && flag3)
                     break;
@@ -457,7 +475,6 @@ public class Audit extends Action {
     protected String tomcatReinforcement() {
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
-
         if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
             return "Could not detect Tomcat settings file in /etc/default/ directory."; 
 
@@ -475,25 +492,27 @@ public class Audit extends Action {
             ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line))
-                    continue;
-
+                if (Pattern.matches("^(#).*", line)) continue;
                 Matcher xmxMatch = xmxPattern.matcher(line);
                 isMatch1 = xmxMatch.matches();
                 Matcher xmsMatch = xmsPattern.matcher(line);
                 isMatch2 = xmsMatch.matches();
 
-                if (isMatch1) { // e.g. Xmx1024m
-                    xmx = xmxMatch.group(1);
-                    String[] xmxString = xmx.toString().split("x");
-                    flag1 = true;
-                    output += "Xmx value: " + xmxString[1] + "<br />";
+                if (!flag1) {
+                    if (isMatch1) { // e.g. Xmx1024m
+                        xmx = xmxMatch.group(1);
+                        String[] xmxString = xmx.toString().split("x");
+                        flag1 = true;
+                        output += "Xmx value: " + xmxString[1] + "<br />";
+                    }
                 }
-                if (isMatch2) { // e.g. Xms1024m
-                    xms = xmsMatch.group(1);
-                    String[] xmsString = xms.toString().split("s");
-                    flag2 = true;
-                    output += "Xms value: " + xmsString[1] + "<br />";
+                if (!flag2) {
+                    if (isMatch2) { // e.g. Xms1024m
+                        xms = xmsMatch.group(1);
+                        String[] xmsString = xms.toString().split("s");
+                        flag2 = true;
+                        output += "Xms value: " + xmsString[1] + "<br />";
+                    }
                 }
                 if (flag1 && flag2)
                     break;
