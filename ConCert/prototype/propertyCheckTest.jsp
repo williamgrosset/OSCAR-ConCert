@@ -35,10 +35,6 @@
         </div>
     </head>
     <body>
-        <h5>Search for a property:</h5>
-        <form action="${pageContext.request.contextPath}/admin/propertyCheck.do" method="post">
-            <input type="text" name="property"/>
-            <input type="submit" value="Submit"/>
-        </form>
+        <h5>I am just a simple test.</h5>
     </body>
 </html>

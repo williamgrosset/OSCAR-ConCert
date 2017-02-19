@@ -25,14 +25,17 @@
 package oscar.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -43,8 +46,23 @@ import org.apache.struts.action.ActionMapping;
 *  github.com/williamgrosset
 */
 public class PropertyCheck extends Action {
-
+   
+    /* 
+    public void doPost(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
+        String input = servletRequest.getParameter("property"); 
+    }*/
+   
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
+
+        PropertyCheckForm form = (PropertyCheckForm) actionForm;
+        String property = form.getProperty();
+        if (form.getProperty().equals("bob")) {
+            return actionMapping.findForward("success");
+        } else {
+            return actionMapping.findForward("unauthorized");
+        }
+
+        /*
         try {
             if (servletRequest.getSession().getAttribute("userrole") == null)
                 servletResponse.sendRedirect("../logout.jsp");
@@ -65,5 +83,6 @@ public class PropertyCheck extends Action {
         //servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         //servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
+        */
     }
 }

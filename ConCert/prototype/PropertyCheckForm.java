@@ -31,7 +31,7 @@ import org.apache.struts.action.ActionForm;
 */
 public class PropertyCheckForm extends ActionForm {
 
-    private String property;
+    private String property = "";
 
     public String getProperty() {
         return property;
@@ -40,4 +40,10 @@ public class PropertyCheckForm extends ActionForm {
     public void setProperty(String property) {
         this.property = property;
     }
+
+    /*
+    @Override
+    public void reset(ActionMapping actionMapping, HttpServletRequest servletRequest) {
+        this.property = null;
+    }*/
 }
