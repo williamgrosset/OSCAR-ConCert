@@ -47,20 +47,27 @@ import org.apache.struts.action.ActionMapping;
 */
 public class PropertyCheck extends Action {
    
-    /* 
-    public void doPost(HttpServletRequest servletRequest, HttpServletResponse servletResponse) throws ServletException, IOException {
-        String input = servletRequest.getParameter("property"); 
-    }*/
-   
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
 
         PropertyCheckForm form = (PropertyCheckForm) actionForm;
         String property = form.getProperty();
-        if (form.getProperty().equals("bob")) {
-            return actionMapping.findForward("success");
+
+        // Use OscarProperties class and verify if the tag is active.
+        if (property.equals("") || property == null) {
+            return actionMapping.findForward("hmm");
         } else {
             return actionMapping.findForward("unauthorized");
         }
+
+
+        // if property does not exist (maybe should be handled by ActionForm validate()?)
+        // return actionMapping.findForward("failure");
+
+        // if property is active
+        // return actionMapping.findForward("active");
+
+        // if property is not active
+        // return actionMapping.findForward("notActive");
 
         /*
         try {
@@ -76,12 +83,12 @@ public class PropertyCheck extends Action {
             return actionMapping.findForward("unauthorized");
         }
 
-        //servletRequest.setAttribute("serverVersion", serverVersion());
-        //servletRequest.setAttribute("databaseInfo", databaseInfo());
-        //servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        //servletRequest.setAttribute("verifyOscar", verifyOscar());
-        //servletRequest.setAttribute("verifyDrugref", verifyDrugref());
-        //servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
+        servletRequest.setAttribute("serverVersion", serverVersion());
+        servletRequest.setAttribute("databaseInfo", databaseInfo());
+        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
+        servletRequest.setAttribute("verifyOscar", verifyOscar());
+        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
+        servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
         return actionMapping.findForward("success");
         */
     }

@@ -35,6 +35,6 @@
         </div>
     </head>
     <body>
-        <h5>I am just a simple test.</h5>
+        <h5>Property is active.</h5>
     </body>
 </html>
