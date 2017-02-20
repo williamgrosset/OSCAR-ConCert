@@ -39,8 +39,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-//import javax.persistence.Query;
-//import javax.persistence.EntityManager;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import org.oscarehr.util.DbConnectionFilter;
+import oscar.OscarProperties;
 
 /*
 *  github.com/williamgrosset
@@ -55,7 +57,6 @@ public class Audit extends Action {
     private String tomcatVersion;
     private String webAppName;
     private String drugrefUrl;
-    //private EntityManager entityManager;
 
     public Audit() {
         catalinaBase = getCatalinaBase();
@@ -66,7 +67,6 @@ public class Audit extends Action {
         tomcatVersion = "";
         webAppName = "";
         drugrefUrl = "";
-        //entityManager = null;
     }
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -202,15 +202,31 @@ public class Audit extends Action {
     }
 
     /*
+    *  *************OUTDATED FUNCTION DESC***************
+    *  **************************************************
+    *
     *  Retrieve url, username, and password information from Oscar properties
     *  to make a connection with our database. From our connection, we can 
     *  retrieve which database type we are connected to and the database version.
     *
-    *  @return output: Database name and version.
+    *  @return output: Database type and version.
     */
     protected String databaseInfo() {
-        //Query query = entityManager.createQuery("SELECT VERSION()");
-        return "This is temporary.";
+        try {
+            String dbType = OscarProperties.getInstance().getProperty("db_type");
+            if (dbType == null || dbType.equals("")) {
+                return "Cannot determine database type. Could not detect \"db_type\" tag.";
+            }
+            
+            String output = "";
+            Connection connection = DbConnectionFilter.getThreadLocalDbConnection();
+            DatabaseMetaData metaData = connection.getMetaData();
+            output += "Type: " + metaData.getDatabaseProductName() + "<br />";
+            output += "Version: " + metaData.getDatabaseProductVersion() + "<br />";
+            return output;
+        } catch (Exception e) {
+            return "Cannot determine database type and version.";
+        }
     }
     
 
