@@ -36,7 +36,9 @@
         </div>
     </head>
     <body>
+        <h5>
         <h5>Search for a property:</h5>
+        <h5>Property will either exist, not exist, or be invalid. Double check capitalization and "=" is not required in the search tag.</h5>
         <form action="${pageContext.request.contextPath}/admin/propertyCheck.do" method="post">
             <input type="text" name="property"/>
             <input type="submit" value="Submit"/>

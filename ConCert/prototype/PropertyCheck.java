@@ -41,32 +41,6 @@ import oscar.OscarProperties;
 public class PropertyCheck extends Action {
    
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-
-        PropertyCheckForm form = (PropertyCheckForm) actionForm;
-        String property = form.getProperty();
-
-        // Use OscarProperties class and verify if the tag is active.
-        if (property.equals("") || property == null) {
-            return actionMapping.findForward("failure");
-        }
-
-        boolean flag = OscarProperties.getInstance().hasProperty(property);
-        if (flag) {
-            return actionMapping.findForward("exists");
-        } else {
-            return actionMapping.findForward("doesNotExist");
-        }
-
-        // if property does not exist (maybe should be handled by ActionForm validate()?)
-        // return actionMapping.findForward("failure");
-
-        // if property is active
-        // return actionMapping.findForward("active");
-
-        // if property is not active
-        // return actionMapping.findForward("notActive");
-
-        /*
         try {
             if (servletRequest.getSession().getAttribute("userrole") == null)
                 servletResponse.sendRedirect("../logout.jsp");
@@ -80,13 +54,21 @@ public class PropertyCheck extends Action {
             return actionMapping.findForward("unauthorized");
         }
 
-        servletRequest.setAttribute("serverVersion", serverVersion());
-        servletRequest.setAttribute("databaseInfo", databaseInfo());
-        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        servletRequest.setAttribute("verifyOscar", verifyOscar());
-        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
-        servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
-        return actionMapping.findForward("success");
-        */
+        PropertyCheckForm form = (PropertyCheckForm) actionForm;
+        String property = form.getProperty();
+
+        if (property.equals("") || property == null || property.contains("=")) {
+            return actionMapping.findForward("failure");
+        }
+
+        if (checkProperty(property)) {
+            return actionMapping.findForward("exists");
+        } else {
+            return actionMapping.findForward("doesNotExist");
+        }
+    }
+    
+    private boolean checkProperty(String property) {
+        return OscarProperties.getInstance().hasProperty(property);
     }
 }

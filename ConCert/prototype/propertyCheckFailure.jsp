@@ -36,7 +36,7 @@
         </div>
     </head>
     <body>
-        <h5>Property could not be found.</h5>
+        <h5>Property invalid.</h5>
         <input type="button" value="Back" onclick="history.go(-1);" />
     </body>
 </html>
