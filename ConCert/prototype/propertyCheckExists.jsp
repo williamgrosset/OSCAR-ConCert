@@ -36,5 +36,6 @@
     </head>
     <body>
         <h5>Property exists.</h5>
+        <input type="button" value="Back" onclick="history.go(-1);" />
     </body>
 </html>
