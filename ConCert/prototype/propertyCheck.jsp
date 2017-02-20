@@ -29,6 +29,7 @@
 <html>
     <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <link href="<%=request.getContextPath() %>/css/propertyCheck.css" rel="stylesheet" type="text/css">
     <title>Property Check</title>
     <head>
         <div class="page-header">
@@ -38,9 +39,9 @@
     <body>
         <h5>
         <h5>Search for a property:</h5>
-        <h5>Property will either exist, not exist, or be invalid. Double check capitalization and "=" is not required in the search tag.</h5>
+        <p><i>NOTE: Property will either exist, not exist, or be invalid. Double check capitalization and "=" is not required in the tag that is being searched for.</i></p>
         <form action="${pageContext.request.contextPath}/admin/propertyCheck.do" method="post">
-            <input type="text" name="property"/>
+            <input type="text" name="property" placeholder="e.g. buildtag"/>
             <input type="submit" value="Submit"/>
         </form>
     </body>
