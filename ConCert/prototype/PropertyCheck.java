@@ -24,23 +24,16 @@
 
 package oscar.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-import org.apache.commons.io.input.ReversedLinesFileReader;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
+import oscar.OscarProperties;
 
 /*
 *  github.com/williamgrosset
@@ -54,9 +47,14 @@ public class PropertyCheck extends Action {
 
         // Use OscarProperties class and verify if the tag is active.
         if (property.equals("") || property == null) {
-            return actionMapping.findForward("active");
+            return actionMapping.findForward("failure");
+        }
+
+        boolean flag = OscarProperties.getInstance().hasProperty(property);
+        if (flag) {
+            return actionMapping.findForward("exists");
         } else {
-            return actionMapping.findForward("unauthorized");
+            return actionMapping.findForward("doesNotExist");
         }
 
         // if property does not exist (maybe should be handled by ActionForm validate()?)
