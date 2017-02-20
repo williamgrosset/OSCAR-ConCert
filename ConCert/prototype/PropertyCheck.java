@@ -54,11 +54,10 @@ public class PropertyCheck extends Action {
 
         // Use OscarProperties class and verify if the tag is active.
         if (property.equals("") || property == null) {
-            return actionMapping.findForward("hmm");
+            return actionMapping.findForward("active");
         } else {
             return actionMapping.findForward("unauthorized");
         }
-
 
         // if property does not exist (maybe should be handled by ActionForm validate()?)
         // return actionMapping.findForward("failure");

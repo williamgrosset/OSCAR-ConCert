@@ -24,14 +24,18 @@
 
 package oscar.util;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.struts.action.ActionForm;
+import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionErrors;
 
 /*
 *  github.com/williamgrosset
 */
 public class PropertyCheckForm extends ActionForm {
 
-    private String property = "";
+    private String property = null;
 
     public String getProperty() {
         return property;
@@ -41,9 +45,14 @@ public class PropertyCheckForm extends ActionForm {
         this.property = property;
     }
 
-    /*
+    @Override
+    public ActionErrors validate(ActionMapping actionMapping, HttpServletRequest servletRequest) {
+        ActionErrors actionErrors = new ActionErrors();
+        return actionErrors;
+    }
+
     @Override
     public void reset(ActionMapping actionMapping, HttpServletRequest servletRequest) {
         this.property = null;
-    }*/
+    }
 }

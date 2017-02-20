@@ -35,6 +35,6 @@
         </div>
     </head>
     <body>
-        <h5>Property is active.</h5>
+        <h5>Property exists.</h5>
     </body>
 </html>
