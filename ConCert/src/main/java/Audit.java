@@ -79,8 +79,7 @@ public class Audit extends Action {
             return actionMapping.findForward("failure");
         }
 
-        String roleName = (String)servletRequest.getSession().getAttribute("userrole") + ","
-                            + (String)servletRequest.getAttribute("user");
+        String roleName = (String)servletRequest.getSession().getAttribute("userrole") + "," + (String)servletRequest.getAttribute("user");
         if (!roleName.contains("admin")) {
             return actionMapping.findForward("unauthorized");
         }
