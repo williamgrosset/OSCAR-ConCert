@@ -42,7 +42,6 @@ import org.apache.struts.action.ActionMapping;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import org.oscarehr.util.DbConnectionFilter;
-import oscar.OscarProperties;
 
 /*
 *  github.com/williamgrosset
@@ -314,12 +313,11 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and
-    *  "drugref_url" tags of Oscar properties file.
+    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and "drugref_url" tags 
+    *  of Oscar properties file.
     *
     *  @param fileName: Path to properties file.
-    *  @return output: Output of the required tags in the Oscar properties 
-    *  file.
+    *  @return output: Output of the required tags in the Oscar properties file.
     */
     protected String verifyOscarProperties(String fileName) {
         try {
@@ -387,8 +385,8 @@ public class Audit extends Action {
     }
 
     /*
-    *  Verify the current Drugref instance. Check the properties file found in 
-    *  Tomcat's "catalina.home" directory.
+    *  Verify the current Drugref instance. Check the properties file found in Tomcat's 
+    *  "catalina.home" directory.
     *
     *  @return output: Output of Drugref properties information.
     */
@@ -412,12 +410,10 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read "db_user," "db_url," and "db_driver" tags of Drugref 
-    *  properties file.
+    *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
     *
     *  @param fileName: Path to properties file.
-    *  @return output: Output of the required tags in the Drugref properties 
-    *  file.
+    *  @return output: Output of the required tags in the Drugref properties file.
     */
     protected String verifyDrugrefProperties(String fileName) {
         try {
@@ -473,8 +469,8 @@ public class Audit extends Action {
     }
 
     /*
-    *  Read through the Tomcat settings file and output the Xmx and Xms values
-    *  to the user.
+    *  Read through the Tomcat settings file and output the Xmx and Xms values to 
+    *  the user.
     *
     *  @return output: Xmx (maximum memory allocation) value followed by Xms 
     *  (minimum memory allocation) value.
