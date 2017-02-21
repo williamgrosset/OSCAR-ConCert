@@ -99,7 +99,7 @@ public class AuditTest {
     @Test
     public void isMatchTrueServerVersion() throws IOException, IllegalAccessException {
         FileUtils.writeStringToFile((File)lsbRelease.get(audit), "DISTRIB_DESCRIPTION=\"Ubuntu 14.04.5 LTS\"");
-        String expectedResult = "\"Ubuntu 14.04.5 LTS\"";
+        String expectedResult = "Version: \"Ubuntu 14.04.5 LTS\"";
         assertEquals(expectedResult,audit.serverVersion());
     }
 
@@ -126,9 +126,8 @@ public class AuditTest {
 
     /*
     *  databaseInfo():
-    *  Retrieve url, username, and password information from Oscar properties
-    *  to make a connection with our database. From our connection, we can
-    *  retrieve which database type we are connected to and the database version.
+    *  Establish a connection to our database and retrieve the database type and 
+    *  version from our DatabaseMetaData object.
     */
 
     /******* TEST METHODS HERE *******/

@@ -24,7 +24,7 @@
 
 --%>
 
-<%@page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" language="java" %>
 <%@include file="/casemgmt/taglibs.jsp"%>
 <html>
     <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
@@ -36,7 +36,7 @@
         </div>
     </head>
     <body>
-        <h5>Server Version:</h5>
+        <h5>Server Information:</h5>
         <pre>${serverVersion}</pre>
 
         <h5>Database Information:</h5>

@@ -170,7 +170,6 @@ public class Audit extends Action {
     /*
     *  Read "/etc/lsb-release" file and extract Linux server version. The
     *  file should be available on Ubuntu and Debian distributions.
-    *
     *  NOTE: Majority of my methods require the ReversedLinesFilerReader class.
     *  Since I did not want to require another import for the default file reader,
     *  I went ahead and used ReversedLinesFileReader anyways.
@@ -192,7 +191,7 @@ public class Audit extends Action {
 
                 isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
                 if (isMatch) {
-                    return line.substring(20);
+                    return "Version: " + line.substring(20);
                 }
             }
             return "Could not detect Linux server version.";
@@ -202,25 +201,17 @@ public class Audit extends Action {
     }
 
     /*
-    *  *************OUTDATED FUNCTION DESC***************
-    *  **************************************************
-    *
-    *  Retrieve url, username, and password information from Oscar properties
-    *  to make a connection with our database. From our connection, we can 
-    *  retrieve which database type we are connected to and the database version.
+    *  Establish a connection to our database and retrieve the database type and 
+    *  version from our DatabaseMetaData object.
     *
     *  @return output: Database type and version.
     */
     protected String databaseInfo() {
         try {
-            String dbType = OscarProperties.getInstance().getProperty("db_type");
-            if (dbType == null || dbType.equals("")) {
-                return "Cannot determine database type. Could not detect \"db_type\" tag.";
-            }
-            
             String output = "";
             Connection connection = DbConnectionFilter.getThreadLocalDbConnection();
             DatabaseMetaData metaData = connection.getMetaData();
+
             output += "Type: " + metaData.getDatabaseProductName() + "<br />";
             output += "Version: " + metaData.getDatabaseProductVersion() + "<br />";
             return output;
