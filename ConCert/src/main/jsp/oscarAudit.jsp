@@ -29,13 +29,29 @@
 <html>
     <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
+    <style>
+        pre {
+            white-space: pre-wrap;
+            word-break: normal;
+        }
+    </style>
     <title>Oscar Audit</title>
-    <head>
+    <head> 
+        <script type="text/javascript" src="<%=request.getContextPath() %>/js/jquery-1.9.1.js"></script>
+        <script>
+            $(document).ready(function() {	
+                parent.parent.resizeIframe($('html').height());	
+                
+            });
+        </script>	
         <div class="page-header">
             <h4>OSCAR Audit</h4>
         </div>
     </head>
-    <body>
+    <body> 
+        <form name="loadDoc" method="post" action="<%=request.getContextPath() %>/admin/oscarStatus.do">
+            <input type="hidden" name="delayed" value="do" />
+        </form>
         <h5>Server Information:</h5>
         <pre>${serverVersion}</pre>
 
