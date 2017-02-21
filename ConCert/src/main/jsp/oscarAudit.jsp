@@ -49,9 +49,6 @@
         </div>
     </head>
     <body> 
-        <form name="loadDoc" method="post" action="<%=request.getContextPath() %>/admin/oscarStatus.do">
-            <input type="hidden" name="delayed" value="do" />
-        </form>
         <h5>Server Information:</h5>
         <pre>${serverVersion}</pre>
 
