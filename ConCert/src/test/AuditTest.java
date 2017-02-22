@@ -42,6 +42,10 @@ import static org.junit.Assert.*;
 public class AuditTest {
 
     Audit audit = new Audit();
+    private File catalinaBaseFolder;
+    private File catalinaHomeFolder;
+    private File lsbReleaseFile;
+    private File tomcatSettingsFile;
     private Field catalinaBase;
     private Field catalinaHome;
     private Field lsbRelease;
@@ -53,10 +57,10 @@ public class AuditTest {
 
     @Before
     public void initialize() throws IOException, NoSuchFieldException, IllegalAccessException {
-        File catalinaBaseFolder = Files.createTempDirectory("catalinaBase").toFile();
-        File catalinaHomeFolder = Files.createTempDirectory("catalinaHome").toFile();
-        File lsbReleaseFile = File.createTempFile("fakelsbReleaseFile", null, new File("/tmp"));
-        File tomcatSettingsFile = File.createTempFile("tomcat411", null, new File("/tmp"));
+        catalinaBaseFolder = Files.createTempDirectory("catalinaBase").toFile();
+        catalinaHomeFolder = Files.createTempDirectory("catalinaHome").toFile();
+        lsbReleaseFile = File.createTempFile("fakelsbReleaseFile", null, new File("/tmp"));
+        tomcatSettingsFile = File.createTempFile("tomcat411", null, new File("/tmp"));
         String jvmVersionValue = "1.7.0_111";
         String tomcatVersionValue = "Apache Tomcat/7.0.52 (Ubuntu)";
         String webAppNameValue = "oscar15";
@@ -525,6 +529,10 @@ public class AuditTest {
 
     @After
     public void tearDown() {
+        catalinaBaseFolder.deleteOnExit();
+        catalinaHomeFolder.deleteOnExit();
+        lsbReleaseFile.deleteOnExit();
+        tomcatSettingsFile.deleteOnExit();
         catalinaBase = null;
         catalinaHome = null;
         lsbRelease = null;
