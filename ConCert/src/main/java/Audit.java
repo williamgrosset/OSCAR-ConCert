@@ -56,6 +56,7 @@ public class Audit extends Action {
     private String tomcatVersion;
     private String webAppName;
     private String drugrefUrl;
+    private Connection connection;
 
     public Audit() {
         catalinaBase = getCatalinaBase();
@@ -66,6 +67,7 @@ public class Audit extends Action {
         tomcatVersion = "";
         webAppName = "";
         drugrefUrl = "";
+        connection = null;
     }
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -205,17 +207,24 @@ public class Audit extends Action {
     *  @return output: Database type and version.
     */
     protected String databaseInfo() {
+        String output = "";
         try {
-            String output = "";
-            Connection connection = DbConnectionFilter.getThreadLocalDbConnection();
+            connection = DbConnectionFilter.getThreadLocalDbConnection();
             DatabaseMetaData metaData = connection.getMetaData();
 
             output += "Type: " + metaData.getDatabaseProductName() + "<br />";
             output += "Version: " + metaData.getDatabaseProductVersion() + "<br />";
-            connection.close();
-            return output;
         } catch (Exception e) {
             return "Cannot determine database type and version.";
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    return "Cannot close connection to database.";
+                }
+            }
+            return output;
         }
     }
     
