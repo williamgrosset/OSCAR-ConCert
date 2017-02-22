@@ -36,7 +36,7 @@
         </div>
     </head>
     <body>
-        <h5>Property exists.</h5>
+    <h5>Property "<bean:write name="propertyCheckForm" property="property"></bean:write>" exists.</h5>
         <input type="button" value="Back" onclick="history.go(-1);" />
     </body>
 </html>
