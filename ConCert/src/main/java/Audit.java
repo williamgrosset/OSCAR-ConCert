@@ -212,6 +212,7 @@ public class Audit extends Action {
 
             output += "Type: " + metaData.getDatabaseProductName() + "<br />";
             output += "Version: " + metaData.getDatabaseProductVersion() + "<br />";
+            connection.close();
             return output;
         } catch (Exception e) {
             return "Cannot determine database type and version.";
