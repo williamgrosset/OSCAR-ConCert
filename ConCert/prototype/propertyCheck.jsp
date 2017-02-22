@@ -26,23 +26,24 @@
 
 <%@page contentType="text/html;charset=UTF-8" language="java" %>
 <%@include file="/casemgmt/taglibs.jsp"%>
-<html>
+<html:html>
+    <meta http-equiv="Content-Type" content="text/html;">
     <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
     <link href="<%=request.getContextPath() %>/css/propertyCheck.css" rel="stylesheet" type="text/css">
     <title>Property Check</title>
     <head>
         <div class="page-header">
-            <h4>ConCert Property Check</h4>
+            <h4>Property Check</h4>
         </div>
     </head>
     <body>
-        <h5>
         <h5>Search for a property:</h5>
-        <p><i>NOTE: Property will either exist, not exist, or be invalid. Double check capitalization and "=" is not required in the tag that is being searched for.</i></p>
+        <p>NOTE: Property will either exist, not exist, or be invalid. Double check capitalization.<br />
+        Quotations and character and '=' are not required in the tag that is being searched for.</p>
         <form action="${pageContext.request.contextPath}/admin/propertyCheck.do" method="post">
             <input type="text" name="property" placeholder="e.g. buildtag"/>
             <input type="submit" value="Submit"/>
         </form>
-    </body>
-</html>
+    </div>
+</html:html>

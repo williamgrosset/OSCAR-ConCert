@@ -32,7 +32,7 @@
     <title>Property Check</title>
     <head>
         <div class="page-header">
-            <h4>ConCert Property Check</h4>
+            <h4>Property Check</h4>
         </div>
     </head>
     <body>
