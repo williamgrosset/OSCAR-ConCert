@@ -480,8 +480,8 @@ public class Audit extends Action {
     *  Read through the Tomcat settings file and output the Xmx and Xms values to 
     *  the user.
     *
-    *  @return output: Xmx (maximum memory allocation) value followed by Xms 
-    *  (minimum memory allocation) value.
+    *  @return output: Xmx value (maximum memory allocation) and Xms value (minimum 
+    *  memory allocation) for JVM heap size.
     */
     protected String tomcatReinforcement() {
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
@@ -492,8 +492,6 @@ public class Audit extends Action {
         try {
             String output = "";
             String line = "";
-            String xmx = "";
-            String xms = "";
             boolean isMatch1 = false;
             boolean isMatch2 = false;
             boolean flag1 = false;
@@ -510,19 +508,15 @@ public class Audit extends Action {
                 isMatch2 = xmsMatch.matches();
 
                 if (!flag1) {
-                    if (isMatch1) { // e.g. Xmx1024m
-                        xmx = xmxMatch.group(1);
-                        String[] xmxString = xmx.toString().split("x");
+                    if (isMatch1) { // e.g. Xmx2056m
                         flag1 = true;
-                        output += "Xmx value: " + xmxString[1] + "<br />";
+                        output += "Xmx value: " + xmxMatch.group(1).substring(3) + "<br />";
                     }
                 }
                 if (!flag2) {
                     if (isMatch2) { // e.g. Xms1024m
-                        xms = xmsMatch.group(1);
-                        String[] xmsString = xms.toString().split("s");
                         flag2 = true;
-                        output += "Xms value: " + xmsString[1] + "<br />";
+                        output += "Xms value: " + xmsMatch.group(1).substring(3) + "<br />";
                     }
                 }
                 if (flag1 && flag2)
