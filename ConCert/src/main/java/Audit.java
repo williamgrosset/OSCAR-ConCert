@@ -176,7 +176,7 @@ public class Audit extends Action {
     *
     *  @return output: Linux server version.
     */
-    protected String serverVersion() {
+    private String serverVersion() {
         try {
             if (lsbRelease == null || lsbRelease.getPath().equals(""))
                 throw new FileNotFoundException();
@@ -205,7 +205,7 @@ public class Audit extends Action {
     *
     *  @return output: Database type and version.
     */
-    protected String databaseInfo() {
+    private String databaseInfo() {
         String output = "";
         try {
             connection = DbConnectionFilter.getThreadLocalDbConnection();
@@ -234,7 +234,7 @@ public class Audit extends Action {
     *
     *  @return output: JVM and Tomcat version information.
     */
-    protected String verifyTomcat() {
+    private String verifyTomcat() {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
         if (jvmVersion == null || jvmVersion.equals(""))
@@ -253,7 +253,7 @@ public class Audit extends Action {
     *
     *  @return output: Combined output of Oscar build and properties information.
     */
-    protected String verifyOscar() {
+    private String verifyOscar() {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -278,7 +278,7 @@ public class Audit extends Action {
     *  @param fileName: Path to properties file.
     *  @return output: Current Oscar build, version, and date of build.
     */
-    protected String oscarBuild(String fileName) {
+    private String oscarBuild(String fileName) {
         try {
             String output = "";
             String line = "";
@@ -327,7 +327,7 @@ public class Audit extends Action {
     *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Oscar properties file.
     */
-    protected String verifyOscarProperties(String fileName) {
+    private String verifyOscarProperties(String fileName) {
         try {
             String output = "";
             String line = "";
@@ -398,7 +398,7 @@ public class Audit extends Action {
     *
     *  @return output: Output of Drugref properties information.
     */
-    protected String verifyDrugref() {
+    private String verifyDrugref() {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -423,7 +423,7 @@ public class Audit extends Action {
     *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Drugref properties file.
     */
-    protected String verifyDrugrefProperties(String fileName) {
+    private String verifyDrugrefProperties(String fileName) {
         try {
             String output = "";
             String line = "";
@@ -483,7 +483,7 @@ public class Audit extends Action {
     *  @return output: Xmx value (maximum memory allocation) and Xms value (minimum 
     *  memory allocation) for JVM heap size.
     */
-    protected String tomcatReinforcement() {
+    private String tomcatReinforcement() {
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
         if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
