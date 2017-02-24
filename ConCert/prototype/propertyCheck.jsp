@@ -40,7 +40,7 @@
     <body>
         <h5>Search for a property:</h5>
         <p>NOTE: Property will either exist, not exist, or be invalid. Double check capitalization.<br />
-        Quotations and character and '=' are not required in the tag that is being searched for.</p>
+        Quotations and character '=' are not required in the tag that is being searched for.</p>
         <form action="${pageContext.request.contextPath}/admin/propertyCheck.do" method="post">
             <input type="text" name="property" placeholder="e.g. buildtag"/>
             <input type="submit" value="Submit"/>

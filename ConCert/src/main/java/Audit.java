@@ -186,11 +186,10 @@ public class Audit extends Action {
             boolean isMatch = false;
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line))
-                    continue;
+                if (Pattern.matches("^(#).*", line)) continue;
 
-                isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
-                if (isMatch) {
+                //isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
+                if (Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line)) {
                     return "Version: " + line.substring(20);
                 }
             }
