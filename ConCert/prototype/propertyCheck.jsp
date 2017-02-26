@@ -30,19 +30,26 @@
     <meta http-equiv="Content-Type" content="text/html;">
     <link rel="stylesheet" type="text/css" href="../oscarEncounter/encounterStyles.css">
     <link href="<%=request.getContextPath() %>/css/bootstrap.css" rel="stylesheet" type="text/css">
-    <link href="<%=request.getContextPath() %>/css/propertyCheck.css" rel="stylesheet" type="text/css">
     <title>Property Check</title>
+    <style>
+        input[type="text"] {
+            height: 30px;
+        }
+    </style>
     <head>
         <div class="page-header">
             <h4>Property Check</h4>
         </div>
     </head>
     <body>
-        <h5>Search for a property:</h5>
-        <p>NOTE: Property will either exist, not exist, or be invalid. Double check capitalization.<br />
-        Quotations and character '=' are not required in the tag that is being searched for.</p>
+        <h5>Search for a property and with a matched value:</h5>
+        <p>NOTE: Property will either match, not match, or be invalid. Properties and values are case-sensitive.<br />
+        Quotations and character '=' are not required in the property.</p>
         <form action="${pageContext.request.contextPath}/admin/propertyCheck.do" method="post">
+            <p>Property:</p>
             <input type="text" name="property" placeholder="e.g. buildtag"/>
+            <p>Value:</p>
+            <input type="text" name="value" placeholder="e.g. arandomvalue"/><br />
             <input type="submit" value="Submit"/>
         </form>
     </div>
