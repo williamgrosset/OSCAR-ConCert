@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
+import org.apache.struts.action.ActionError;
 import org.apache.struts.action.ActionErrors;
 
 /*
@@ -57,6 +58,12 @@ public class PropertyCheckForm extends ActionForm {
     @Override
     public ActionErrors validate(ActionMapping actionMapping, HttpServletRequest servletRequest) {
         ActionErrors actionErrors = new ActionErrors();
+        if (property.equals("")) {
+            actionErrors.add("property", new ActionError("error.invalid.property"));
+        }
+        if (value.equals("")) {
+            actionErrors.add("value", new ActionError("error.invalid.value"));
+        }
         return actionErrors;
     }
 

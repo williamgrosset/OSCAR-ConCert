@@ -38,7 +38,7 @@ import oscar.OscarProperties;
 /*
 *  github.com/williamgrosset
 */
-public class PropertyCheck extends Action {
+public class PropertyCheckAction extends Action {
    
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
@@ -56,19 +56,22 @@ public class PropertyCheck extends Action {
 
         PropertyCheckForm form = (PropertyCheckForm) actionForm;
         String property = form.getProperty();
+        String value = form.getValue();
 
+        // TODO: Implement these checks in the validate method of PropertyCheckForm 
+        // (Won't need a seperate page for property validation)
         if (property.equals("") || property == null || property.contains("=")) {
             return actionMapping.findForward("failure");
         }
 
-        if (checkProperty(property)) {
+        if (checkProperty(property, value)) {
             return actionMapping.findForward("exists");
         } else {
             return actionMapping.findForward("doesNotExist");
         }
     }
     
-    private boolean checkProperty(String property) {
-        return OscarProperties.getInstance().hasProperty(property);
+    private boolean checkProperty(String property, String value) {
+        return OscarProperties.getInstance().getBooleanProperty(property, value);
     }
 }
