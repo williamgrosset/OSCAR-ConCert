@@ -60,12 +60,14 @@ public class PropertyCheckAction extends Action {
 
         // TODO: Implement these checks in the validate method of PropertyCheckForm 
         // (Won't need a seperate page for property validation)
+        /*
         if (property.equals("") || property == null || property.contains("=")) {
             return actionMapping.findForward("failure");
         }
+        */
 
         if (checkProperty(property, value)) {
-            return actionMapping.findForward("exists");
+            return actionMapping.findForward("success");
         } else {
             return actionMapping.findForward("doesNotExist");
         }

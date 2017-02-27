@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionMapping;
-import org.apache.struts.action.ActionError;
+import org.apache.struts.action.ActionMessage;
 import org.apache.struts.action.ActionErrors;
 
 /*
@@ -36,8 +36,8 @@ import org.apache.struts.action.ActionErrors;
 */
 public class PropertyCheckForm extends ActionForm {
 
-    private String property = null;
-    private String value = null;
+    private String property;
+    private String value;
 
     public String getProperty() {
         return property;
@@ -58,18 +58,23 @@ public class PropertyCheckForm extends ActionForm {
     @Override
     public ActionErrors validate(ActionMapping actionMapping, HttpServletRequest servletRequest) {
         ActionErrors actionErrors = new ActionErrors();
-        if (property.equals("")) {
-            actionErrors.add("property", new ActionError("error.invalid.property"));
+        if (property == null || property.equals("") || property.contains("=")) {
+            actionErrors.add("property", new ActionMessage("propertycheck.property.invalid"));
         }
-        if (value.equals("")) {
-            actionErrors.add("value", new ActionError("error.invalid.value"));
+        if (value == null || value.equals("")) {
+            actionErrors.add("value", new ActionMessage("propertycheck.value.invalid"));
         }
+
+        if (actionErrors.size() == 0)
+            servletRequest.setAttribute("status", "success");
+
         return actionErrors;
     }
 
+    /*
     @Override
     public void reset(ActionMapping actionMapping, HttpServletRequest servletRequest) {
         this.property = null;
         this.value = null;
-    }
+    }*/
 }

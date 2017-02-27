@@ -47,5 +47,6 @@
             <input type="text" name="value" placeholder="e.g. arandomvalue"/><br />
             <input type="submit" value="Submit"/>
         </form>
+        <span class="text-error message"><html:errors /></span>
     </div>
 </html:html>
