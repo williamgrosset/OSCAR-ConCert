@@ -58,18 +58,10 @@ public class PropertyCheckAction extends Action {
         String property = form.getProperty();
         String value = form.getValue();
 
-        // TODO: Implement these checks in the validate method of PropertyCheckForm 
-        // (Won't need a seperate page for property validation)
-        /*
-        if (property.equals("") || property == null || property.contains("=")) {
-            return actionMapping.findForward("failure");
-        }
-        */
-
         if (checkProperty(property, value)) {
             return actionMapping.findForward("success");
         } else {
-            return actionMapping.findForward("doesNotExist");
+            return actionMapping.findForward("failure");
         }
     }
     
