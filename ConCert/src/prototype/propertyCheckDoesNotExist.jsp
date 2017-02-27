@@ -36,7 +36,7 @@
         </div>
     </head>
     <body>
-        <h5>Property "<bean:write name="propertyCheckForm" property="property"></bean:write>" does not exist.</h5>
-        <input type="button" value="Back" onclick="history.go(-1);" />
+    <h5>Property "<bean:write name="propertyCheckForm" property="property"></bean:write>" does not match with value "<bean:write name="propertyCheckForm" property="value"></bean:write>".</h5>
+        <input type="button" value="Back" onclick="location.href='${pageContext.request.contextPath}/admin/propertyCheck.jsp';" />
     </body>
 </html>
