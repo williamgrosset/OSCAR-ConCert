@@ -11,6 +11,7 @@ William Grosset (Fall 2016: 100-hour contract & Spring 2017: Full-time programme
     + Tests in `src/test/audit`
 - Prototypes:
     + PropertyCheck in `src/prototype/propertycheck`
-    + DevOps w/ Moskito in `src/prototype/devops`
+    + Tests in `src/test/propertycheck`
+    + DevOps w/ Melody in `src/prototype/devops`
 - Deprecated or old utility:
     + Work in `src/OLDUTIL`

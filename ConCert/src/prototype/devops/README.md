@@ -1,2 +1,2 @@
-# Moskito Framework
+# Java Melody Framework
 ...
