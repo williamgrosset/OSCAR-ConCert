@@ -11,13 +11,13 @@ Currently, the ConCert project audits the OSCAR deployment environment:
 This project focuses on allowing OSCAR Service Providers (OSP) to easily audit the OSCAR application from a static web page. All 33 **JUnit tests** can be found in the `ConCert/src/test/audit/java`.
 
 ### Design Decisions
-1. Why use a reverse line input stream? *(java/Audit.java)*<br><br> 
+1. Why use a reverse line input stream? *(java/AuditAction.java)*<br><br> 
 Since configured parameters in properties files can be overwritten sequentially, we can make an easy optimization to read the executed parameters bottom-up. We begin at the end of the file, find our desired tags and break when we have collected the information needed. Also, this makes the code more maintainable and robust without requiring extra checks if we were to read top-bottom.
 
-2. How are you checking for Tomcat reinforcement? *(java/Audit.java)*<br><br> 
+2. How are you checking for Tomcat reinforcement? *(java/AuditAction.java)*<br><br> 
 ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size. See ```tomcatReinforcement()``` method for further details.
 
-3. Why is there a ```<br />``` (and sometimes ```<b>```) tag after every output line? *(java/Audit.java)*<br><br> 
+3. Why is there a ```<br />``` (and sometimes ```<b>```) tag after every output line? *(java/AuditAction.java)*<br><br> 
 The browser will interpret these characters as HTML tags, allowing for breaks between lines. Using the ```\n``` escape sequence will not render correctly.
 
 4. Why use JSTL tags on JSPs? *(jsp/oscarAudit.jsp)*<br><br> 
@@ -26,7 +26,7 @@ Keeping code readable, maintainable, and easily understood is crucial for the de
 ### Utilizing the Struts framework
 The Struts framework utilizes the Java Servlet API (Java Enterprise Edition) and formulates a model, view, controller (MVC) architecture. This framework is used for flexible and maintainable Java web-based applications. Currently, OSCAR is running on Struts version 1.2.7.
 
-The **Action class** *(Audit.java)* represents our model (M). This class contains our logic and processes the request by the client. Our Action class receives the appropriate data (calling our audit methods below) and then forwards the data back to the presentation layer. Overriding the execute method allows us to handle the HTTP request:
+The **Action class** *(AuditAction.java)* represents our model (M). This class contains our logic and processes the request by the client. Our Action class receives the appropriate data (calling our audit methods below) and then forwards the data back to the presentation layer. Overriding the execute method allows us to handle the HTTP request:
 ```java
 public ActionForward execute(ActionMapping actionMapping, ActionForm 
                                 actionForm, HttpServletRequest 

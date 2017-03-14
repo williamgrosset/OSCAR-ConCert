@@ -46,7 +46,7 @@ import org.oscarehr.util.DbConnectionFilter;
 /*
 *  github.com/williamgrosset
 */
-public class Audit extends Action {
+public class AuditAction extends Action {
 
     private File catalinaBase;
     private File catalinaHome;
@@ -58,7 +58,7 @@ public class Audit extends Action {
     private String drugrefUrl;
     private Connection connection;
 
-    public Audit() {
+    public AuditAction() {
         catalinaBase = getCatalinaBase();
         catalinaHome = getCatalinaHome();
         lsbRelease = getLsbRelease();
@@ -72,9 +72,6 @@ public class Audit extends Action {
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
-            if (servletRequest.getSession().getAttribute("userrole") == null)
-                servletResponse.sendRedirect("../logout.jsp");
-
             tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
             webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
         } catch (Exception e) {

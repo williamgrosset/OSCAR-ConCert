@@ -302,6 +302,7 @@
 			<form-property name="appointmentCardFax" type="org.oscarehr.common.model.UserProperty" />
 			<form-property name="bornPromptsProperty" type="org.oscarehr.common.model.UserProperty" />
 			<form-property name="ticklerEmailProviderProperty" type="org.oscarehr.common.model.UserProperty" />
+			<form-property name="dashboardShareProperty" type="org.oscarehr.common.model.UserProperty" />
 		</form-bean>
 		<form-bean name="setMyOscarIdForm" type="org.apache.struts.action.DynaActionForm">
 			<form-property name="myOscarLoginId" type="java.lang.String" />
@@ -361,6 +362,7 @@
 		</form-bean>
 		<form-bean name="bedManagerForm" type="org.oscarehr.PMmodule.web.admin.BedManagerForm" />
 		<form-bean name="facilityManagerForm" type="org.oscarehr.PMmodule.web.admin.FacilityManagerForm" />
+		<form-bean name="functionalCentreManagerForm" type="org.oscarehr.PMmodule.web.admin.FunctionalCentreManagerForm" />
 		<form-bean name="oscarFacilityManagerForm" type="oscar.facility.FacilityManagerForm" />
 		<form-bean name="clientSearchForm2" type="org.apache.struts.validator.DynaValidatorForm">
 			<form-property name="criteria" type="org.oscarehr.PMmodule.web.formbean.ClientSearchFormBean" />
@@ -381,6 +383,7 @@
 			<form-property name="programWithIntakeId" type="java.lang.String" />
 			<form-property name="serviceRestriction" type="org.oscarehr.PMmodule.model.ProgramClientRestriction" />
 			<form-property name="serviceRestrictionLength" type="java.lang.Integer" />
+			<form-property name="fcAdmission" type="org.oscarehr.PMmodule.web.FunctionalCentreAdmissionDisplay" />			
 		</form-bean>
 		<form-bean name="staffManagerForm" type="org.apache.struts.validator.DynaValidatorForm">
 			<form-property name="provider" type="org.oscarehr.common.model.Provider" />
@@ -600,6 +603,12 @@
 	</global-forwards>
 
 	<action-mappings>
+	
+		<action path="/lookupListManagerAction" type="org.oscarehr.admin.lookUpLists.LookupListManagerAction" 
+			scope="request" validate="false" parameter="method">
+			<forward name="success" path="/admin/lookUpLists/" />
+		</action>
+	
 		<!-- OMD Dashboard Proof of Concept -->
 		<action input="/web/dashboard/admin/DashboardManager.jsp" name="FrmForm" path="/web/dashboard/admin/DashboardManager" 
 			parameter="method" type="org.oscarehr.dashboard.admin.ManageDashboardAction" scope="request" >
@@ -643,6 +652,11 @@
 			<forward name="error" path="/failure.jsp" />
 		</action>
 	
+		<action path="/web/dashboard/OutcomesDashboard" 
+			parameter="method" type="org.oscarehr.integration.dashboard.OutcomesDashboardAction" scope="request" >
+			
+		</action>
+		
 		<!-- Pharma Best Possible Medication Health form -->
 	 	<action path="/formBPMH" parameter="method" name="bpmh" type="oscar.form.pharmaForms.formBPMH.web.BpmhFormRetrieve"	
 	 		scope="request" validate="false" > 
@@ -1169,6 +1183,13 @@
 			<forward name="close" path="/oscarEncounter/close.jsp" />
 			<forward name="concurrencyError" path="/oscarEncounter/concurrencyError.jsp" />
 		</action>
+		
+		<!-- Import Clinical Data into the Consultation form -->
+		<action path="/oscarConsultationRequest/consultationClinicalData" scope="request" validate="false" parameter="method"
+			type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.ConsultationClinicalDataAction" >
+			<forward name="success" path="/oscarEncounter/oscarConsultationRequest/ConsultationFormRequest.jsp" />
+		</action>
+		
 		<action input=" " name="EctIncomingConsultationForm" path="/oscarEncounter/IncomingConsultation" scope="request" type="oscar.oscarEncounter.oscarConsultationRequest.pageUtil.EctIncomingConsultationAction">
 			<forward name="success" path="/oscarEncounter/oscarConsultationRequest/ViewConsultationRequests.jsp" />
 		</action>
@@ -1635,7 +1656,9 @@
             <forward name="genHideOldEchartLinkInAppt"		path="/provider/setHideOldEchartLinkInAppt.jsp"/>
             <forward name="genAppointmentCardPrefs"     path="/provider/setAppointmentCardPrefs.jsp"/>
             <forward name="genBornPrefs"     path="/provider/setBornPrefs.jsp"/>
- 			<forward name="genTicklerEmailProviderPrefs"     path="/provider/setTicklerEmailProviderPrefs.jsp"/>
+	    <forward name="genTicklerEmailProviderPrefs"     path="/provider/setTicklerEmailProviderPrefs.jsp"/>
+            <forward name="genAppointmentCardPrefs"     path="/provider/setAppointmentCardPrefs.jsp"/>
+            <forward name="genDashboardPrefs"     path="/provider/setDashboardPrefs.jsp"/>
         </action>
 		<action input="/provider/providerIndivoIdSetter.jsp" name="setMyOscarIdForm" path="/setMyOscarId" scope="request" type="oscar.oscarProvider.pageUtil.ProEditMyOscarIdAction">
 			<forward name="success" path="/provider/providerIndivoIdSetter.jsp" />
@@ -2123,6 +2146,10 @@
 			<forward name="list" path="/admin/facility/ListFacilities.jsp" />
 			<forward name="edit" path="/admin/facility/EditFacility.jsp" />
 		</action>
+		<action path="/PMmodule/FunctionalCentreManager" type="org.springframework.web.struts.DelegatingActionProxy" parameter="method" name="functionalCentreManagerForm" scope="session">
+			<forward name="list" path="page.pmm.admin.functionalCentre.list" />
+			<forward name="edit" path="page.pmm.admin.functionalCentre.edit"/>			
+		</action>
 		<action path="/PMmodule/ProviderSearch" type="org.springframework.web.struts.DelegatingActionProxy"  parameter="method">
 			<forward name="results" path="/PMmodule/ProviderSearch.jsp" />
 		</action>
@@ -2144,6 +2171,7 @@
 			<forward name="links" path="/PMmodule/ClientManager/links.jsp" />
 			<forward name="view_referral" path="/PMmodule/ClientManager/view_referral.jsp" />
 			<forward name="view_admission" path="/PMmodule/ClientManager/view_admission.jsp" />
+			<forward name="view_fcAdmission" path="/PMmodule/ClientManager/view_fcAdmission.jsp" />
 			<forward name="service_restriction_error" path="page.pmm.client.service_restriction_error" />
 			<forward name="generalFormsReport" path="/PMmodule/GeneralFormsReport.jsp" />
 			<forward name="intake-search" path="/PMmodule/GenericIntake/Search" redirect="true" />
@@ -2575,7 +2603,7 @@
 			<forward name="success" path="/admin/oscarStatus.jsp" />
         </action>
 
-        <action path="/admin/oscarAudit" scope="request" parameter="method" validate="false" type="oscar.util.Audit">
+        <action path="/admin/oscarAudit" scope="request" parameter="method" validate="false" type="oscar.util.AuditAction">
             <forward name="success" path="/admin/oscarAudit.jsp" />
             <forward name="failure" path="/failure.jsp" />
             <forward name="unauthorized" path="/securityError.jsp" />
