@@ -43,6 +43,10 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import org.oscarehr.util.DbConnectionFilter;
 
+import org.oscarehr.util.SpringUtils;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.managers.SecurityInfoManager;
+
 /*
 *  github.com/williamgrosset
 */
@@ -57,6 +61,7 @@ public class AuditAction extends Action {
     private String webAppName;
     private String drugrefUrl;
     private Connection connection;
+    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
     public AuditAction() {
         catalinaBase = getCatalinaBase();
@@ -81,6 +86,10 @@ public class AuditAction extends Action {
         String roleName = (String)servletRequest.getSession().getAttribute("userrole") + "," + (String)servletRequest.getAttribute("user");
         if (!roleName.contains("admin")) {
             return actionMapping.findForward("unauthorized");
+        }
+
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(servletRequest), "_admin", "r", null)) {
+            throw new SecurityException("Missing required security object (_admin)");
         }
 
         servletRequest.setAttribute("serverVersion", serverVersion());
