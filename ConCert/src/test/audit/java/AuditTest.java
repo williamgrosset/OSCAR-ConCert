@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
 */
 public class AuditTest {
 
-    Audit audit = new Audit();
+    AuditAction audit = new AuditAction();
     private Field catalinaBase;
     private Field catalinaHome;
     private Field lsbRelease;
@@ -545,6 +545,7 @@ public class AuditTest {
 
     @After
     public void tearDown() {
+        audit = null;
         catalinaBase = null;
         catalinaHome = null;
         lsbRelease = null;
@@ -561,6 +562,7 @@ public class AuditTest {
         verifyDrugrefProperties = null;
         tomcatReinforcement = null;
 
+        assertNull(audit);
         assertNull(catalinaBase);
         assertNull(catalinaHome);
         assertNull(lsbRelease);
