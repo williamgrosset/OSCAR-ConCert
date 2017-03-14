@@ -58,14 +58,14 @@ public class PropertyCheckAction extends Action {
         String property = form.getProperty();
         String value = form.getValue();
 
-        if (checkProperty(property, value)) {
+        if (propertyCompareBool(property, value)) {
             return actionMapping.findForward("success");
         } else {
             return actionMapping.findForward("failure");
         }
     }
     
-    private boolean checkProperty(String property, String value) {
+    private boolean propertyCompareBool(String property, String value) {
         return OscarProperties.getInstance().getBooleanProperty(property, value);
     }
 }
