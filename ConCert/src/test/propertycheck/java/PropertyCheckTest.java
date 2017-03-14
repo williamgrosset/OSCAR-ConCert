@@ -25,19 +25,15 @@
 package oscar.util;
 
 import java.io.File;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.After;
 import org.junit.Test;
 import org.apache.commons.io.FileUtils;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import static org.junit.Assert.*;
-import oscar.util.PropertyCheckAction;
 
 /*
 *  github.com/williamgrosset
