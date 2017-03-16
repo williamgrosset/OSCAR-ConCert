@@ -61,7 +61,7 @@ public class AuditAction extends Action {
     private String webAppName;
     private String drugrefUrl;
     private Connection connection;
-    private SecurityInfoManager securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+    private SecurityInfoManager securityInfoManager;
 
     public AuditAction() {
         catalinaBase = getCatalinaBase();
@@ -73,6 +73,7 @@ public class AuditAction extends Action {
         webAppName = "";
         drugrefUrl = "";
         connection = null;
+        securityInfoManager = getSecurityInfoManager();
     }
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
@@ -84,7 +85,7 @@ public class AuditAction extends Action {
         }
 
         String roleName = (String)servletRequest.getSession().getAttribute("userrole") + "," + (String)servletRequest.getAttribute("user");
-        if (!roleName.contains("admin")) {
+        if (!roleName.contains("admin") || securityInfoManager == null) {
             return actionMapping.findForward("unauthorized");
         }
 
@@ -170,6 +171,21 @@ public class AuditAction extends Action {
             return System.getProperty("java.version");
         } catch (Exception e) {
             return "";
+        }
+    }
+
+    /*
+    *  Initialize SecurityInfoManager object.
+    *
+    *  @return securityInfoManager: Object for SecurityInfoManager.class.
+    */
+    private SecurityInfoManager getSecurityInfoManager() {
+        try {
+            return SpringUtils.getBean(SecurityInfoManager.class);
+        } catch (NoClassDefFoundError e) {
+            return null;
+        } catch (Exception e) {
+            return null;
         }
     }
 
