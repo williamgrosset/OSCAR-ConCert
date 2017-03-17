@@ -182,8 +182,6 @@ public class AuditAction extends Action {
     private SecurityInfoManager getSecurityInfoManager() {
         try {
             return SpringUtils.getBean(SecurityInfoManager.class);
-        } catch (NoClassDefFoundError e) {
-            return null;
         } catch (Exception e) {
             return null;
         }
