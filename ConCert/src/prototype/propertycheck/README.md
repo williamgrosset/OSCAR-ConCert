@@ -1,0 +1,9 @@
+# Property Query Tool
+## Overview
+The Property Query tool allows OSPs (Oscar Service Providers) to query properties of a live OSCAR application. The user-interface allows a user to set a property and value to query, which will either return:
++ True: redirect user to `jsp/propertyCheckTrue.jsp`
++ False: redirect user to `jsp/propertyCheckFalse.jsp`
++ Invalid: display invalid user values on `jsp/propertyCheck.jsp`
+
+## What's next
+...
