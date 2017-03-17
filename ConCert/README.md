@@ -14,4 +14,4 @@ William Grosset (**Fall 2016**: 100-hour contract, **Spring 2017**: Full-time) a
     + Tests in `src/test/propertycheck`
     + DevOps w/ Melody in `src/prototype/devops`
 - Deprecated or old utility:
-    + Work in `src/OLDUTIL`
+    + Work in `src/oldutil`
