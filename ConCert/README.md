@@ -7,11 +7,11 @@ William Grosset (**Fall 2016**: 100-hour contract, **Spring 2017**: Full-time) a
 
 ### ConCert
 - Committed code or in the process of code review:
-    + Main in `src/main/audit` (review of feature request can be found [here](https://source.oscartools.org:8080/#/c/14224/)).
-    + Tests in `src/test/audit`
+    + **Audit** src in `src/main/audit` (review of feature request can be found [here](https://source.oscartools.org:8080/#/c/14224/)).
+    + **Audit** tests in `src/test/audit`
 - Prototypes:
-    + PropertyCheck in `src/prototype/propertycheck`
-    + Tests in `src/test/propertycheck`
-    + DevOps w/ Melody in `src/prototype/devops`
+    + **PropertyCheck** src in `src/prototype/propertycheck`
+    + **PropertyCheck** tests in `src/test/propertycheck`
+    + **Remote auditing** w/ (...) in `src/prototype/remote`
 - Deprecated or old utility:
     + Work in `src/oldutil`
