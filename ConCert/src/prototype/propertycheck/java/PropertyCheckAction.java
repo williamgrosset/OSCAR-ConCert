@@ -34,29 +34,32 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import oscar.OscarProperties;
+import org.oscarehr.util.SpringUtils;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.managers.SecurityInfoManager;
 
 /*
 *  github.com/williamgrosset
 */
 public class PropertyCheckAction extends Action {
+
+    private SecurityInfoManager securityInfoManager;
    
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-        try {
-            if (servletRequest.getSession().getAttribute("userrole") == null)
-                servletResponse.sendRedirect("../logout.jsp");
-        } catch (Exception e) {
-            return actionMapping.findForward("failure");
-        }
-
         String roleName = (String)servletRequest.getSession().getAttribute("userrole") + ","
                             + (String)servletRequest.getAttribute("user");
-        if (!roleName.contains("admin")) {
-            return actionMapping.findForward("unauthorized");
-        }
-
         PropertyCheckForm form = (PropertyCheckForm) actionForm;
         String property = form.getProperty();
         String value = form.getValue();
+        securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+        if (!roleName.contains("admin")) {
+            return actionMapping.findForward("unauthorized");
+        }
+        
+        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(servletRequest), "_admin", "r", null)) {
+            throw new SecurityException("Missing required security object (_admin)");
+        }
 
         if (propertyCompareBool(property, value)) {
             return actionMapping.findForward("success");
