@@ -37,5 +37,12 @@ OSCAR provides it's web services to authorized users only ([OAUTH 1.0a](https://
 ### Documentation
 + REST API documentation will be done using [RAML](http://raml.org)
 + Can generate base RAML using [RAML for JAX-RS](https://github.com/mulesoft-labs/raml-for-jax-rs) (?)
+
+### Implementation
+...
+
 ### Testing
 ...
+
+### Resources
++ [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
