@@ -2,7 +2,7 @@
 ## Overview
 The purpose of this project is to provide a web service for live auditing of an OSCAR application. The services will be accessible through a REST API. Authorized clients will be able to make a request to a specific resource on the server over an HTTP protocol. OAUTH will require clients to provide credentials (client id and secret) in exchange for an access token, which will authorize the request.
 
-## Notes on Best Practices
+## Notes on [Best Practices](http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api)
 A few key requirements for the design of an API are:
 + Use web standards where they make sense
 + Friendly to the developer and explorable by the URL address bar
@@ -13,8 +13,10 @@ A few key requirements for the design of an API are:
 + Can use a fields query parameter that takes a comma seperated list to limit which fields are returned by the API
 
 ### Use RESTful URLS and actions
-+ Seperate API into logical **resources**, which are manipulated using HTTP requests (where the methods ```GET, POST, PUT, ...``` have specific meaning)
-+ **Resources** should be nouns that make sense from the perspective of the API consumer and are generally plural (i.e. ```GET /tickets/12```)
++ Seperate API into logical **resources**, which are manipulated using HTTP requests 
+    - where the methods ```GET, POST, ..., PUT``` have specific meaning
++ **Resources** should be nouns that make sense from the perspective of the API consumer and are generally plural 
+    - i.e. ```GET /tickets/12```
 
 ### JSON data
 + Use camelCase for JSON field names
@@ -23,8 +25,7 @@ A few key requirements for the design of an API are:
 
 ### Errors
 + An API should provide a useful error message with its own set of fields (including HTTP status codes)
-+ An API that accepts JSON encoded requests should also require the Content-Type header be set to application/json or throw a 415 Unsupported Meida Type HTTP status code
++ An API that accepts JSON encoded requests should also require the Content-Type header be set to ```application/json``` or throw a 415 Unsupported Media Type HTTP status code
 
-## Resources
-[REST API Concepts & Examples](https://www.youtube.com/watch?v=7YcW25PHnAA)
-[Best Practices for Designing a Pragmatic RESTful API](http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api)
+## Current OSCAR web services
+...
