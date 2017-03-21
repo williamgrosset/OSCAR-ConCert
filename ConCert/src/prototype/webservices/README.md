@@ -27,5 +27,15 @@ A few key requirements for the design of an API are:
 + An API should provide a useful error message with its own set of fields (including HTTP status codes)
 + An API that accepts JSON encoded requests should also require the Content-Type header be set to ```application/json``` or throw a 415 Unsupported Media Type HTTP status code
 
-## Current OSCAR web services
+## OSCAR RESTful web services
+OSCAR provides it's web services to authorized users only ([OAUTH 1.0a](https://oauth.net/core/1.0a/)).
+
+### Data formats
++ Use JSON for all responses/requests
++ OSCAR src code has both JSON and legacy services that use XML
+
+### Documentation
++ REST API documentation will be done using [RAML](http://raml.org)
++ Can generate base RAML using [RAML for JAX-RS](https://github.com/mulesoft-labs/raml-for-jax-rs) (?)
+### Testing
 ...
