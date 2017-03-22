@@ -42,13 +42,17 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 + Can generate base RAML using [RAML for JAX-RS](https://github.com/mulesoft-labs/raml-for-jax-rs) (?)
 
 ### Implementation
-...
++ OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services)
+    - pairs well with Struts framework (OSCAR runs on Struts 1.2.7)
+    - allows annotations of methods to indicate their roles in the REST API
++ see ```OSCAR-ConCert/src/main/resources/applicationContextREST.xml``` for web services
++ see **RESTful Web Service** section in ```resources/architectural_notes.pdf```
 
 ### Testing
 ...
 
 ## OSCAR Audit Web Service
-The goal of the REST API is to provide authorized access to the auditing information found in ```../main/audit/```.
+The goal of the REST API is to provide authorized access to the auditing information found in ```../../main/audit/```.
 
 ### API requests
 + ```GET /audit/serverInfo```
