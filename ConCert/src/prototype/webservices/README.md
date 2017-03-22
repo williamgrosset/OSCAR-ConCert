@@ -9,8 +9,10 @@ A few key requirements for the design of an API are:
 + Throw hard errors on non-SSL access to API URL
 + Strong documentation (see [GitHub](https://developer.github.com/v3/) for reference)
 + Include versioning (see [Stripe](https://stripe.com/docs/api#versioning) for reference)
-+ Result filtering, sorting, and searching can be implemented as query parameters on top of the base URL
-+ Can use a fields query parameter that takes a comma seperated list to limit which fields are returned by the API
++ Local values (i.e. id=5, action=refresh, page=2) can be a part of the resource URL path
++ Result filtering, sorting, and searching can be implemented as query parameters (i.e. ?order=backwards/?query=Obama)
+on top of the base URL
++ Can use a fields query parameter that takes a comma seperated list to limit which fields are returned by the API request
 
 ### Use RESTful URLS and actions
 + Seperate API into logical **resources**, which are manipulated using HTTP requests 
@@ -21,6 +23,7 @@ A few key requirements for the design of an API are:
 ### JSON data
 + Use camelCase for JSON field names
 + Wrap responses in envelopes only when needed
++ Consistent format of results
 + Endpoint URL should include .json extension (?)
 
 ### Errors
@@ -47,7 +50,28 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 ## OSCAR Audit web service
 ...
 
-### Resources
+### API requests
++ ```GET /audit/serverInfo```
++ ```GET /audit/databaseInfo```
++ ```GET /audit/tomcat/jvmVersion```
++ ```GET /audit/tomcat/tomcatVersion```
++ ```GET /audit/tomcat/memoryAllocation```
++ ```GET /audit/oscarBuild```
++ ...some stuff w/ ```oscar.properties``` and ```drugref.properties```
+
+### HTTP status codes
+| HTTP Code | Message            | Meaning                                        | Response Body                              |
+| --------- | ------------------ | ---------------------------------------------- | ------------------------------------------ |
+| 200       | OK                 | Success!                                       | JSON response                              |
+| 201       | Created            | A new resources was successfully created.      | JSON response containing new resource data |
+| 400       | Bad Request        | You've made an error in your request.          | Error message                              |
+| 403       | Forbidden          | You've eceeded rate limits or data is private. | Error message                              |
+| 404       | Not Found          | The request resource could not be found.       | Error message                              |
+| 500       | Server Error       | An internal error.                             | Error message                              |
+| 503       | Server Unavailable | Access to API is unavailable.                  | Error message                              |
+
+## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
 + OAUTH and REST documentation in ```OSCAR-ConCert/docs/webservices```
 + Examples and notes in ```resources/``` (credits to Simon Diemert)
++ [Etsy API documentation](https//www.etsy.com/developers/documentation/getting_started/api_basics)
