@@ -2,8 +2,8 @@
 ## Overview
 The purpose of this project is to provide a web service for live auditing of an OSCAR application. The services will be accessible through a REST API. Authorized clients will be able to make a request to a specific resource on the server over an HTTP protocol. OAUTH will require clients to provide credentials (client id and secret) in exchange for an access token, which will authorize the request.
 
-## Notes on [Best Practices](http://www.vinaysahni.com/best-practices-for-a-pragmatic-restful-api)
-A few key requirements for the design of an API are:
+## Best Practices for REST API Design:
+These are my personal notes for this [article](http://vinaysahni.com/best-practices-for-a-pragmatic-restful-api). A few key requirements for the design of an API are:
 + Use web standards where they make sense
 + Friendly to the developer and explorable by the URL address bar
 + Throw hard errors on non-SSL access to API URL
@@ -30,7 +30,7 @@ on top of the base URL
 + An API should provide a useful error message with its own set of fields (including HTTP status codes)
 + An API that accepts JSON encoded requests should also require the Content-Type header be set to ```application/json``` or throw a 415 Unsupported Media Type HTTP status code
 
-## OSCAR RESTful web services
+## OSCAR RESTful Web Services
 OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/)).
 
 ### Data formats
@@ -47,8 +47,8 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 ### Testing
 ...
 
-## OSCAR Audit web service
-...
+## OSCAR Audit Web Service
+The goal of the REST API is to provide authorized access to the auditing information found in ```../main/audit/```.
 
 ### API requests
 + ```GET /audit/serverInfo```
@@ -60,18 +60,18 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 + ...some stuff w/ ```oscar.properties``` and ```drugref.properties```
 
 ### HTTP status codes
-| HTTP Code | Message            | Meaning                                        | Response Body                              |
-| --------- | ------------------ | ---------------------------------------------- | ------------------------------------------ |
-| 200       | OK                 | Success!                                       | JSON response                              |
-| 201       | Created            | A new resources was successfully created.      | JSON response containing new resource data |
-| 400       | Bad Request        | You've made an error in your request.          | Error message                              |
-| 403       | Forbidden          | You've eceeded rate limits or data is private. | Error message                              |
-| 404       | Not Found          | The request resource could not be found.       | Error message                              |
-| 500       | Server Error       | An internal error.                             | Error message                              |
-| 503       | Server Unavailable | Access to API is unavailable.                  | Error message                              |
+| HTTP Code | Message            | Meaning                                        | Response Body                         |
+| --------- | ------------------ | ---------------------------------------------- | ------------------------------------- |
+| 200       | OK                 | Success!                                       | JSON response                         |
+| 201       | Created            | A new resource was successfully created.       | JSON response containing new resource |
+| 400       | Bad Request        | You've made an error in your request.          | Error message                         |
+| 403       | Forbidden          | You've eceeded rate limits or data is private. | Error message                         |
+| 404       | Not Found          | The request resource could not be found.       | Error message                         |
+| 500       | Server Error       | An internal error.                             | Error message                         |
+| 503       | Server Unavailable | Access to API is unavailable.                  | Error message                         |
 
 ## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
 + OAUTH and REST documentation in ```OSCAR-ConCert/docs/webservices```
-+ Examples and notes in ```resources/``` (credits to Simon Diemert)
-+ [Etsy API documentation](https//www.etsy.com/developers/documentation/getting_started/api_basics)
++ Examples and notes in ```resources/``` (credits to [Simon Diemert](https://github.com/sdiemert))
++ [Etsy API documentation](https://etsy.com/developers/documentation/getting_started/api_basics)
