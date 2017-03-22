@@ -28,7 +28,7 @@ A few key requirements for the design of an API are:
 + An API that accepts JSON encoded requests should also require the Content-Type header be set to ```application/json``` or throw a 415 Unsupported Media Type HTTP status code
 
 ## OSCAR RESTful web services
-OSCAR provides it's web services to authorized users only ([OAUTH 1.0a](https://oauth.net/core/1.0a/)).
+OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/)).
 
 ### Data formats
 + Use JSON for all responses/requests
@@ -44,5 +44,10 @@ OSCAR provides it's web services to authorized users only ([OAUTH 1.0a](https://
 ### Testing
 ...
 
+## OSCAR Audit web service
+...
+
 ### Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
++ OAUTH and REST documentation in ```OSCAR-ConCert/docs/webservices```
++ Examples and notes in ```resources/``` (credits to Simon Diemert)
