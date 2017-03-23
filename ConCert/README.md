@@ -12,6 +12,6 @@ William Grosset (**Fall 2016**: 100-hour contract, **Spring 2017**: Full-time) a
 - Prototypes:
     + **PropertyCheck** src in `src/prototype/propertycheck`
     + **PropertyCheck** tests in `src/test/propertycheck`
-    + **Remote auditing** w/ (...) in `src/prototype/remote`
+    + **Audit Web Service** w/ (...) in `src/prototype/webservices`
 - Deprecated or old utility:
     + Work in `src/oldutil`
