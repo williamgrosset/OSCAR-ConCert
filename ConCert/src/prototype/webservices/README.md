@@ -42,7 +42,7 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 + Can generate base RAML using [RAML for JAX-RS](https://github.com/mulesoft-labs/raml-for-jax-rs) (?)
 
 ### Implementation
-+ OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services)
++ OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services) (Java API for creating RESTful web services)
     - pairs well with Struts framework (OSCAR runs on Struts 1.2.7)
     - allows annotations of methods to indicate their roles in the REST API
 + see ```OSCAR-ConCert/src/main/resources/applicationContextREST.xml``` for web services
@@ -79,3 +79,4 @@ The goal of the REST API is to provide authorized access to the auditing informa
 + OAUTH and REST documentation in ```OSCAR-ConCert/docs/webservices```
 + Examples and notes in ```resources/``` (credits to [Simon Diemert](https://github.com/sdiemert))
 + [Etsy API documentation](https://etsy.com/developers/documentation/getting_started/api_basics)
++ [RESTful Objects URIs and HTTP Methods](https://youtube.com/watch?v=grXnAMIQ_1Q)
