@@ -57,45 +57,45 @@ The goal of the REST API is to provide authorized access to the auditing informa
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK).
 + ```GET /audit/serverVersion```
+  **Response**
   ```
-  Example Response
   {
     "version": "Ubuntu 14.04"
   }
   ```
 + ```GET /audit/databaseInfo```
+  **Response**
   ```
-  Example Response
   {
     "type": "MySQL",
     "version": "5.5.53"
   }
   ```
 + ```GET /audit/tomcat/jvmVersion```
+  **Response**
   ```
-  Example Response
   {
     "version": "1.7.0_111"
   }
   ```
 + ```GET /audit/tomcat/tomcatVersion```
+  **Response**
   ```
-  Example Response
   {
     "version": "Apache Tomcat/7.0.52"
   }
   ```
 + ```GET /audit/tomcat/memoryAllocation```
+  **Response**
   ```
-  Example Response
   {
     "xmx": "1024m",
     "xms": "1024m"
   }
   ```
 + ```GET /audit/oscarBuild```
+  **Response**
   ```
-  Example Response
   {
     "build": "Gerrit_OSCAR-697"
   }
@@ -109,6 +109,11 @@ The following JSON responses for each API call assume that the HTTP status code 
 | 400       | Bad Request        | You've made an error in your request.           | Error message                         |
 | 403       | Forbidden          | You've exceeded rate limits or data is private. | Error message                         |
 | 404       | Not Found          | The request resource could not be found.        | Error message                         |
+
+### Java classes
++ **AuditWebService.class**: This class will handle all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
++ **AuditManager.class**: This class will provide access to relevant data and business logic classes that are required by the AuditWebService route handlers. A web service class may use several manager classes to access the required data.
++ **AuditConverter.class**: This class will handle converting the objects returned by the business logic classes to a transfer object. Transfer objects implement the Serializable interface and can be wrapped by a Response object (i.e. JSON) to be sent back to the client.
 
 ## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
