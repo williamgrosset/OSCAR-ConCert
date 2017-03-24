@@ -112,8 +112,12 @@ The following JSON responses for each API call assume that the HTTP status code 
 
 ### Java classes
 + **AuditWebService.class**: This class will handle all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
+    - This class will use **SecurityInfoManager.class** to control access to the audited information.
+    - The response object (**AuditResponse.class**) will ```... extends GenericRESTReponse implements Serializable```.
 + **AuditManager.class**: This class will provide access to relevant data and business logic classes that are required by the AuditWebService route handlers. A web service class may use several manager classes to access the required data.
 + **AuditConverter.class**: This class will handle converting the objects returned by the business logic classes to a transfer object. Transfer objects implement the Serializable interface and can be wrapped by a Response object (i.e. JSON) to be sent back to the client.
+
+An authorized client will make an API request using an available route handler. *AuditWebService* will check admin permissions using *SecurityInfoManager*. If permission is granted, *AuditManager* will handle the request and retrieve the relevent data and business logic. Once this data is received, *AuditConverter* will transform this data into a response object (*AuditResponse*) that can be returned as JSON back to the client.
 
 ## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
