@@ -22,9 +22,8 @@ on top of the base URL
 
 ### JSON data
 + Use camelCase for JSON field names
-+ Wrap responses in envelopes only when needed
 + Consistent format of results
-+ Endpoint URL should include .json extension
++ Endpoint URL should include .json extension?
 
 ### Errors
 + An API should provide a useful error message with its own set of fields (including HTTP status codes)
@@ -115,7 +114,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     - This class will use **SecurityInfoManager.class** to control access to the audited information.
     - The response object (**AuditResponse.class**) will ```... extends GenericRESTReponse implements Serializable```.
 + **AuditManager.class**: This class will provide access to relevant data and business logic classes that are required by the AuditWebService route handlers. A web service class may use several manager classes to access the required data.
-+ **AuditConverter.class**: This class will handle converting the objects returned by the business logic classes to a transfer object. Transfer objects implement the Serializable interface and can be wrapped by a response object (i.e. JSON) to be sent back to the client.
++ **AuditConverter.class**: This class will handle converting the objects returned by the business logic classes to a transfer object.
 + **AuditTo1.class**: This class will represent the transfer object. Transfer objects implement the Serializable interface and can be wrapped by a response object (i.e. JSON) to be sent back to the client.
 
 An authorized client will make an API request using an available route handler. **AuditWebService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will handle the request and retrieve the relevent data and business logic. Once this data is received, **AuditConverter** will transform this data into a response object (**AuditResponse**) that can be returned as JSON back to the client.
