@@ -56,8 +56,8 @@ The goal of the REST API is to provide authorized access to the auditing informa
 
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK).
-+ ```GET /audit/serverInfo 
-    RESPONSE
++ ```GET /audit/serverInfo```
+ ```Example Response
     {
         "server": "Ubuntu 14.04"
     }```
