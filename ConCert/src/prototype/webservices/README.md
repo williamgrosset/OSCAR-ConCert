@@ -57,15 +57,47 @@ The goal of the REST API is to provide authorized access to the auditing informa
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK).
 + ```GET /audit/serverInfo```
- ```Example Response
-    {
+  ```
+     Example Response
+     {
         "server": "Ubuntu 14.04"
-    }```
+     }
+   ```
 + ```GET /audit/databaseInfo```
+  ```
+     Example Response
+     {
+        "server": "Ubuntu 14.04"
+     }
+   ```
 + ```GET /audit/tomcat/jvmVersion```
+  ```
+     Example Response
+     {
+        "server": "Ubuntu 14.04"
+     }
+   ```
 + ```GET /audit/tomcat/tomcatVersion```
+  ```
+     Example Response
+     {
+        "server": "Ubuntu 14.04"
+     }
+   ```
 + ```GET /audit/tomcat/memoryAllocation```
+  ```
+     Example Response
+     {
+        "server": "Ubuntu 14.04"
+     }
+   ```
 + ```GET /audit/oscarBuild```
+  ```
+     Example Response
+     {
+        "server": "Ubuntu 14.04"
+     }
+   ```
 + ...some stuff w/ ```oscar.properties``` and ```drugref.properties```
 
 ### HTTP status codes
