@@ -24,7 +24,7 @@ on top of the base URL
 + Use camelCase for JSON field names
 + Wrap responses in envelopes only when needed
 + Consistent format of results
-+ Endpoint URL should include .json extension (?)
++ Endpoint URL should include .json extension
 
 ### Errors
 + An API should provide a useful error message with its own set of fields (including HTTP status codes)
@@ -55,7 +55,11 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 The goal of the REST API is to provide authorized access to the auditing information found in ```../../main/audit/```.
 
 ### API requests
+The following JSON responses for each API call assume that the HTTP status code returns 200 (OK).
 + ```GET /audit/serverInfo```
+    - ```{
+            "server": "Ubuntu 14.04"
+         }```
 + ```GET /audit/databaseInfo```
 + ```GET /audit/tomcat/jvmVersion```
 + ```GET /audit/tomcat/tomcatVersion```
@@ -64,15 +68,12 @@ The goal of the REST API is to provide authorized access to the auditing informa
 + ...some stuff w/ ```oscar.properties``` and ```drugref.properties```
 
 ### HTTP status codes
-| HTTP Code | Message            | Meaning                                        | Response Body                         |
-| --------- | ------------------ | ---------------------------------------------- | ------------------------------------- |
-| 200       | OK                 | Success!                                       | JSON response                         |
-| 201       | Created            | A new resource was successfully created.       | JSON response containing new resource |
-| 400       | Bad Request        | You've made an error in your request.          | Error message                         |
-| 403       | Forbidden          | You've eceeded rate limits or data is private. | Error message                         |
-| 404       | Not Found          | The request resource could not be found.       | Error message                         |
-| 500       | Server Error       | An internal error.                             | Error message                         |
-| 503       | Server Unavailable | Access to API is unavailable.                  | Error message                         |
+| HTTP Code | Message            | Meaning                                         | Response Body                         |
+| --------- | ------------------ | ----------------------------------------------- | ------------------------------------- |
+| 200       | OK                 | Success!                                        | JSON response                         |
+| 400       | Bad Request        | You've made an error in your request.           | Error message                         |
+| 403       | Forbidden          | You've exceeded rate limits or data is private. | Error message                         |
+| 404       | Not Found          | The request resource could not be found.        | Error message                         |
 
 ## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
