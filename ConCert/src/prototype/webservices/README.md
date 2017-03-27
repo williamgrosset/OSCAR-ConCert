@@ -17,13 +17,13 @@ on top of the base URL
 ### Use RESTful URLS and actions
 + Seperate API into logical **resources**, which are manipulated using HTTP requests 
     - where the methods ```GET, POST, ..., PUT``` have specific meaning
-+ **Resources** should be nouns that make sense from the perspective of the API consumer and are generally plural 
++ **Resources** should be nouns that make sense from the perspective of the API consumer 
     - i.e. ```GET /tickets/12```
 
 ### JSON data
 + Use camelCase for JSON field names
 + Consistent format of results
-+ Endpoint URL should include .json extension?
++ Endpoint URL should include .json extension
 
 ### Errors
 + An API should provide a useful error message with its own set of fields (including HTTP status codes)
@@ -62,7 +62,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "version": "Ubuntu 14.04"
   }
   ```
-+ ```GET /audit/databaseInfo``` Returns the connected database type and version.
++ ```GET /audit/databaseInfo``` Returns the connected database type and version.  
   **Example Response**:
   ```
   {
@@ -70,21 +70,21 @@ The following JSON responses for each API call assume that the HTTP status code 
     "version": "5.5.53"
   }
   ```
-+ ```GET /audit/tomcat/jvmVersion``` Returns the JVM version.
++ ```GET /audit/tomcat/jvmVersion``` Returns the JVM version.  
   **Example Response**:
   ```
   {
     "version": "1.7.0_111"
   }
   ```
-+ ```GET /audit/tomcat/tomcatVersion``` Returns Tomcat web container version.
++ ```GET /audit/tomcat/tomcatVersion``` Returns Tomcat web container version.  
   **Example Response**:
   ```
   {
     "version": "Apache Tomcat/7.0.52"
   }
   ```
-+ ```GET /audit/tomcat/memoryAllocation``` Returns maximum (xmx) and minimum (xms) heap size for memory allocation.
++ ```GET /audit/tomcat/memoryAllocation``` Returns maximum (xmx) and minimum (xms) heap size for memory allocation.  
   **Example Response**:
   ```
   {
@@ -92,7 +92,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "xms": "1024m"
   }
   ```
-+ ```GET /audit/oscarBuild``` Returns OSCAR build tag. 
++ ```GET /audit/oscarBuild``` Returns OSCAR build tag.  
   **Example Response**:
   ```
   {
