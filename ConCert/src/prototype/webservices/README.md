@@ -55,45 +55,45 @@ The goal of the REST API is to provide authorized access to the auditing informa
 
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK).
-+ ```GET /audit/serverVersion```  
-  **Response**:
++ ```GET /audit/serverVersion``` Returns the Linux distribution version.
+  **Example Response**:
   ```
   {
     "version": "Ubuntu 14.04"
   }
   ```
-+ ```GET /audit/databaseInfo```  
-  **Response**:
++ ```GET /audit/databaseInfo``` Returns the connected database type and version.
+  **Example Response**:
   ```
   {
     "type": "MySQL",
     "version": "5.5.53"
   }
   ```
-+ ```GET /audit/tomcat/jvmVersion```  
-  **Response**:
++ ```GET /audit/tomcat/jvmVersion``` Returns the JVM version.
+  **Example Response**:
   ```
   {
     "version": "1.7.0_111"
   }
   ```
-+ ```GET /audit/tomcat/tomcatVersion```  
-  **Response**:
++ ```GET /audit/tomcat/tomcatVersion``` Returns Tomcat web container version.
+  **Example Response**:
   ```
   {
     "version": "Apache Tomcat/7.0.52"
   }
   ```
-+ ```GET /audit/tomcat/memoryAllocation```  
-  **Response**:
++ ```GET /audit/tomcat/memoryAllocation``` Returns maximum (xmx) and minimum (xms) heap size for memory allocation.
+  **Example Response**:
   ```
   {
     "xmx": "1024m",
     "xms": "1024m"
   }
   ```
-+ ```GET /audit/oscarBuild```  
-  **Response**:
++ ```GET /audit/oscarBuild``` Returns OSCAR build tag. 
+  **Example Response**:
   ```
   {
     "build": "Gerrit_OSCAR-697"
