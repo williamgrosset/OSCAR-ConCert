@@ -47,8 +47,10 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 + see ```OSCAR-ConCert/src/main/resources/applicationContextREST.xml``` for web services
 + see **RESTful Web Service** section in ```resources/architectural_notes.pdf```
 
-### Testing
-...
+### Using web services
+OSCAR web services can be accessed in two different ways:
++ **OAuth**: Can use endpoint ```/ws/services/<path>?<query>```
++ **User session**: Can use endpoint ```/ws/rs/<path>?<query>```
 
 ## OSCAR Audit Web Service
 The goal of the REST API is to provide authorized access to the auditing information found in ```../../main/audit/```.
@@ -124,6 +126,9 @@ The following JSON responses for each API call assume that the HTTP status code 
 + **AuditTo1.class**: This class will represent the transfer object. Transfer objects implement the Serializable interface and can be wrapped by a response object (i.e. JSON) to be sent back to the client.
 
 An authorized client will make an API request using an available route handler. **AuditWebService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will handle the request and retrieve the relevent data and business logic. Once this data is received, **AuditConverter** will transform this data into a response object (**AuditResponse**) that can be returned as JSON back to the client.
+
+### Testing
+...
 
 ## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
