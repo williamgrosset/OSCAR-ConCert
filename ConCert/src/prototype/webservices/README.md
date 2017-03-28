@@ -127,7 +127,7 @@ An authorized client will make an API request using an available route handler. 
 
 ## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
-+ OAUTH and REST documentation in ```OSCAR-ConCert/docs/webservices```
 + Examples and notes in ```resources/``` (credits to [Simon Diemert](https://github.com/sdiemert))
++ OAUTH and REST documentation in ```OSCAR-ConCert/docs/webservices```
 + [Etsy API documentation](https://etsy.com/developers/documentation/getting_started/api_basics)
 + [RESTful Objects URIs and HTTP Methods](https://youtube.com/watch?v=grXnAMIQ_1Q)
