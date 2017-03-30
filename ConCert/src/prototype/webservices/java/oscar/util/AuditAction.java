@@ -187,6 +187,29 @@ public class AuditAction extends Action {
         }
     }
 
+    public String getServerVersion() {
+        return serverVersion();
+    }
+
+    public String getDatabaseInfo() {
+        return databaseInfo();
+    }
+
+    public String getVerifyTomcat() {
+        return verifyTomcat();
+    }
+
+    public String getVerifyOscar() {
+        return verifyOscar();
+    }
+
+    public String getDrugrefOscar() {
+        return verifyDrugref();
+    }
+
+    public String getTomcatReinforcement() {
+        return tomcatReinforcement();
+    }
     /*
     *  Read "/etc/lsb-release" file and extract Linux server version. The
     *  file should be available on Ubuntu and Debian distributions.
