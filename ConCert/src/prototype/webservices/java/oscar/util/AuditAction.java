@@ -99,6 +99,7 @@ public class AuditAction extends Action {
         servletRequest.setAttribute("verifyOscar", verifyOscar());
         servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
+        servletRequest.setAttribute("test", extractTomcatVersionNumber(tomcatVersion));
         return actionMapping.findForward("success");
     }
 
@@ -210,6 +211,7 @@ public class AuditAction extends Action {
     public String getTomcatReinforcement() {
         return tomcatReinforcement();
     }
+
     /*
     *  Read "/etc/lsb-release" file and extract Linux server version. The
     *  file should be available on Ubuntu and Debian distributions.
@@ -290,6 +292,23 @@ public class AuditAction extends Action {
     }
 
     /*
+    *  Extract Tomcat version number from server version information (via servlet).
+    *
+    *  @return value: Version number (7 or 8) of Tomcat. Return -1 if no match
+    *  exists.
+    */
+    private int extractTomcatVersionNumber(String tomcatVersion) {
+        Pattern tomcatVersionPattern = Pattern.compile(".*Tomcat/([0-9]).*");
+        Matcher tomcatMatch = tomcatVersionPattern.matcher(tomcatVersion);
+        if (tomcatMatch.matches()) {
+            String version = tomcatMatch.group(1);
+            return Integer.parseInt(version);
+        } else {
+            return -1;
+        }
+    }
+
+    /*
     *  Verify the current Oscar instance. Check build, version, and the default 
     *  properties file in the WAR and the properties file found in Tomcat's 
     *  "catalina.home" directory.
@@ -305,13 +324,23 @@ public class AuditAction extends Action {
             return "Could not detect the Oscar webapps directory name.";
 
         String output = "";
-        output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />";
-        output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-        output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-        output += "<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
-        output += oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties");
-        output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
-        output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
+        // Tomcat 7
+        if (extractTomcatVersion(tomcatVersion) == 7) {
+            output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />";
+            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+            output += "<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
+            output += oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties");
+            output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
+            output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
+        // Tomcat 8
+        } else if (extractTomcatVersion(tomcatVersion) == 8) {
+
+        
+        // No Tomcat version found
+        } else {
+
+        }
         return output;
     }
 
