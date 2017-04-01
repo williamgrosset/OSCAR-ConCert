@@ -368,8 +368,8 @@ public class AuditAction extends Action {
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(buildtag=).*", line);
-                isMatch2 = Pattern.matches("^(buildDateTime=).*", line);
+                isMatch1 = Pattern.matches("^(buildtag(=|:)).*", line);
+                isMatch2 = Pattern.matches("^(buildDateTime(=|:)).*", line);
 
                 if (!flag1) {
                     if (isMatch1) { // buildtag=
@@ -421,10 +421,10 @@ public class AuditAction extends Action {
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(HL7TEXT_LABS=).*", line);
-                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART=).*", line);
+                isMatch1 = Pattern.matches("^(HL7TEXT_LABS(=|:)).*", line);
+                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART(=|:)).*", line);
                 isMatch3 = Pattern.matches("^(TMP_DIR(=|:)).*", line);
-                isMatch4 = Pattern.matches("^(drugref_url=).*", line);
+                isMatch4 = Pattern.matches("^(drugref_url(=|:)).*", line);
 
                 if (!flag1) {
                     if (isMatch1) { // HL7TEXT_LABS=
@@ -515,9 +515,9 @@ public class AuditAction extends Action {
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(db_user=).*", line);
-                isMatch2 = Pattern.matches("^(db_url=).*", line);
-                isMatch3 = Pattern.matches("^(db_driver=).*", line);
+                isMatch1 = Pattern.matches("^(db_user(=|:)).*", line);
+                isMatch2 = Pattern.matches("^(db_url(=|:)).*", line);
+                isMatch3 = Pattern.matches("^(db_driver(=|:)).*", line);
 
                 if (!flag1) {
                     if (isMatch1) { // db_user=
