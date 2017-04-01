@@ -325,7 +325,7 @@ public class AuditAction extends Action {
 
         String output = "";
         // Tomcat 7
-        if (extractTomcatVersion(tomcatVersion) == 7) {
+        if (extractTomcatVersionNumber(tomcatVersion) == 7) {
             output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />";
             output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
             output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
@@ -334,12 +334,17 @@ public class AuditAction extends Action {
             output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
             output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
         // Tomcat 8
-        } else if (extractTomcatVersion(tomcatVersion) == 8) {
-
-        
+        } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
+            output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />";
+            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
+            output += "<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
+            output += oscarBuild(System.getProperty("user.home") + "/" + webAppName + ".properties");
+            output += verifyOscarProperties(System.getProperty("user.home") + "/" + webAppName + ".properties");
+            output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
         // No Tomcat version found
         } else {
-
+            output += "Could not detect Tomcat version number to determine audit check for Oscar properties.";
         }
         return output;
     }
@@ -460,7 +465,7 @@ public class AuditAction extends Action {
                 output += "Could not detect \"drugref_url\" tag." + "<br />";
             return output;
         } catch (Exception e) {
-            return "Could not read properties file to verify Oscar tags.";
+            return "Could not read properties file to verify Oscar tags. " + e.getMessage();
         }
     }
 
