@@ -7,7 +7,7 @@ William Grosset (**Fall 2016**: 100-hour contract, **Spring 2017**: Full-time) a
 
 ### ConCert
 - Committed code or in the process of code review:
-    + **Audit** src in `src/main/audit` (review of feature request can be found [here](https://source.oscartools.org:8080/#/c/14224/)).
+    + **Audit** src in `src/main/audit` (review of feature request can be found [here](https://bitbucket.org/oscaremr/oscar/commits/d5a866c62c4e88323fefb6efecf4d1ee8a18fe1a)).
     + **Audit** tests in `src/test/audit`
 - Prototypes:
     + **PropertyCheck** src in `src/prototype/propertycheck`

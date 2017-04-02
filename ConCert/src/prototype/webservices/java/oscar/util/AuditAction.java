@@ -99,7 +99,6 @@ public class AuditAction extends Action {
         servletRequest.setAttribute("verifyOscar", verifyOscar());
         servletRequest.setAttribute("verifyDrugref", verifyDrugref());
         servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
-        servletRequest.setAttribute("test", extractTomcatVersionNumber(tomcatVersion));
         return actionMapping.findForward("success");
     }
 
@@ -424,7 +423,11 @@ public class AuditAction extends Action {
                 isMatch1 = Pattern.matches("^(HL7TEXT_LABS(=|:)).*", line);
                 isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART(=|:)).*", line);
                 isMatch3 = Pattern.matches("^(TMP_DIR(=|:)).*", line);
-                isMatch4 = Pattern.matches("^(drugref_url(=|:)).*", line);
+                //isMatch4 = Pattern.matches("^(drugref_url\\d(=|:)).*", line);
+                Pattern p = Pattern.compile("^(drugref_url\\s(=|:)).*");
+                Matcher m = p.matcher(line);
+                isMatch4 = m.matches();
+                //return Pattern.compile("^(drugref_url\\s(=|:)).*").toString();
 
                 if (!flag1) {
                     if (isMatch1) { // HL7TEXT_LABS=
@@ -454,7 +457,6 @@ public class AuditAction extends Action {
                 if (flag1 && flag2 && flag3 && flag4)
                     break;
             }
-            
             if (!flag1)
                 output += "Could not detect \"HL7TEXT_LABS\" tag." + "<br />";
             if (!flag2)
@@ -485,13 +487,16 @@ public class AuditAction extends Action {
         }
 
         // Grab deployed Drugref folder name and use as the file name for the properties file
-        String output = "";
         Pattern p = Pattern.compile(".*://.*/(.*)/.*");
         Matcher m = p.matcher(drugrefUrl);
-        m.matches();
-        output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
-        output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + m.group(1) + ".properties");
-        return output;
+        if (m.matches()) {
+            String output = "";
+            output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
+            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + m.group(1) + ".properties");
+            return output;
+        } else {
+            return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
+        }
     }
 
     /*
