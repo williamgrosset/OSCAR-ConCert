@@ -342,8 +342,7 @@ public class AuditAction extends Action {
         try {
             String output = "";
             String line = "";
-            File oscar = new File(fileName);
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternBuildtag = Pattern.compile("^(buildtag\\s?(=|:)).*");
             Pattern patternBuildDateTime = Pattern.compile("^(buildDateTime\\s?(=|:)).*");
@@ -393,8 +392,7 @@ public class AuditAction extends Action {
         try {
             String output = "";
             String line = "";
-            File oscar = new File(fileName);
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternHL7TEXT_LABS = Pattern.compile("^(HL7TEXT_LABS\\s?(=|:)).*");
             Pattern patternSINGLE_PAGE_CHART = Pattern.compile("^(SINGLE_PAGE_CHART\\s?(=|:)).*");
@@ -503,8 +501,7 @@ public class AuditAction extends Action {
         try {
             String output = "";
             String line = "";
-            File drugref = new File(fileName);
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(drugref);
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternDb_user = Pattern.compile("^(db_user\\s?(=|:)).*");
             Pattern patternDb_url = Pattern.compile("^(db_url\\s?(=|:)).*");
@@ -575,8 +572,6 @@ public class AuditAction extends Action {
             ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
             String output = "";
             String line = "";
-            boolean isMatch1 = false;
-            boolean isMatch2 = false;
             boolean flag1 = false;
             boolean flag2 = false;
             Pattern patternComment = Pattern.compile("^(#).*");
