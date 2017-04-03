@@ -567,27 +567,27 @@ public class AuditAction extends Action {
             boolean isMatch2 = false;
             boolean flag1 = false;
             boolean flag2 = false;
-            Pattern xmxPattern = Pattern.compile(".*(Xmx[0-9]+m).*");
-            Pattern xmsPattern = Pattern.compile(".*(Xms[0-9]+m).*");
             ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternXmx = Pattern.compile(".*(Xmx[0-9]+m).*");
+            Pattern patternXms = Pattern.compile(".*(Xms[0-9]+m).*");
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line)) continue;
-                Matcher xmxMatch = xmxPattern.matcher(line);
-                isMatch1 = xmxMatch.matches();
-                Matcher xmsMatch = xmsPattern.matcher(line);
-                isMatch2 = xmsMatch.matches();
+                Matcher matcherComment = patternComment.matcher(line);
+                if (matcherComment.matches()) continue;
+                Matcher matcherXmx = patternXmx.matcher(line);
+                Matcher matcherXms = patternXms.matcher(line);
 
                 if (!flag1) {
-                    if (isMatch1) { // e.g. Xmx2056m
+                    if (matcherXmx.matches()) { // e.g. Xmx2056m
                         flag1 = true;
-                        output += "Xmx value: " + xmxMatch.group(1).substring(3) + "<br />";
+                        output += "Xmx value: " + matcherXmx.group(1).substring(3) + "<br />";
                     }
                 }
                 if (!flag2) {
-                    if (isMatch2) { // e.g. Xms1024m
+                    if (matcherXms.matches()) { // e.g. Xms1024m
                         flag2 = true;
-                        output += "Xms value: " + xmsMatch.group(1).substring(3) + "<br />";
+                        output += "Xms value: " + matcherXms.group(1).substring(3) + "<br />";
                     }
                 }
                 if (flag1 && flag2)
