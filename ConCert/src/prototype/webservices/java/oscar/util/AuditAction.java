@@ -67,7 +67,7 @@ public class AuditAction extends Action {
         catalinaBase = getCatalinaBase();
         catalinaHome = getCatalinaHome();
         lsbRelease = getLsbRelease();
-        tomcatSettings = getTomcatSettings();
+        tomcatSettings = getTomcatSettings(7);
         jvmVersion = getJvmVersion();
         tomcatVersion = "";
         webAppName = "";
@@ -144,18 +144,25 @@ public class AuditAction extends Action {
     /*
     *  Retrieve Tomcat settings file from "/etc/default" directory. 
     *
+    *  @param value:
     *  @return tomcatSettings: File object for "/etc/default/$tomcat" with
     *  $tomcat being the current Tomcat web container for this application.
     */
-    private File getTomcatSettings() {
+    private File getTomcatSettings(int value) {
         try {
             if (catalinaBase == null || catalinaBase.getPath().equals(""))
                 throw new FileNotFoundException();
 
-            Pattern tomcatPattern = Pattern.compile(".*(tomcat[0-9]+)");
-            Matcher tomcatMatch = tomcatPattern.matcher(catalinaBase.getPath());
-            tomcatMatch.matches();
-            return new File("/etc/default/" + tomcatMatch.group(1));
+            if (value == 7) {
+                Pattern tomcatPattern = Pattern.compile(".*(tomcat[0-9]+)");
+                Matcher tomcatMatch = tomcatPattern.matcher(catalinaBase.getPath());
+                tomcatMatch.matches();
+                return new File("/etc/default/" + tomcatMatch.group(1));
+            } else if (value == 8) {
+                return new File(catalinaBase.getPath() + "/bin/setenv.sh");
+            } else {
+                return new File("");
+            }
         } catch (Exception e) {
             return new File("");
         }
@@ -557,17 +564,21 @@ public class AuditAction extends Action {
     private String tomcatReinforcement() {
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
-        if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
-            return "Could not detect Tomcat settings file in /etc/default/ directory."; 
 
         try {
+            // Determine which version of Tomcat settings file to check
+            int value = extractTomcatVersionNumber(tomcatVersion);
+            tomcatSettings = getTomcatSettings(value);
+            if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
+                return "Could not detect Tomcat settings file."; 
+
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
             String output = "";
             String line = "";
             boolean isMatch1 = false;
             boolean isMatch2 = false;
             boolean flag1 = false;
             boolean flag2 = false;
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternXmx = Pattern.compile(".*(Xmx[0-9]+m).*");
             Pattern patternXms = Pattern.compile(".*(Xms[0-9]+m).*");

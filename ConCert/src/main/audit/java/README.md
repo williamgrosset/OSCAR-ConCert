@@ -6,6 +6,6 @@ Since I complete all my work entirely in the Linux shell with Vim (no Eclipse ID
 2. Ensure that you have the following packages and compile ```AuditAction.java``` with the following command from the ```WEB-INF/classes/``` directory:  
     
     ```javac -cp .:/usr/share/java/commons-io-2.4.jar:/usr/share/tomcat7/lib/servlet-api.jar:<tomcat-path>/webapps/oscar/WEB-INF/lib/struts-1.2.7.jar oscar/util/AuditAction.java```
-3. Make any necessary changes to ```AuditAction.java``` and repeat Step 2
-4. After successful compilation, restart Tomcat 7: ```sudo service tomcat7 restart```
+3. Make any necessary changes to ```AuditAction.java``` and repeat *Step 2*
+4. After successful compilation, restart **Tomcat 7**: ```sudo service tomcat7 restart```
 5. Login to your OSCAR application and view the ```OSCAR Audit``` web page under the **Administration** panel
