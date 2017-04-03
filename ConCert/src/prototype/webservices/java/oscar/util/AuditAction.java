@@ -492,8 +492,18 @@ public class AuditAction extends Action {
         Matcher m = p.matcher(drugrefUrl);
         if (m.matches()) {
             String output = "";
-            output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
-            output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + m.group(1) + ".properties");
+            // Tomcat 7
+            if (extractTomcatVersionNumber(tomcatVersion) == 7) {
+                output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
+                output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + m.group(1) + ".properties");
+            // Tomcat 8
+            } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
+                output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
+                output += verifyDrugrefProperties(System.getProperty("user.home") + "/" + m.group(1) + ".properties");
+            // No Tomcat version found
+            } else {
+                output += "Could not detect Tomcat version number to determine audit check for Drugref properties.";
+            }
             return output;
         } else {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
