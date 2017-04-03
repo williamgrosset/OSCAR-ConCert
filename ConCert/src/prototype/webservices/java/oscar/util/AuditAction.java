@@ -142,23 +142,23 @@ public class AuditAction extends Action {
     }
 
     /*
-    *  Retrieve Tomcat settings file from "/etc/default" directory. 
+    *  Retrieve settings file from appropriate Tomcat directory
+    *  (currently supports version 7 and 8 of Tomcat).
     *
-    *  @param value:
-    *  @return tomcatSettings: File object for "/etc/default/$tomcat" with
-    *  $tomcat being the current Tomcat web container for this application.
+    *  @param: Version of Tomcat.
+    *  @return tomcatSettings: Settings file for Tomcat.
     */
-    private File getTomcatSettings(int value) {
+    private File getTomcatSettings(int version) {
         try {
             if (catalinaBase == null || catalinaBase.getPath().equals(""))
                 throw new FileNotFoundException();
 
-            if (value == 7) {
+            if (version == 7) {
                 Pattern tomcatPattern = Pattern.compile(".*(tomcat[0-9]+)");
                 Matcher tomcatMatch = tomcatPattern.matcher(catalinaBase.getPath());
                 tomcatMatch.matches();
                 return new File("/etc/default/" + tomcatMatch.group(1));
-            } else if (value == 8) {
+            } else if (version == 8) {
                 return new File(catalinaBase.getPath() + "/bin/setenv.sh");
             } else {
                 return new File("");
@@ -293,8 +293,8 @@ public class AuditAction extends Action {
 
     /*
     *  Verify the current Oscar instance. Check build, version, and the default 
-    *  properties file in the WAR and the properties file found in Tomcat's 
-    *  "catalina.home" directory.
+    *  properties file in the WAR and the custom properties file in the appropriate
+    *  Tomcat directory.
     *
     *  @return output: Combined output of Oscar build and properties information.
     */
@@ -456,8 +456,8 @@ public class AuditAction extends Action {
     }
 
     /*
-    *  Verify the current Drugref instance. Check the properties file found in Tomcat's 
-    *  "catalina.home" directory.
+    *  Verify the current Drugref instance. Check the custom properties file found 
+    *  in the appropriate Tomcat directory.
     *
     *  @return output: Output of Drugref properties information.
     */
@@ -555,7 +555,7 @@ public class AuditAction extends Action {
     }
 
     /*
-    *  Read through the Tomcat settings file and output the Xmx and Xms values to 
+    *  Read through the Tomcat settings file and echo the Xmx and Xms values to 
     *  the user.
     *
     *  @return output: Xmx value (maximum memory allocation) and Xms value (minimum 
@@ -567,8 +567,8 @@ public class AuditAction extends Action {
 
         try {
             // Determine which version of Tomcat settings file to check
-            int value = extractTomcatVersionNumber(tomcatVersion);
-            tomcatSettings = getTomcatSettings(value);
+            int version = extractTomcatVersionNumber(tomcatVersion);
+            tomcatSettings = getTomcatSettings(version);
             if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
                 return "Could not detect Tomcat settings file."; 
 
