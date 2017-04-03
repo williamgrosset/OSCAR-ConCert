@@ -187,30 +187,6 @@ public class AuditAction extends Action {
         }
     }
 
-    public String getServerVersion() {
-        return serverVersion();
-    }
-
-    public String getDatabaseInfo() {
-        return databaseInfo();
-    }
-
-    public String getVerifyTomcat() {
-        return verifyTomcat();
-    }
-
-    public String getVerifyOscar() {
-        return verifyOscar();
-    }
-
-    public String getDrugrefOscar() {
-        return verifyDrugref();
-    }
-
-    public String getTomcatReinforcement() {
-        return tomcatReinforcement();
-    }
-
     /*
     *  Read "/etc/lsb-release" file and extract Linux server version. The
     *  file should be available on Ubuntu and Debian distributions.
@@ -488,18 +464,18 @@ public class AuditAction extends Action {
         }
 
         // Grab deployed Drugref folder name and use as the file name for the properties file
-        Pattern p = Pattern.compile(".*://.*/(.*)/.*");
-        Matcher m = p.matcher(drugrefUrl);
-        if (m.matches()) {
+        Pattern patternDrugrefUrl = Pattern.compile(".*://.*/(drugref.*)/.*");
+        Matcher matcherDrugrefUrl = patternDrugrefUrl.matcher(drugrefUrl);
+        if (matcherDrugrefUrl.matches()) {
             String output = "";
             // Tomcat 7
             if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-                output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
-                output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + m.group(1) + ".properties");
+                output += "<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />";
+                output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + matcherDrugrefUrl.group(1) + ".properties");
             // Tomcat 8
             } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-                output += "<b>Currently checking \"" + m.group(1) + ".properties\" file..." + "</b><br />";
-                output += verifyDrugrefProperties(System.getProperty("user.home") + "/" + m.group(1) + ".properties");
+                output += "<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />";
+                output += verifyDrugrefProperties(System.getProperty("user.home") + "/" + matcherDrugrefUrl.group(1) + ".properties");
             // No Tomcat version found
             } else {
                 output += "Could not detect Tomcat version number to determine audit check for Drugref properties.";
@@ -628,5 +604,35 @@ public class AuditAction extends Action {
         } catch (Exception e) {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
+    }
+    
+    /****************************************************
+     *                                                  *
+     *     METHODS USED FOR OSCAR REST WEB SERVICE      *
+     *                                                  *
+     ***************************************************/
+
+    public String getServerVersion() {
+        return serverVersion();
+    }
+
+    public String getDatabaseInfo() {
+        return databaseInfo();
+    }
+
+    public String getVerifyTomcat() {
+        return verifyTomcat();
+    }
+
+    public String getVerifyOscar() {
+        return verifyOscar();
+    }
+
+    public String getDrugrefOscar() {
+        return verifyDrugref();
+    }
+
+    public String getTomcatReinforcement() {
+        return tomcatReinforcement();
     }
 }
