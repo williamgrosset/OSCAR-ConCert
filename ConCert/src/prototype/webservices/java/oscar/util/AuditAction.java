@@ -227,14 +227,16 @@ public class AuditAction extends Action {
 
             String line = "";
             ReversedLinesFileReader rf = new ReversedLinesFileReader(lsbRelease);
-            boolean isMatch = false;
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternDIST_DESC = Pattern.compile("^(DISTRIB_DESCRIPTION\\s?=).*");
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line)) continue;
+                Matcher matcherComment = patternComment.matcher(line);
+                if (matcherComment.matches()) continue;
+                Matcher matcherDIST_DESC = patternDIST_DESC.matcher(line);
 
-                if (Pattern.matches("^(DISTRIB_DESCRIPTION\\s?=).*", line)) {
-                    return "Version: " + line.substring(20);
-                }
+                if (matcherDIST_DESC.matches())
+                    return "Version: " + line.substring(matcherDIST_DESC.group(1).length());
             }
             return "Could not detect Linux server version.";
         } catch (Exception e) {
@@ -359,26 +361,28 @@ public class AuditAction extends Action {
             String line = "";
             File oscar = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
-            boolean isMatch1 = false;
-            boolean isMatch2 = false;
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternBuildtag = Pattern.compile("^(buildtag\\s?(=|:)).*");
+            Pattern patternBuildDateTime = Pattern.compile("^(buildDateTime\\s?(=|:)).*");
             boolean flag1 = false;
             boolean flag2 = false;
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(buildtag\\s?(=|:)).*", line);
-                isMatch2 = Pattern.matches("^(buildDateTime\\s?(=|:)).*", line);
+                Matcher matcherComment = patternComment.matcher(line);
+                Matcher matcherBuildtag = patternBuildtag.matcher(line);
+                Matcher matcherBuildDateTime = patternBuildDateTime.matcher(line);
+                if (matcherComment.matches()) continue;
 
                 if (!flag1) {
-                    if (isMatch1) { // buildtag=
+                    if (matcherBuildtag.matches()) { // buildtag=
                         flag1 = true;
-                        output += "Oscar build and version: " + line.substring(9) + "<br />";
+                        output += "Oscar build and version: " + line.substring(matcherBuildtag.group(1).length()) + "<br />";
                     }
                 }
                 if (!flag2) {
-                    if (isMatch2) { // buildDateTime=
+                    if (matcherBuildDateTime.matches()) { // buildDateTime=
                         flag2 = true;
-                        output += "Oscar build date and time: " + line.substring(14) + "<br />";
+                        output += "Oscar build date and time: " + line.substring(matcherBuildDateTime.group(1).length()) + "<br />";
                     }
                 }
                 if (flag1 && flag2)
@@ -408,47 +412,46 @@ public class AuditAction extends Action {
             String line = "";
             File oscar = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(oscar);
-            boolean isMatch1 = false;
-            boolean isMatch2 = false;
-            boolean isMatch3 = false;
-            boolean isMatch4 = false;
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternHL7TEXT_LABS = Pattern.compile("^(HL7TEXT_LABS\\s?(=|:)).*");
+            Pattern patternSINGLE_PAGE_CHART = Pattern.compile("^(SINGLE_PAGE_CHART\\s?(=|:)).*");
+            Pattern patternTMP_DIR = Pattern.compile("^(TMP_DIR\\s?(=|:)).*");
+            Pattern patternDrugrefUrl = Pattern.compile("^(drugref_url\\s?(=|:)).*");
             boolean flag1 = false;
             boolean flag2 = false;
             boolean flag3 = false;
             boolean flag4 = false;
 
             while ((line = rf.readLine()) != null) {
-                if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(HL7TEXT_LABS\\s?(=|:)).*", line);
-                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART\\s?(=|:)).*", line);
-                isMatch3 = Pattern.matches("^(TMP_DIR\\s?(=|:)).*", line);
-                isMatch4 = Pattern.matches("^(drugref_url\\s?(=|:)).*", line);
-                //Pattern p = Pattern.compile("^(drugref_url\\s(=|:)).*");
-                //Matcher m = p.matcher(line);
-                //isMatch4 = m.matches();
+                Matcher matcherComment = patternComment.matcher(line);
+                if (matcherComment.matches()) continue;
+                Matcher matcherHL7TEXT_LABS = patternHL7TEXT_LABS.matcher(line);
+                Matcher matcherSINGLE_PAGE_CHART = patternSINGLE_PAGE_CHART.matcher(line);
+                Matcher matcherTMP_DIR = patternTMP_DIR.matcher(line);
+                Matcher matcherDrugrefUrl = patternDrugrefUrl.matcher(line);
 
                 if (!flag1) {
-                    if (isMatch1) { // HL7TEXT_LABS=
+                    if (matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
                         flag1 = true;
-                        output += "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(13) + "<br />";
+                        output += "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(matcherHL7TEXT_LABS.group(1).length()) + "<br />";
                     }
                 }
                 if (!flag2) {
-                    if (isMatch2) { // SINGLE_PAGE_CHART=
+                    if (matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
                         flag2 = true;
-                        output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + line.substring(18) + "<br />";
+                        output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + line.substring(matcherSINGLE_PAGE_CHART.group(1).length()) + "<br />";
                     }
                 }
                 if (!flag3) {
-                    if (isMatch3) { // TMP_DIR=
+                    if (matcherTMP_DIR.matches()) { // TMP_DIR=
                         flag3 = true;
-                        output += "\"TMP_DIR\" tag is configured as: " + line.substring(8) + "<br />";
+                        output += "\"TMP_DIR\" tag is configured as: " + line.substring(matcherTMP_DIR.group(1).length()) + "<br />";
                     }
                 }
                 if (!flag4) {
-                    if (isMatch4) { // drugref_url=
+                    if (matcherDrugrefUrl.matches()) { // drugref_url=
                         flag4 = true;
-                        output += "\"drugref_url\" tag is configured as: " + line.substring(12) + "<br />";
+                        output += "\"drugref_url\" tag is configured as: " + line.substring(matcherDrugrefUrl.group(1).length()) + "<br />";
                         drugrefUrl = line.substring(12);
                     }
                 }
@@ -509,35 +512,37 @@ public class AuditAction extends Action {
             String line = "";
             File drugref = new File(fileName);
             ReversedLinesFileReader rf = new ReversedLinesFileReader(drugref);
-            boolean isMatch1 = false;
-            boolean isMatch2 = false;
-            boolean isMatch3 = false;
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternDb_user = Pattern.compile("^(db_user\\s?(=|:)).*");
+            Pattern patternDb_url = Pattern.compile("^(db_url\\s?(=|:)).*");
+            Pattern patternDb_driver = Pattern.compile("^(db_driver\\s?(=|:)).*");
             boolean flag1 = false;
             boolean flag2 = false;
             boolean flag3 = false;
 
             while ((line = rf.readLine()) != null) {
+                Matcher matcherComment = patternComment.matcher(line);
                 if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(db_user\\s?(=|:)).*", line);
-                isMatch2 = Pattern.matches("^(db_url\\s?(=|:)).*", line);
-                isMatch3 = Pattern.matches("^(db_driver\\s?(=|:)).*", line);
+                Matcher matcherDb_user = patternDb_user.matcher(line);
+                Matcher matcherDb_url = patternDb_url.matcher(line);
+                Matcher matcherDb_driver = patternDb_driver.matcher(line);
 
                 if (!flag1) {
-                    if (isMatch1) { // db_user=
+                    if (matcherDb_user.matches()) { // db_user=
                         flag1 = true;
-                        output += "\"db_user\" tag is configured as: " + line.substring(8) + "<br />";
+                        output += "\"db_user\" tag is configured as: " + line.substring(matcherDb_user.group(1).length()) + "<br />";
                     }
                 }
                 if (!flag2) {
-                    if (isMatch2) { // db_url=
+                    if (matcherDb_url.matches()) { // db_url=
                         flag2 = true;
-                        output += "\"db_url\" tag is configured as: " + line.substring(7) + "<br />";
+                        output += "\"db_url\" tag is configured as: " + line.substring(matcherDb_url.group(1).length()) + "<br />";
                     }
                 }
                 if (!flag3) {
-                    if (isMatch3) { // db_driver=
+                    if (matcherDb_driver.matches()) { // db_driver=
                         flag3 = true;
-                        output += "\"db_driver\" tag is configured as: " + line.substring(10) + "<br />";
+                        output += "\"db_driver\" tag is configured as: " + line.substring(matcherDb_driver.group(1).length()) + "<br />";
                     }
                 }
                 if (flag1 && flag2 && flag3)
