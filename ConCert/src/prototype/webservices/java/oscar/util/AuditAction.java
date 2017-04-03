@@ -232,8 +232,7 @@ public class AuditAction extends Action {
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line)) continue;
 
-                //isMatch = Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line);
-                if (Pattern.matches("^(DISTRIB_DESCRIPTION=).*", line)) {
+                if (Pattern.matches("^(DISTRIB_DESCRIPTION\\s?=).*", line)) {
                     return "Version: " + line.substring(20);
                 }
             }
@@ -367,8 +366,8 @@ public class AuditAction extends Action {
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(buildtag(=|:)).*", line);
-                isMatch2 = Pattern.matches("^(buildDateTime(=|:)).*", line);
+                isMatch1 = Pattern.matches("^(buildtag\\s?(=|:)).*", line);
+                isMatch2 = Pattern.matches("^(buildDateTime\\s?(=|:)).*", line);
 
                 if (!flag1) {
                     if (isMatch1) { // buildtag=
@@ -420,14 +419,13 @@ public class AuditAction extends Action {
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(HL7TEXT_LABS(=|:)).*", line);
-                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART(=|:)).*", line);
-                isMatch3 = Pattern.matches("^(TMP_DIR(=|:)).*", line);
-                //isMatch4 = Pattern.matches("^(drugref_url\\d(=|:)).*", line);
-                Pattern p = Pattern.compile("^(drugref_url\\s(=|:)).*");
-                Matcher m = p.matcher(line);
-                isMatch4 = m.matches();
-                //return Pattern.compile("^(drugref_url\\s(=|:)).*").toString();
+                isMatch1 = Pattern.matches("^(HL7TEXT_LABS\\s?(=|:)).*", line);
+                isMatch2 = Pattern.matches("^(SINGLE_PAGE_CHART\\s?(=|:)).*", line);
+                isMatch3 = Pattern.matches("^(TMP_DIR\\s?(=|:)).*", line);
+                isMatch4 = Pattern.matches("^(drugref_url\\s?(=|:)).*", line);
+                //Pattern p = Pattern.compile("^(drugref_url\\s(=|:)).*");
+                //Matcher m = p.matcher(line);
+                //isMatch4 = m.matches();
 
                 if (!flag1) {
                     if (isMatch1) { // HL7TEXT_LABS=
@@ -520,9 +518,9 @@ public class AuditAction extends Action {
 
             while ((line = rf.readLine()) != null) {
                 if (Pattern.matches("^(#).*", line)) continue;
-                isMatch1 = Pattern.matches("^(db_user(=|:)).*", line);
-                isMatch2 = Pattern.matches("^(db_url(=|:)).*", line);
-                isMatch3 = Pattern.matches("^(db_driver(=|:)).*", line);
+                isMatch1 = Pattern.matches("^(db_user\\s?(=|:)).*", line);
+                isMatch2 = Pattern.matches("^(db_url\\s?(=|:)).*", line);
+                isMatch3 = Pattern.matches("^(db_driver\\s?(=|:)).*", line);
 
                 if (!flag1) {
                     if (isMatch1) { // db_user=
