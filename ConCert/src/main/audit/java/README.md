@@ -1,5 +1,5 @@
 # Java Classes
-## Compiling AuditAction.java
+## Compiling `oscar/util/AuditAction.java`
 Since I complete all my work entirely in the Linux shell with Vim (no Eclipse IDE), I manually set my classpath for compiling my Java classes. The method below is a quick iterative process of adding changes to ```AuditAction.java```, compiling, and restarting tomcat entirely from the Linux terminal.
 + **Prerequisites**: Using master branch of OSCAR that is currently deployed with **Tomcat 7**. Steps with **Tomcat 8** can be found [here](https://github.com/williamgrosset/OSCAR-ConCert/tree/master/ConCert/src/prototype/webservices/java).
 1. Move ```oscar/util/AuditAction.java``` into ```<tomcat-path>/webapps/oscar/WEB-INF/classes/oscar/util/```
