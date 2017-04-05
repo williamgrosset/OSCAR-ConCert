@@ -623,7 +623,7 @@ public class AuditAction extends Action {
     *
     *  @return output: Linux server version.
     */
-    public String getServerVersion() {
+    public String getServerInfo() {
         return serverVersion();
     }
 

@@ -57,14 +57,14 @@ The goal of the REST API is to provide authorized access to the auditing informa
 
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK) - all information below is subject to change.
-+ #### ```GET /audit/serverVersion```
++ #### ```GET /audit/serverInfo```
 
   Returns the Linux distribution version.  
   
   **Example Response**:
   ```
   {
-    "version": "Ubuntu 14.04"
+    "server_version": "Ubuntu 14.04"
   }
   ```
 + #### ```GET /audit/databaseInfo```
@@ -74,65 +74,38 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
-    "type": "MySQL",
-    "version": "5.5.53"
+    "database_type": "MySQL",
+    "database_version": "5.5.53"
   }
   ```
-+ #### ```GET /audit/tomcat/jvmVersion```
++ #### ```GET /audit/tomcatInfo```
 
-  Returns the JVM version.  
+  Returns the JVM version, Tomcat version, and maximum/minimum (xmx/xms) heap size for Tomcat memory allocation.  
   
   **Example Response**:
   ```
   {
-    "version": "1.7.0_111"
-  }
-  ```
-+ #### ```GET /audit/tomcat/tomcatVersion```
-
-  Returns Tomcat web container version.  
-  
-  **Example Response**:
-  ```
-  {
-    "version": "Apache Tomcat/7.0.52"
-  }
-  ```
-+ #### ```GET /audit/tomcat/memoryAllocation```
-
-  Returns maximum (xmx) and minimum (xms) heap size for memory allocation.  
-  
-  **Example Response**:
-  ```
-  {
+    "jvm_version": "1.7.0_111",
+    "tomcat_version": "Apache Tomcat/7.0.52",
     "xmx": "1024m",
     "xms": "1024m"
   }
   ```
-+ #### ```GET /audit/oscarBuild```
++ #### ```GET /audit/oscarInfo```
 
-  Returns OSCAR build tag.  
+  Returns OSCAR build tag and property values for HL7TEXT_LABS, SINGLE_PAGE_CHART, TMP_DIR, and drugref_url. 
   
   **Example Response**:
   ```
   {
-    "build": "Gerrit_OSCAR-697"
-  }
-  ```
-+ #### ```GET /audit/oscarProperties```
-
-  Returns OSCAR property values for HL7TEXT_LABS, SINGLE_PAGE_CHART, TMP_DIR, and drugref_url.  
-  
-  **Example Response**:
-  ```
-  {
+    "build": "Gerrit_OSCAR-697",
     "HL7TEXT_LABS": "no",
     "SINGLE_PAGE_CHART": "false",
     "TMP_DIR": "/etc/tmp/",
     "drugref_url": "http://<ip_address>:<port_number>
   }
   ```
-+ #### ```GET /audit/drugrefProperties```
++ #### ```GET /audit/drugrefInfo```
 
   Returns Drugref property values for db_user, db_url, and db_driver.
   
