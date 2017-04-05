@@ -56,7 +56,7 @@ OSCAR web services can be accessed in two different ways:
 The goal of the REST API is to provide authorized access to the auditing information found in ```../../main/audit/```.
 
 ### API requests
-The following JSON responses for each API call assume that the HTTP status code returns 200 (OK).
+The following JSON responses for each API call assume that the HTTP status code returns 200 (OK) - all information below is subject to change.
 + #### ```GET /audit/serverVersion```
 
   Returns the Linux distribution version.  
@@ -119,7 +119,31 @@ The following JSON responses for each API call assume that the HTTP status code 
     "build": "Gerrit_OSCAR-697"
   }
   ```
-+ ...some stuff w/ ```oscar.properties``` and ```drugref.properties```
++ #### ```GET /audit/oscarProperties```
+
+  Returns OSCAR property values for HL7TEXT_LABS, SINGLE_PAGE_CHART, TMP_DIR, and drugref_url.  
+  
+  **Example Response**:
+  ```
+  {
+    "HL7TEXT_LABS": "no",
+    "SINGLE_PAGE_CHART": "false",
+    "TMP_DIR": "/etc/tmp/",
+    "drugref_url": "http://<ip_address>:<port_number>
+  }
+  ```
++ #### ```GET /audit/drugrefProperties```
+
+  Returns Drugref property values for db_user, db_url, and db_driver.
+  
+  **Example Response**:
+  ```
+  {
+    "db_user": "oscar",
+    "db_url": "jdbc:mysql://127.0.0.1:drugref2",
+    "db_driver": "com.mysql.jdbc.Driver"
+  }
+  ```
 
 ### HTTP status codes
 | HTTP Code | Message            | Meaning                                         | Response Body                         |
