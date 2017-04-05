@@ -145,7 +145,7 @@ public class AuditAction extends Action {
     *  Retrieve settings file from appropriate Tomcat directory
     *  (currently supports version 7 and 8 of Tomcat).
     *
-    *  @param: Version of Tomcat.
+    *  @param version: Version of Tomcat.
     *  @return tomcatSettings: Settings file for Tomcat.
     */
     private File getTomcatSettings(int version) {
@@ -618,27 +618,62 @@ public class AuditAction extends Action {
      *                                                  *
      ***************************************************/
 
+    /*
+    *  Public method for retrieving server version.
+    *
+    *  @return output: Linux server version.
+    */
     public String getServerVersion() {
         return serverVersion();
     }
 
+    /*
+    *  Public method for retrieving database type and version.
+    *
+    *  @return output: Database type and version.
+    */
     public String getDatabaseInfo() {
         return databaseInfo();
     }
 
-    public String getVerifyTomcat() {
-        return verifyTomcat();
+    /*
+    *  Public method for retrieving JVM version, Tomcat version from servlet 
+    *  context, and maximum/minimum heap size allocated for Tomcat.
+    *
+    *  @param tomcatVersion: Tomcat version from HTTP session. 
+    *  @return output: JVM version, Tomcat version, and max/min heap size.
+    */
+    public String getTomcatInfo(String tomcatVersion) {
+        this.tomcatVersion = tomcatVersion;
+        return verifyTomcat() + "\n" + tomcatReinforcement();
     }
 
-    public String getVerifyOscar() {
+    /*
+    *  Public method for retrieving Oscar build tag and date. Also, property
+    *  values of "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and "drugref_url" 
+    *  tags.
+    *
+    *  @param tomcatVersion: Tomcat version from HTTP session. 
+    *  @param webAppName: Oscar web application name from HTTP session.
+    *  @return output: Output of tags in Oscar properties file.
+    */
+    public String getOscarInfo(String tomcatVersion, String webAppName) {
+        this.tomcatVersion = tomcatVersion;
+        this.webAppName = webAppName;
         return verifyOscar();
     }
 
-    public String getDrugrefOscar() {
+    /*
+    *  Public method for retrieving Drugref property values of "db_user,"
+    *  "db_user", and "db_driver" tags.
+    *
+    *  @param tomcatVersion: Tomcat version from HTTP session. 
+    *  @param webAppName: Oscar web application name from HTTP session.
+    *  @return output: Output of tags in Drugref properties file.
+    */
+    public String getDrugrefInfo(String tomcatVersion, String webAppName) {
+        this.tomcatVersion = tomcatVersion;
+        this.webAppName = webAppName;
         return verifyDrugref();
-    }
-
-    public String getTomcatReinforcement() {
-        return tomcatReinforcement();
     }
 }
