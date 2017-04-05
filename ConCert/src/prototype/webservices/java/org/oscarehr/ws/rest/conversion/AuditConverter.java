@@ -21,4 +21,4 @@
  * University of Victoria
  * Victoria, Canada
  */
-public class AuditManager {}
+public class AuditConverter {}
