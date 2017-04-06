@@ -21,4 +21,23 @@
  * University of Victoria
  * Victoria, Canada
  */
-public class AuditWebService {}
+
+package org.oscarehr.ws.rest;
+
+import org.springframework.beans.stereotype.Component;
+import org.oscarehr.ws.rest.to.GenericRESTResponse;
+
+import javax.ws.rs.*;
+
+@Path("/audit")
+@Component("auditService")
+public class AuditService extends AbstractServiceImpl {
+
+    @GET
+    @PATH("/test")
+    @Produces("application/json")
+    public GenericRESTResponse getTestInfo() {
+        GenericRESTResponse response = new GenericRESTResponse();
+        return response;
+    }
+}

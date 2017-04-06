@@ -74,8 +74,8 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
-    "database_type": "MySQL",
-    "database_version": "5.5.53"
+    "db_type": "MySQL",
+    "db_version": "5.5.53"
   }
   ```
 + #### ```GET /audit/tomcatInfo```
@@ -127,7 +127,7 @@ The following JSON responses for each API call assume that the HTTP status code 
 | 404       | Not Found          | The request resource could not be found.        | Error message                         |
 
 ### Java classes
-+ **AuditWebService.class**: This class will handle all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
++ **AuditService.class**: This class will handle all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
     - This class will use **SecurityInfoManager.class** to control access to the audited information.
     - The response object (**AuditResponse.class**) will ```... extends GenericRESTReponse implements Serializable```.
 + **AuditManager.class**: This class will provide access to relevant data and business logic classes that are required by the AuditWebService route handlers. A web service class may use several manager classes to access the required data.
