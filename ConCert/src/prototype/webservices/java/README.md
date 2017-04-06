@@ -11,3 +11,5 @@ Since I complete all my work entirely in the Linux shell with Vim (no Eclipse ID
 
     ```/opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh```
 5. Login to your OSCAR application and view the ```OSCAR Audit``` web page under the **Administration** panel
+## Compiling `org/oscarehr/ws/AuditService.java`
+...

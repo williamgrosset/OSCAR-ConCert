@@ -24,17 +24,24 @@
 
 package org.oscarehr.ws.rest;
 
+//import org.apache.log4j.Logger;
 import org.springframework.beans.stereotype.Component;
 import org.oscarehr.ws.rest.to.GenericRESTResponse;
+//import org.oscarehr.util.MiscUtils;
 
 import javax.ws.rs.*;
 
+/*
+* Class that handles access to auditing information via the REST API.
+*/
 @Path("/audit")
 @Component("auditService")
 public class AuditService extends AbstractServiceImpl {
 
+    //private static Logger logger = MiscUtils.getLogger();
+
     @GET
-    @PATH("/test")
+    @Path("/test")
     @Produces("application/json")
     public GenericRESTResponse getTestInfo() {
         GenericRESTResponse response = new GenericRESTResponse();
