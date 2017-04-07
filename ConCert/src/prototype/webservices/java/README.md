@@ -5,11 +5,20 @@ Since I complete all my work entirely in the Linux shell with Vim (no Eclipse ID
 1. Move ```oscar/util/AuditAction.java``` into ```<tomcat-path>/webapps/oscar/WEB-INF/classes/oscar/util/```
 2. Ensure that you have the following packages and compile ```AuditAction.java``` with the following command from the ```WEB-INF/classes/``` directory:  
     
-    ```javac -cp .:/usr/share/java/commons-io-2.4.jar:/opt/tomcat/lib/servlet-api.jar:/opt/tomcat/webapps/oscar/WEB-INF/lib/struts-1.2.7.jar oscar/util/AuditAction.java```
+    ```javac -cp .:<path>/commons-io-2.4.jar:<path>/servlet-api.jar:<path>/struts-1.2.7.jar oscar/util/AuditAction.java```
 3. Make any necessary changes to ```AuditAction.java``` and repeat *Step 2*
 4. After successful compilation, restart **Tomcat 8**: 
 
     ```/opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh```
 5. Login to your OSCAR application and view the ```OSCAR Audit``` web page under the **Administration** panel
-## Compiling `org/oscarehr/ws/AuditService.java`
-...
+
+## Compiling `org/oscarehr/ws/rest/AuditService.java`
+1. Move ```org/oscarehr/ws/rest/AuditService.java``` into ```<tomcat-path>/webapps/oscar/WEB-INF/classes/org/oscarehr/ws/rest/```
+2. Ensure that you have the following packages and compile ```AuditService.java``` with the following command from the ```WEB-INF/classes/``` directory:  
+
+    ```javac -cp .:<path>/javax.ws.rs.jar:<path>/spring-context-3.1.0.RELEASE.jar org/oscarehr/ws/rest/AuditService.java```
+3. Make any necessary changes to ```AuditService.java``` and repeat *Step 2*
+4. After successful compilation, restart **Tomcat 8**: 
+
+    ```/opt/tomcat/bin/shutdown.sh && /opt/tomcat/bin/startup.sh```
+5. Login to your OSCAR application and view ...*to be continued*

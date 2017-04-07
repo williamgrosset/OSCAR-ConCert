@@ -5,7 +5,7 @@ The objective of this project (nicknamed ConCert - for Continuous Certification)
 ### Contributor
 William Grosset (Software Engineer Intern) at [LEAD Lab](http://leadlab.ca/about-us/). Supervised by [Dr. Raymond Rusk](https://github.com/rrusk) and [Dr. Jens Weber](https://github.com/jenshweber).
 
-I completed a 100-hour contract during **Fall 2016** while taking 3 courses. I was offered a full-time position for **Spring 2016** as a co-op programmer to continue contributing to the open-source medical web application. I completed all my work remotely and managed my own weekly hours.
+I completed a 100-hour contract during **Fall 2016** while taking 3 courses. I was offered a full-time position for **Spring 2017** as a co-op programmer to continue contributing to the open-source medical system. I completed all my work remotely and managed my own weekly hours.
 
 ### ConCert
 Below outlines the project structure and where all the sub-directories/files can be located within `ConCert/`:
