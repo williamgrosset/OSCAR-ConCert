@@ -31,20 +31,32 @@ public class AuditTo1 implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String serverVersion;
-    private String databaseInfo;
+    private String databaseType;
+    private String databaseVersion;
     private String jvmVersion;
     private String tomcatVersion;
-    private String memoryAllocation;
+    private String tomcatXmx;
+    private String tomcatXms;
     private String oscarBuild;
-    private String oscarProperties;
-    private String drugrefProperties;
+    private String oscarBuildDate;
+    private String oscarHL7TEXT_LABS;
+    private String oscarSINGLE_PAGE_CHART;
+    private String oscarTMP_DIR;
+    private String oscarDrugref_url;
+    private String drugrefDatabaseUser;
+    private String drugrefDatabaseUrl;
+    private String drugrefDatabaseDriver;
 
     public String getServerVersion() {
         return serverVersion;
     }
 
-    public String getDatabaseInfo() {
-        return databaseInfo;
+    public String getDatabaseType() {
+        return databaseType;
+    }
+
+    public String getDatabaseVersion() {
+        return databaseVersion;
     }
 
     public String getJvmVersion() {
@@ -55,28 +67,60 @@ public class AuditTo1 implements Serializable {
         return tomcatVersion;
     }
 
-    public String getMemoryAllocation() {
-        return memoryAllocation;
+    public String getTomcatXmx() {
+        return tomcatXmx;
+    }
+
+    public String getTomcatXms() {
+        return tomcatXms;
     }
 
     public String getOscarBuild() {
         return oscarBuild;
     }
 
-    public String getOscarProperties() {
-        return oscarProperties;
+    public String getOscarBuildDate() {
+        return oscarBuildDate;
     }
 
-    public String getDrugrefProperties() {
-        return drugrefProperties;
+    public String getOscarHL7TEXT_LABS() {
+        return oscarHL7TEXT_LABS;
+    }
+
+    public String getOscarSINGLE_PAGE_CHART() {
+        return oscarSINGLE_PAGE_CHART;
+    }
+
+    public String getOscarTMP_DIR() {
+        return oscarTMP_DIR;
+    }
+    
+    public String getOscarDrugref_url() {
+        return oscarDrugref_url;
+    }
+
+    public String getDrugrefDatabaseUser() {
+        return drugrefDatabaseUser;
+    }
+
+    public String getDrugrefDatabaseUrl() {
+        return drugrefDatabaseUrl; 
+    }
+
+    public String getDrugrefDatabaseDriver() {
+        return drugrefDatabaseDriver;
     }
 
     public void setServerVersion(String serverVersion) {
         this.serverVersion = serverVersion;
     }
 
-    public void setDatabaseInfo(String databaseInfo) {
-        this.databaseInfo = databaseInfo;
+    public void setDatabaseType(String databaseType) {
+        this.databaseType = databaseType;
+    }
+
+    public void setDatabaseVersion(String databaseVersion) {
+        this.databaseVersion = databaseVersion;
     }
 
     public void setJvmVersion(String jvmVersion) {
@@ -87,19 +131,47 @@ public class AuditTo1 implements Serializable {
         this.tomcatVersion = tomcatVersion;
     }
 
-    public void setMemoryAllocation(String memoryAllocation) {
-        this.memoryAllocation = memoryAllocation;
+    public void setTomcatXmx(String tomcatXmx) {
+        this.tomcatXmx = tomcatXmx;
+    }
+
+    public void setTomcatXms(String tomcatXms) {
+        this.tomcatXms = tomcatXms;
     }
 
     public void setOscarBuild(String oscarBuild) {
         this.oscarBuild = oscarBuild;
     }
 
-    public void setOscarProperties(String oscarProperties) {
-        this.oscarProperties = oscarProperties;
+    public void setOscarBuildDate(String oscarBuildDate) {
+        this.oscarBuildDate = oscarBuildDate;
     }
 
-    public void setDrugrefProperties(String drugrefProperties) {
-        this.drugrefProperties = drugrefProperties;
+    public void setOscarHL7TEXT_LABS(String oscarHL7TEXT_LABS) {
+        this.oscarHL7TEXT_LABS = oscarHL7TEXT_LABS;
+    }
+
+    public void setOscarSINGLE_PAGE_CHART(String oscarSINGLE_PAGE_CHART) {
+        this.oscarSINGLE_PAGE_CHART = oscarSINGLE_PAGE_CHART;
+    }
+
+    public void setOscarTMP_DIR(String oscarTMP_DIR) {
+        this.oscarTMP_DIR = oscarTMP_DIR;
+    }
+
+    public void setOscarDrugref_url(String oscarDrugref_url) {
+        this.oscarDrugref_url = oscarDrugref_url;
+    }
+
+    public void setDrugrefDatabaseUser(String drugrefDatabaseUser) {
+        this.drugrefDatabaseUser = drugrefDatabaseUser;
+    }
+
+    public void setDrugrefDatabaseUrl(String drugrefDatabaseUrl) {
+        this.drugrefDatabaseUrl = drugrefDatabaseUrl;
+    }
+
+    public void setDrugrefDatabaseDriver(String drugrefDatabaseDriver) {
+        this.drugrefDatabaseDriver = drugrefDatabaseDriver;
     }
 }

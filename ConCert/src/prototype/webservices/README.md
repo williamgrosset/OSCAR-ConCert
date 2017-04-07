@@ -99,6 +99,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
   {
     "build": "Gerrit_OSCAR-697",
+    "build-date": "2017-05-01 1:20AM",
     "HL7TEXT_LABS": "no",
     "SINGLE_PAGE_CHART": "false",
     "TMP_DIR": "/etc/tmp/",
