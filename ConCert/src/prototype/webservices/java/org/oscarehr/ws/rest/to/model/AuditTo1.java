@@ -30,41 +30,41 @@ public class AuditTo1 implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String server_version;
-    private String db_type;
-    private String db_version;
-    private String jvm_version;
-    private String tomcat_version;
+    private String serverVersion;
+    private String dbType;
+    private String dbVersion;
+    private String jvmVersion;
+    private String tomcatVersion;
     private String xmx;
     private String xms;
     private String build;
-    private String build_date;
-    private String HL7TEXT_LABS;
-    private String SINGLE_PAGE_CHART;
-    private String TMP_DIR;
-    private String drugref_url;
-    private String db_user;
-    private String db_url;
-    private String db_driver;
+    private String buildDate;
+    private String hl7TextLabs;
+    private String singlePageChart;
+    private String tmpDir;
+    private String drugrefUrl;
+    private String dbUser;
+    private String dbUrl;
+    private String dbDriver;
 
     public String getServerVersion() {
-        return server_version;
+        return serverVersion;
     }
 
     public String getDbType() {
-        return db_type;
+        return dbType;
     }
 
     public String getDbVersion() {
-        return db_version;
+        return dbVersion;
     }
 
     public String getJvmVersion() {
-        return jvm_version;
+        return jvmVersion;
     }
 
     public String getTomcatVersion() {
-        return tomcat_version;
+        return tomcatVersion;
     }
 
     public String getXmx() {
@@ -80,55 +80,55 @@ public class AuditTo1 implements Serializable {
     }
 
     public String getBuildDate() {
-        return build_date;
+        return buildDate;
     }
 
-    public String getHL7TEXT_LABS() {
-        return HL7TEXT_LABS;
+    public String getHl7TextLabs() {
+        return hl7TextLabs;
     }
 
-    public String getSINGLE_PAGE_CHART() {
-        return SINGLE_PAGE_CHART;
+    public String getSinglePageChart() {
+        return singlePageChart;
     }
 
-    public String getTMP_DIR() {
-        return TMP_DIR;
+    public String getTmpDir() {
+        return tmpDir;
     }
     
-    public String getDrugref_url() {
-        return drugref_url;
+    public String getDrugrefUrl() {
+        return drugrefUrl;
     }
 
     public String getDbUser() {
-        return db_user;
+        return dbUser;
     }
 
     public String getDbUrl() {
-        return db_url; 
+        return dbUrl; 
     }
 
     public String getDbDriver() {
-        return db_driver;
+        return dbDriver;
     }
 
-    public void setServerVersion(String server_version) {
-        this.server_version = server_version;
+    public void setServerVersion(String serverVersion) {
+        this.serverVersion = serverVersion;
     }
 
-    public void setDbType(String db_type) {
-        this.db_type = db_type;
+    public void setDbType(String dbType) {
+        this.dbType = dbType;
     }
 
-    public void setDbVersion(String db_version) {
-        this.db_version = db_version;
+    public void setDbVersion(String dbVersion) {
+        this.dbVersion = dbVersion;
     }
 
-    public void setJvmVersion(String jvm_version) {
-        this.jvm_version = jvm_version;
+    public void setJvmVersion(String jvmVersion) {
+        this.jvmVersion = jvmVersion;
     }
 
-    public void setTomcatVersion(String tomcat_version) {
-        this.tomcat_version = tomcat_version;
+    public void setTomcatVersion(String tomcatVersion) {
+        this.tomcatVersion = tomcatVersion;
     }
 
     public void setXmx(String xmx) {
@@ -143,35 +143,35 @@ public class AuditTo1 implements Serializable {
         this.build = build;
     }
 
-    public void setBuildDate(String build_date) {
-        this.build_date = build_date;
+    public void setBuildDate(String buildDate) {
+        this.buildDate = buildDate;
     }
 
-    public void setHL7TEXT_LABS(String HL7TEXT_LABS) {
-        this.HL7TEXT_LABS = HL7TEXT_LABS;
+    public void setHl7TextLabs(String hl7TextLabs) {
+        this.hl7TextLabs = hl7TextLabs;
     }
 
-    public void setSINGLE_PAGE_CHART(String SINGLE_PAGE_CHART) {
-        this.SINGLE_PAGE_CHART = SINGLE_PAGE_CHART;
+    public void setSinglePageChart(String singlePageChart) {
+        this.singlePageChart = singlePageChart;
     }
 
-    public void setTMP_DIR(String TMP_DIR) {
-        this.TMP_DIR = TMP_DIR;
+    public void setTmpDir(String tmpDir) {
+        this.tmpDir = tmpDir;
     }
 
-    public void setDrugref_url(String drugref_url) {
-        this.drugref_url = drugref_url;
+    public void setDrugrefUrl(String drugrefUrl) {
+        this.drugrefUrl = drugrefUrl;
     }
 
-    public void setDbUser(String db_user) {
-        this.db_user = db_user;
+    public void setDbUser(String dbUser) {
+        this.dbUser = dbUser;
     }
 
-    public void setDbUrl(String db_url) {
-        this.db_url = db_url;
+    public void setDbUrl(String dbUrl) {
+        this.dbUrl = dbUrl;
     }
 
-    public void setDbDriver(String db_driver) {
-        this.db_driver = db_driver;
+    public void setDbDriver(String dbDriver) {
+        this.dbDriver = dbDriver;
     }
 }

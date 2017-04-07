@@ -64,7 +64,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
-    "server_version": "Ubuntu 14.04"
+    "serverVersion": "Ubuntu 14.04"
   }
   ```
 + #### ```GET /audit/databaseInfo```
@@ -74,8 +74,8 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
-    "db_type": "MySQL",
-    "db_version": "5.5.53"
+    "dbType": "MySQL",
+    "dbVersion": "5.5.53"
   }
   ```
 + #### ```GET /audit/tomcatInfo```
@@ -85,8 +85,8 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
-    "jvm_version": "1.7.0_111",
-    "tomcat_version": "Apache Tomcat/7.0.52",
+    "jvmVersion": "1.7.0_111",
+    "tomcatVersion": "Apache Tomcat/7.0.52",
     "xmx": "1024m",
     "xms": "1024m"
   }
@@ -99,11 +99,11 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
   {
     "build": "Gerrit_OSCAR-697",
-    "build_date": "2017-05-01 1:20AM",
-    "HL7TEXT_LABS": "no",
-    "SINGLE_PAGE_CHART": "false",
-    "TMP_DIR": "/etc/tmp/",
-    "drugref_url": "http://<ip_address>:<port_number>
+    "buildDate": "2017-05-01 1:20AM",
+    "hl7TextLabs": "no",
+    "singlePageChart": "false",
+    "tmpDir": "/etc/tmp/",
+    "drugrefUrl": "http://<ip_address>:<port_number>
   }
   ```
 + #### ```GET /audit/drugrefInfo```
@@ -113,9 +113,9 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
-    "db_user": "oscar",
-    "db_url": "jdbc:mysql://127.0.0.1:drugref2",
-    "db_driver": "com.mysql.jdbc.Driver"
+    "dbUser": "oscar",
+    "dbUrl": "jdbc:mysql://127.0.0.1:drugref2",
+    "dbDriver": "com.mysql.jdbc.Driver"
   }
   ```
 
