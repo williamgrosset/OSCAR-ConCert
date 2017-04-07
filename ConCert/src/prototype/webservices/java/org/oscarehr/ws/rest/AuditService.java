@@ -24,10 +24,10 @@
 
 package org.oscarehr.ws.rest;
 
-//import org.apache.log4j.Logger;
-import org.springframework.beans.stereotype.Component;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 import org.oscarehr.ws.rest.to.GenericRESTResponse;
-//import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.MiscUtilsOld;
 
 import javax.ws.rs.*;
 
@@ -38,13 +38,21 @@ import javax.ws.rs.*;
 @Component("auditService")
 public class AuditService extends AbstractServiceImpl {
 
-    //private static Logger logger = MiscUtils.getLogger();
+    private static Logger logger = MiscUtilsOld.getLogger();
 
     @GET
     @Path("/test")
     @Produces("application/json")
     public GenericRESTResponse getTestInfo() {
         GenericRESTResponse response = new GenericRESTResponse();
+        try {
+            response.setMessage("Test response was successful");
+            response.setSuccess(true);
+        } catch (Exception e) {
+            System.out.println(e.getStackTrace());
+            response.setMessage("Test response failed");
+            response.setSuccess(false);
+        }
         return response;
     }
 }
