@@ -30,148 +30,148 @@ public class AuditTo1 implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String serverVersion;
-    private String databaseType;
-    private String databaseVersion;
-    private String jvmVersion;
-    private String tomcatVersion;
-    private String tomcatXmx;
-    private String tomcatXms;
-    private String oscarBuild;
-    private String oscarBuildDate;
-    private String oscarHL7TEXT_LABS;
-    private String oscarSINGLE_PAGE_CHART;
-    private String oscarTMP_DIR;
-    private String oscarDrugref_url;
-    private String drugrefDatabaseUser;
-    private String drugrefDatabaseUrl;
-    private String drugrefDatabaseDriver;
+    private String server_version;
+    private String db_type;
+    private String db_version;
+    private String jvm_version;
+    private String tomcat_version;
+    private String xmx;
+    private String xms;
+    private String build;
+    private String build_date;
+    private String HL7TEXT_LABS;
+    private String SINGLE_PAGE_CHART;
+    private String TMP_DIR;
+    private String drugref_url;
+    private String db_user;
+    private String db_url;
+    private String db_driver;
 
     public String getServerVersion() {
-        return serverVersion;
+        return server_version;
     }
 
-    public String getDatabaseType() {
-        return databaseType;
+    public String getDbType() {
+        return db_type;
     }
 
-    public String getDatabaseVersion() {
-        return databaseVersion;
+    public String getDbVersion() {
+        return db_version;
     }
 
     public String getJvmVersion() {
-        return jvmVersion;
+        return jvm_version;
     }
 
     public String getTomcatVersion() {
-        return tomcatVersion;
+        return tomcat_version;
     }
 
-    public String getTomcatXmx() {
-        return tomcatXmx;
+    public String getXmx() {
+        return xmx;
     }
 
-    public String getTomcatXms() {
-        return tomcatXms;
+    public String getXms() {
+        return xms;
     }
 
-    public String getOscarBuild() {
-        return oscarBuild;
+    public String getBuild() {
+        return build;
     }
 
-    public String getOscarBuildDate() {
-        return oscarBuildDate;
+    public String getBuildDate() {
+        return build_date;
     }
 
-    public String getOscarHL7TEXT_LABS() {
-        return oscarHL7TEXT_LABS;
+    public String getHL7TEXT_LABS() {
+        return HL7TEXT_LABS;
     }
 
-    public String getOscarSINGLE_PAGE_CHART() {
-        return oscarSINGLE_PAGE_CHART;
+    public String getSINGLE_PAGE_CHART() {
+        return SINGLE_PAGE_CHART;
     }
 
-    public String getOscarTMP_DIR() {
-        return oscarTMP_DIR;
+    public String getTMP_DIR() {
+        return TMP_DIR;
     }
     
-    public String getOscarDrugref_url() {
-        return oscarDrugref_url;
+    public String getDrugref_url() {
+        return drugref_url;
     }
 
-    public String getDrugrefDatabaseUser() {
-        return drugrefDatabaseUser;
+    public String getDbUser() {
+        return db_user;
     }
 
-    public String getDrugrefDatabaseUrl() {
-        return drugrefDatabaseUrl; 
+    public String getDbUrl() {
+        return db_url; 
     }
 
-    public String getDrugrefDatabaseDriver() {
-        return drugrefDatabaseDriver;
+    public String getDbDriver() {
+        return db_driver;
     }
 
-    public void setServerVersion(String serverVersion) {
-        this.serverVersion = serverVersion;
+    public void setServerVersion(String server_version) {
+        this.server_version = server_version;
     }
 
-    public void setDatabaseType(String databaseType) {
-        this.databaseType = databaseType;
+    public void setDbType(String db_type) {
+        this.db_type = db_type;
     }
 
-    public void setDatabaseVersion(String databaseVersion) {
-        this.databaseVersion = databaseVersion;
+    public void setDbVersion(String db_version) {
+        this.db_version = db_version;
     }
 
-    public void setJvmVersion(String jvmVersion) {
-        this.jvmVersion = jvmVersion;
+    public void setJvmVersion(String jvm_version) {
+        this.jvm_version = jvm_version;
     }
 
-    public void setTomcatVersion(String tomcatVersion) {
-        this.tomcatVersion = tomcatVersion;
+    public void setTomcatVersion(String tomcat_version) {
+        this.tomcat_version = tomcat_version;
     }
 
-    public void setTomcatXmx(String tomcatXmx) {
-        this.tomcatXmx = tomcatXmx;
+    public void setXmx(String xmx) {
+        this.xmx = xmx;
     }
 
-    public void setTomcatXms(String tomcatXms) {
-        this.tomcatXms = tomcatXms;
+    public void setXms(String xms) {
+        this.xms = xms;
     }
 
-    public void setOscarBuild(String oscarBuild) {
-        this.oscarBuild = oscarBuild;
+    public void setBuild(String build) {
+        this.build = build;
     }
 
-    public void setOscarBuildDate(String oscarBuildDate) {
-        this.oscarBuildDate = oscarBuildDate;
+    public void setBuildDate(String build_date) {
+        this.build_date = build_date;
     }
 
-    public void setOscarHL7TEXT_LABS(String oscarHL7TEXT_LABS) {
-        this.oscarHL7TEXT_LABS = oscarHL7TEXT_LABS;
+    public void setHL7TEXT_LABS(String HL7TEXT_LABS) {
+        this.HL7TEXT_LABS = HL7TEXT_LABS;
     }
 
-    public void setOscarSINGLE_PAGE_CHART(String oscarSINGLE_PAGE_CHART) {
-        this.oscarSINGLE_PAGE_CHART = oscarSINGLE_PAGE_CHART;
+    public void setSINGLE_PAGE_CHART(String SINGLE_PAGE_CHART) {
+        this.SINGLE_PAGE_CHART = SINGLE_PAGE_CHART;
     }
 
-    public void setOscarTMP_DIR(String oscarTMP_DIR) {
-        this.oscarTMP_DIR = oscarTMP_DIR;
+    public void setTMP_DIR(String TMP_DIR) {
+        this.TMP_DIR = TMP_DIR;
     }
 
-    public void setOscarDrugref_url(String oscarDrugref_url) {
-        this.oscarDrugref_url = oscarDrugref_url;
+    public void setDrugref_url(String drugref_url) {
+        this.drugref_url = drugref_url;
     }
 
-    public void setDrugrefDatabaseUser(String drugrefDatabaseUser) {
-        this.drugrefDatabaseUser = drugrefDatabaseUser;
+    public void setDbUser(String db_user) {
+        this.db_user = db_user;
     }
 
-    public void setDrugrefDatabaseUrl(String drugrefDatabaseUrl) {
-        this.drugrefDatabaseUrl = drugrefDatabaseUrl;
+    public void setDbUrl(String db_url) {
+        this.db_url = db_url;
     }
 
-    public void setDrugrefDatabaseDriver(String drugrefDatabaseDriver) {
-        this.drugrefDatabaseDriver = drugrefDatabaseDriver;
+    public void setDbDriver(String db_driver) {
+        this.db_driver = db_driver;
     }
 }
