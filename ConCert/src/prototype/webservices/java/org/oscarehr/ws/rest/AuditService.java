@@ -26,10 +26,18 @@ package org.oscarehr.ws.rest;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
-import org.oscarehr.ws.rest.to.GenericRESTResponse;
 import org.oscarehr.util.MiscUtilsOld;
 
+// This will be replaced by an actual Response object
+// (i.e. AuditResponse.class)
+import org.oscarehr.ws.rest.to.GenericRESTResponse;
+
+// This import won't exist here, will eventually be handled by
+// AuditManager.class
+import oscar.util.AuditAction;
+
 import javax.ws.rs.*;
+import javax.servlet.http.HttpServletRequest;
 
 /*
 * Class that handles access to auditing information via the REST API.
@@ -45,8 +53,13 @@ public class AuditService extends AbstractServiceImpl {
     @Produces("application/json")
     public GenericRESTResponse getTestInfo() {
         GenericRESTResponse response = new GenericRESTResponse();
+        HttpServletRequest request = this.getHttpServletRequest();
+        AuditAction audit = new AuditAction();
+
+        // Testing purposes
+        String output = request.getSession().getServletContext().getContextPath().replace("/", "");
         try {
-            response.setMessage("Test response was successful");
+            response.setMessage("Test response successful :) " + output);
             response.setSuccess(true);
         } catch (Exception e) {
             System.out.println(e.getStackTrace());

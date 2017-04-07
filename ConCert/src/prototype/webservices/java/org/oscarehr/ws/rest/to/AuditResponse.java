@@ -21,4 +21,23 @@
  * University of Victoria
  * Victoria, Canada
  */
-public class AuditResponse {}
+package org.oscarehr.ws.rest.to;
+
+import org.oscarehr.ws.rest.to.model.AuditTo1;
+
+import java.io.Serializable;
+
+public class AuditResponse extends GenericRESTResponse implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    private AuditTo1 audit;
+
+    public AuditTo1 getAudit() {
+        return this.audit;
+    }
+
+    public void setAudit(AuditTo1 audit) {
+        this.audit = audit;
+    }
+}
