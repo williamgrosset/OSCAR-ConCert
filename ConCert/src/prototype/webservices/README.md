@@ -2,43 +2,8 @@
 ## Overview
 The purpose of this project is to provide a web service for live auditing of an OSCAR application. The services will be accessible through a REST API. Authorized clients will be able to make a request to a specific resource on the server over an HTTP protocol. OAUTH will require clients to provide credentials (client id and secret) in exchange for an access token, which will authorize the request.
 
-## Best Practices for REST API Design:
-These are my personal notes for this [article](http://vinaysahni.com/best-practices-for-a-pragmatic-restful-api). A few key requirements for the design of an API are:
-+ Use web standards where they make sense
-+ Friendly to the developer and explorable by the URL address bar
-+ Throw hard errors on non-SSL access to API URL
-+ Strong documentation (see [GitHub](https://developer.github.com/v3/) for reference)
-+ Include versioning (see [Stripe](https://stripe.com/docs/api#versioning) for reference)
-+ Local values (i.e. id=5, action=refresh, page=2) can be a part of the resource URL path
-+ Result filtering, sorting, and searching can be implemented as query parameters (i.e. ?order=backwards/?query=Obama)
-on top of the base URL
-+ Can use a fields query parameter that takes a comma seperated list to limit which fields are returned by the API request
-
-### Use RESTful URLS and actions
-+ Seperate API into logical **resources**, which are manipulated using HTTP requests 
-    - where the methods ```GET, POST, ..., PUT``` have specific meaning
-+ **Resources** should be nouns that make sense from the perspective of the API consumer 
-    - i.e. ```GET /tickets/12```
-
-### JSON data
-+ Use camelCase for JSON field names
-+ Consistent format of results
-+ Endpoint URL should include .json extension
-
-### Errors
-+ An API should provide a useful error message with its own set of fields (including HTTP status codes)
-+ An API that accepts JSON encoded requests should also require the Content-Type header be set to ```application/json``` or throw a 415 Unsupported Media Type HTTP status code
-
 ## OSCAR RESTful Web Services
-OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/)).
-
-### Data formats
-+ Use JSON for all responses/requests
-+ OSCAR src code has both JSON and legacy services that use XML
-
-### Documentation
-+ REST API documentation will be done using [RAML](http://raml.org)
-+ Can generate base RAML using [RAML for JAX-RS](https://github.com/mulesoft-labs/raml-for-jax-rs) (?)
+OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/) or user session with admin access). OSCAR's source code uses both JSON and XML (legacy services).
 
 ### Implementation
 + OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services) (Java API for creating RESTful web services)
@@ -134,11 +99,18 @@ The following JSON responses for each API call assume that the HTTP status code 
 + **AuditManager.class**: This class will provide access to relevant data and business logic classes that are required by the AuditWebService route handlers. A web service class may use several manager classes to access the required data.
 + **AuditConverter.class**: This class will handle converting the objects returned by the business logic classes to a transfer object.
 + **AuditTo1.class**: This class will represent the transfer object. Transfer objects implement the Serializable interface and can be wrapped by a response object (i.e. JSON) to be sent back to the client.
++ **TODO**: Each class should have a header comment.
 
 An authorized client will make an API request using an available route handler. **AuditWebService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will handle the request and retrieve the relevent data and business logic. Once this data is received, **AuditConverter** will transform this data into a response object (**AuditResponse**) that can be returned as JSON back to the client.
 
+### UML Diagrams
+...
+
 ### Testing
 ...
+
+## Author
+Author of the OSCAR Audit REST API can be contacted at williamhgrosset@gmail.com.
 
 ## Resources
 + [OSCAR Drug REST Web Service](https://github.com/williamgrosset/OSCAR-ConCert/commit/4964b70cf4963b44cc3d2feba17d5e9b7df159a5)
