@@ -42,22 +42,103 @@ import java.util.regex.Pattern;
 */
 public class Audit {
 
+    // Utility variables for Audit class
     private File catalinaBase;
     private File catalinaHome;
     private File lsbRelease;
     private File tomcatSettings;
-    private String jvmVersion;
-    private String drugrefUrl;
     private Connection connection;
+
+    // Variables for Audit object
+    private String serverVersion;
+    private String dbType;
+    private String dbVersion;
+    private String jvmVersion;
+    private String tomcatVersion;
+    private String xmx;
+    private String xms;
+    private String build;
+    private String buildDate;
+    private String hl7TextLabs;
+    private String singlePageChart;
+    private String tmpDir;
+    private String drugrefUrl;
+    private String dbUser;
+    private String dbUrl;
+    private String dbDriver;
 
     public Audit() {
         catalinaBase = getCatalinaBase();
         catalinaHome = getCatalinaHome();
         lsbRelease = getLsbRelease();
         tomcatSettings = getTomcatSettings(7);
-        jvmVersion = getJvmVersion();
+        jvmVersion = systemGetJvmVersion();
         drugrefUrl = "";
         connection = null;
+    }
+
+    public String getServerVersion() {
+        return serverVersion;
+    }
+
+    public String getDbType() {
+        return dbType;
+    }
+
+    public String getDbVersion() {
+        return dbVersion;
+    }
+
+    public String getJvmVersion() {
+        return jvmVersion;
+    }
+
+    public String getTomcatVersion() {
+        return tomcatVersion;
+    }
+
+    public String getXmx() {
+        return xmx;
+    }
+
+    public String getXms() {
+        return xms;
+    }
+
+    public String getBuild() {
+        return build;
+    }
+
+    public String getBuildDate() {
+        return buildDate;
+    }
+
+    public String getHl7TextLabs() {
+        return hl7TextLabs;
+    }
+
+    public String getSinglePageChart() {
+        return singlePageChart;
+    }
+
+    public String getTmpDir() {
+        return tmpDir;
+    }
+    
+    public String getDrugrefUrl() {
+        return drugrefUrl;
+    }
+
+    public String getDbUser() {
+        return dbUser;
+    }
+
+    public String getDbUrl() {
+        return dbUrl; 
+    }
+
+    public String getDbDriver() {
+        return dbDriver;
     }
 
     /*
@@ -131,7 +212,7 @@ public class Audit {
     *
     *  @return jvmVersion: String value for JVM version.
     */
-    private String getJvmVersion() {
+    private String systemGetJvmVersion() {
         try {
             return System.getProperty("java.version");
         } catch (Exception e) {
