@@ -24,20 +24,23 @@
 
 package oscar.util;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.oscarehr.util.SpringUtils;
+import org.oscarehr.util.LoggedInInfo;
+import org.oscarehr.managers.SecurityInfoManager;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.managers.SecurityInfoManager;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /*
-*  github.com/williamgrosset
+*  Action class that contains auditing information for the view (oscarAudit.jsp)
+*  of the OSCAR Administration page.
+*  
+*  https://github.com/williamgrosset
 */
 public class AuditAction extends Action {
 

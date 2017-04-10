@@ -24,19 +24,21 @@
 
 package oscar.util;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import org.oscarehr.util.DbConnectionFilter;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import org.oscarehr.util.DbConnectionFilter;
-
 /*
-*  github.com/williamgrosset
+*  Class that audits a live OSCAR application and contains information
+*  regarding OSCAR's deployment environment.
+*  
+*  https://github.com/williamgrosset
 */
 public class Audit {
 
@@ -203,6 +205,7 @@ public class Audit {
     *  Extract JVM version from system properties and server version information 
     *  from servlet.
     *
+    *  @param tomcatVersion: Tomcat version.
     *  @return output: JVM and Tomcat version information.
     */
     protected String verifyTomcat(String tomcatVersion) {
@@ -239,6 +242,8 @@ public class Audit {
     *  properties file in the WAR and the custom properties file in the appropriate
     *  Tomcat directory.
     *
+    *  @param tomcatVersion: Tomcat version.
+    *  @param webAppName: Web application name for OSCAR.
     *  @return output: Combined output of Oscar build and properties information.
     */
     protected String verifyOscar(String tomcatVersion, String webAppName) {
@@ -400,6 +405,8 @@ public class Audit {
     *  Verify the current Drugref instance. Check the custom properties file found 
     *  in the appropriate Tomcat directory.
     *
+    *  @param tomcatVersion: Tomcat version.
+    *  @param webAppName: Web application name for OSCAR.
     *  @return output: Output of Drugref properties information.
     */
     protected String verifyDrugref(String tomcatVersion, String webAppName) {
@@ -498,6 +505,7 @@ public class Audit {
     *  Read through the Tomcat settings file and echo the Xmx and Xms values to 
     *  the user.
     *
+    *  @param tomcatVersion: Tomcat version.
     *  @return output: Xmx value (maximum memory allocation) and Xms value (minimum 
     *  memory allocation) for JVM heap size.
     */
