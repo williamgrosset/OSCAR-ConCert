@@ -24,9 +24,11 @@
 
 package org.oscarehr.managers;
 
+import oscar.util.Audit;
+import org.oscarehr.ws.rest.to.model.AuditTo1;
+
 import org.apache.log4j.Logger;
 import org.oscarehr.util.MiscUtils;
-import oscar.util.AuditAction;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -38,57 +40,60 @@ public class AuditManager {
     @Autowired
     protected SecurityInfoManager securityInfoManager;
 
-    protected AuditAction audit;
 
-    public String getServerVersion() {
-        return "";
+    public AuditTo1 auditServer() {
+        Audit audit = new Audit();
+
+        try {} catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+
+        return null;
     }
 
-    public String getDbType() {
-        return "";
+    public AuditTo1 auditDatabase() {
+        Audit audit = new Audit();
+
+        try {} catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+
+        return null;
     }
 
-    public String getDbVersion() {
-        return "";
+    public AuditTo1 auditTomcat() {
+        Audit audit = new Audit();
+
+        try {} catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+
+        return null;
     }
 
-    public String getJvmVersion() {
-        return "";
+    // Maybe combine auditOscar + auditDrugref = auditProperties?
+    public AuditTo1 auditOscar() {
+        Audit audit = new Audit();
+
+        try {} catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+
+        return null;
     }
 
-    public String getTomcatVersion() {
-        return "";
-    }
+    public AuditTo1 auditDrugref() {
+        Audit audit = new Audit();
 
-    public String getXmx() {
-        return "";
-    }
+        try {} catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
 
-    public String getXms() {
-        return "";
-    }
-
-    public String getBuild() {
-        return "";
-    }
-
-    public String getBuildDate() {
-        return "";
-    }
-
-    public String getHl7TextLabs() {
-        return "";
-    }
-
-    public String getSinglePageChart() {
-        return "";
-    }
-
-    public String getTmpDir() {
-        return "";
-    }
-    
-    public String getDrugrefUrl() {
-        return "";
+        return null;
     }
 }
