@@ -31,16 +31,9 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import org.oscarehr.util.DbConnectionFilter;
-
-import org.oscarehr.util.SpringUtils;
-import org.oscarehr.util.LoggedInInfo;
-import org.oscarehr.managers.SecurityInfoManager;
 
 /*
 *  github.com/williamgrosset
@@ -54,7 +47,6 @@ public class Audit {
     private String jvmVersion;
     private String drugrefUrl;
     private Connection connection;
-    private SecurityInfoManager securityInfoManager;
 
     public Audit() {
         catalinaBase = getCatalinaBase();
@@ -64,7 +56,6 @@ public class Audit {
         jvmVersion = getJvmVersion();
         drugrefUrl = "";
         connection = null;
-        securityInfoManager = getSecurityInfoManager();
     }
 
     /*
@@ -143,19 +134,6 @@ public class Audit {
             return System.getProperty("java.version");
         } catch (Exception e) {
             return "";
-        }
-    }
-
-    /*
-    *  Initialize SecurityInfoManager object.
-    *
-    *  @return securityInfoManager: Object for SecurityInfoManager.class.
-    */
-    private SecurityInfoManager getSecurityInfoManager() {
-        try {
-            return SpringUtils.getBean(SecurityInfoManager.class);
-        } catch (Exception e) {
-            return null;
         }
     }
 

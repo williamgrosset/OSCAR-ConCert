@@ -44,14 +44,18 @@ public class AuditAction extends Action {
     private SecurityInfoManager securityInfoManager;
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-        Audit audit = new Audit();
-        String tomcatVersion = "";
-        String webAppName = "";
-
         try {
-            tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
-            webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
+            Audit audit = new Audit();
+            String tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
+            String webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
             securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
+
+            servletRequest.setAttribute("serverVersion", audit.serverVersion());
+            servletRequest.setAttribute("databaseInfo", audit.databaseInfo());
+            servletRequest.setAttribute("verifyTomcat", audit.verifyTomcat(tomcatVersion));
+            servletRequest.setAttribute("verifyOscar", audit.verifyOscar(tomcatVersion, webAppName));
+            servletRequest.setAttribute("verifyDrugref", audit.verifyDrugref(tomcatVersion, webAppName));
+            servletRequest.setAttribute("tomcatReinforcement", audit.tomcatReinforcement(tomcatVersion));
         } catch (Exception e) {
             return actionMapping.findForward("failure");
         }
@@ -65,12 +69,6 @@ public class AuditAction extends Action {
             throw new SecurityException("Missing required security object (_admin)");
         }
 
-        servletRequest.setAttribute("serverVersion", audit.serverVersion());
-        servletRequest.setAttribute("databaseInfo", audit.databaseInfo());
-        servletRequest.setAttribute("verifyTomcat", audit.verifyTomcat(tomcatVersion));
-        servletRequest.setAttribute("verifyOscar", audit.verifyOscar(tomcatVersion, webAppName));
-        servletRequest.setAttribute("verifyDrugref", audit.verifyDrugref(tomcatVersion, webAppName));
-        servletRequest.setAttribute("tomcatReinforcement", audit.tomcatReinforcement(tomcatVersion));
         return actionMapping.findForward("success");
     }
 }
