@@ -34,11 +34,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.struts.action.Action;
-import org.apache.struts.action.ActionForm;
-import org.apache.struts.action.ActionForward;
-import org.apache.struts.action.ActionMapping;
-
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import org.oscarehr.util.DbConnectionFilter;
@@ -50,15 +45,13 @@ import org.oscarehr.managers.SecurityInfoManager;
 /*
 *  github.com/williamgrosset
 */
-public class Audit extends Action {
+public class Audit {
 
     private File catalinaBase;
     private File catalinaHome;
     private File lsbRelease;
     private File tomcatSettings;
     private String jvmVersion;
-    private String tomcatVersion;
-    private String webAppName;
     private String drugrefUrl;
     private Connection connection;
     private SecurityInfoManager securityInfoManager;
@@ -69,37 +62,9 @@ public class Audit extends Action {
         lsbRelease = getLsbRelease();
         tomcatSettings = getTomcatSettings(7);
         jvmVersion = getJvmVersion();
-        tomcatVersion = "";
-        webAppName = "";
         drugrefUrl = "";
         connection = null;
         securityInfoManager = getSecurityInfoManager();
-    }
-
-    public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
-        try {
-            tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
-            webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
-        } catch (Exception e) {
-            return actionMapping.findForward("failure");
-        }
-
-        String roleName = (String)servletRequest.getSession().getAttribute("userrole") + "," + (String)servletRequest.getAttribute("user");
-        if (!roleName.contains("admin") || securityInfoManager == null) {
-            return actionMapping.findForward("unauthorized");
-        }
-
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(servletRequest), "_admin", "r", null)) {
-            throw new SecurityException("Missing required security object (_admin)");
-        }
-
-        servletRequest.setAttribute("serverVersion", serverVersion());
-        servletRequest.setAttribute("databaseInfo", databaseInfo());
-        servletRequest.setAttribute("verifyTomcat", verifyTomcat());
-        servletRequest.setAttribute("verifyOscar", verifyOscar());
-        servletRequest.setAttribute("verifyDrugref", verifyDrugref());
-        servletRequest.setAttribute("tomcatReinforcement", tomcatReinforcement());
-        return actionMapping.findForward("success");
     }
 
     /*
@@ -203,7 +168,7 @@ public class Audit extends Action {
     *
     *  @return output: Linux server version.
     */
-    private String serverVersion() {
+    protected String serverVersion() {
         try {
             if (lsbRelease == null || lsbRelease.getPath().equals(""))
                 throw new FileNotFoundException();
@@ -233,7 +198,7 @@ public class Audit extends Action {
     *
     *  @return output: Database type and version.
     */
-    private String databaseInfo() {
+    protected String databaseInfo() {
         String output = "";
         try {
             connection = DbConnectionFilter.getThreadLocalDbConnection();
@@ -262,7 +227,7 @@ public class Audit extends Action {
     *
     *  @return output: JVM and Tomcat version information.
     */
-    private String verifyTomcat() {
+    protected String verifyTomcat(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
         if (jvmVersion == null || jvmVersion.equals(""))
@@ -298,7 +263,7 @@ public class Audit extends Action {
     *
     *  @return output: Combined output of Oscar build and properties information.
     */
-    private String verifyOscar() {
+    protected String verifyOscar(String tomcatVersion, String webAppName) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -338,7 +303,7 @@ public class Audit extends Action {
     *  @param fileName: Path to properties file.
     *  @return output: Current Oscar build, version, and date of build.
     */
-    private String oscarBuild(String fileName) {
+    protected String oscarBuild(String fileName) {
         try {
             String output = "";
             String line = "";
@@ -388,7 +353,7 @@ public class Audit extends Action {
     *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Oscar properties file.
     */
-    private String verifyOscarProperties(String fileName) {
+    protected String verifyOscarProperties(String fileName) {
         try {
             String output = "";
             String line = "";
@@ -459,7 +424,7 @@ public class Audit extends Action {
     *
     *  @return output: Output of Drugref properties information.
     */
-    private String verifyDrugref() {
+    protected String verifyDrugref(String tomcatVersion, String webAppName) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -497,7 +462,7 @@ public class Audit extends Action {
     *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Drugref properties file.
     */
-    private String verifyDrugrefProperties(String fileName) {
+    protected String verifyDrugrefProperties(String fileName) {
         try {
             String output = "";
             String line = "";
@@ -558,7 +523,9 @@ public class Audit extends Action {
     *  @return output: Xmx value (maximum memory allocation) and Xms value (minimum 
     *  memory allocation) for JVM heap size.
     */
-    private String tomcatReinforcement() {
+    protected String tomcatReinforcement(String tomcatVersion) {
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
 
@@ -643,10 +610,12 @@ public class Audit extends Action {
     *  @param tomcatVersion: Tomcat version from HTTP session. 
     *  @return output: JVM version, Tomcat version, and max/min heap size.
     */
+    /*
     public String getTomcatInfo(String tomcatVersion) {
         this.tomcatVersion = tomcatVersion;
         return verifyTomcat() + "\n" + tomcatReinforcement();
     }
+    */
 
     /*
     *  Public method for retrieving Oscar build tag and date. Also, property
@@ -657,11 +626,13 @@ public class Audit extends Action {
     *  @param webAppName: Oscar web application name from HTTP session.
     *  @return output: Output of tags in Oscar properties file.
     */
+    /*
     public String getOscarInfo(String tomcatVersion, String webAppName) {
         this.tomcatVersion = tomcatVersion;
         this.webAppName = webAppName;
         return verifyOscar();
     }
+    */
 
     /*
     *  Public method for retrieving Drugref property values of "db_user,"
@@ -671,9 +642,11 @@ public class Audit extends Action {
     *  @param webAppName: Oscar web application name from HTTP session.
     *  @return output: Output of tags in Drugref properties file.
     */
+    /*
     public String getDrugrefInfo(String tomcatVersion, String webAppName) {
         this.tomcatVersion = tomcatVersion;
         this.webAppName = webAppName;
         return verifyDrugref();
     }
+    */
 }
