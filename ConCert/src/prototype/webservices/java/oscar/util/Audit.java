@@ -311,10 +311,10 @@ public class Audit {
         this.jvmVersion = jvmVersion;
         this.tomcatVersion = tomcatVersion;
 
-        String output = "";
-        output += "JVM Version: " + this.jvmVersion + "<br />";
-        output += "Tomcat version: " + this.tomcatVersion + "<br />";
-        return output;
+        StringBuilder output = new StringBuilder();
+        output.append("JVM Version: " + this.jvmVersion + "<br />");
+        output.append("Tomcat version: " + this.tomcatVersion);
+        return output.toString();
     }
 
     /*
@@ -349,36 +349,38 @@ public class Audit {
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         }
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
         if (webAppName == null || webAppName.equals(""))
             return "Could not detect the Oscar webapps directory name.";
 
         this.tomcatVersion = tomcatVersion;
         this.webAppName = webAppName;
 
-        String output = "";
+        StringBuilder output = new StringBuilder();
         // Tomcat 7
         if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-            output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />";
-            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-            output += "<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
-            output += oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties");
-            output += verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties");
-            output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
+            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
+            output.append(oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
+            output.append(oscarBuild(catalinaHome.getPath() + "/" + webAppName + ".properties"));
+            output.append(verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties"));
+            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
         // Tomcat 8
         } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-            output += "<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />";
-            output += oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-            output += verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties");
-            output += "<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />";
-            output += oscarBuild(System.getProperty("user.home") + "/" + webAppName + ".properties");
-            output += verifyOscarProperties(System.getProperty("user.home") + "/" + webAppName + ".properties");
-            output += "<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />";
+            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
+            output.append(oscarBuild(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
+            output.append(oscarBuild(System.getProperty("user.home") + "/" + webAppName + ".properties"));
+            output.append(verifyOscarProperties(System.getProperty("user.home") + "/" + webAppName + ".properties"));
+            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
         // No Tomcat version found
         } else {
-            output += "Could not detect Tomcat version number to determine audit check for Oscar properties.";
+            output.append("Could not detect Tomcat version number to determine audit check for Oscar properties.");
         }
-        return output;
+        return output.toString();
     }
 
     /*
@@ -389,8 +391,11 @@ public class Audit {
     */
     protected String oscarBuild(String fileName) {
         try {
-            String output = "";
+            if (fileName == null || fileName.equals(""))
+                return "Could not detect filename for properties file.";
+
             String line = "";
+            StringBuilder output = new StringBuilder();
             ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternBuildtag = Pattern.compile("^(buildtag\\s?(=|:)).*");
@@ -409,7 +414,7 @@ public class Audit {
                         String build = line.substring(matcherBuildtag.group(1).length());
                         this.build = build;
                         flag1 = true;
-                        output += "Oscar build and version: " + this.build + "<br />";
+                        output.append("Oscar build and version: " + this.build + "<br />");
                     }
                 }
                 if (!flag2) {
@@ -417,7 +422,7 @@ public class Audit {
                         String buildDate = line.substring(matcherBuildDateTime.group(1).length());
                         this.buildDate = buildDate;
                         flag2 = true;
-                        output += "Oscar build date and time: " + this.buildDate + "<br />";
+                        output.append("Oscar build date and time: " + this.buildDate + "<br />");
                     }
                 }
                 if (flag1 && flag2)
@@ -425,10 +430,10 @@ public class Audit {
             }
 
             if (!flag1)
-                output += "Could not detect Oscar build tag." + "<br />";
+                output.append("Could not detect Oscar build tag." + "<br />");
             if (!flag2)
-                output += "Could not detect Oscar build date and time." + "<br />";
-            return output;
+                output.append("Could not detect Oscar build date and time." + "<br />");
+            return output.toString();
         } catch (Exception e) {
             return "Could not read properties file to detect Oscar build.<br />";
         }
@@ -443,8 +448,11 @@ public class Audit {
     */
     protected String verifyOscarProperties(String fileName) {
         try {
-            String output = "";
+            if (fileName == null || fileName.equals(""))
+                return "Could not detect filename for properties file.";
+
             String line = "";
+            StringBuilder output = new StringBuilder();
             ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternHL7TEXT_LABS = Pattern.compile("^(HL7TEXT_LABS\\s?(=|:)).*");
@@ -469,7 +477,7 @@ public class Audit {
                         String hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length());
                         this.hl7TextLabs = hl7TextLabs;
                         flag1 = true;
-                        output += "\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "<br />";
+                        output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "<br />");
                     }
                 }
                 if (!flag2) {
@@ -477,7 +485,7 @@ public class Audit {
                         String singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length());
                         this.singlePageChart = singlePageChart;
                         flag2 = true;
-                        output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "<br />";
+                        output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "<br />");
                     }
                 }
                 if (!flag3) {
@@ -485,7 +493,7 @@ public class Audit {
                         String tmpDir = line.substring(matcherTMP_DIR.group(1).length());
                         this.tmpDir = tmpDir;
                         flag3 = true;
-                        output += "\"TMP_DIR\" tag is configured as: " + this.tmpDir + "<br />";
+                        output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "<br />");
                     }
                 }
                 if (!flag4) {
@@ -493,21 +501,21 @@ public class Audit {
                         String drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length());
                         this.drugrefUrl = drugrefUrl;
                         flag4 = true;
-                        output += "\"drugref_url\" tag is configured as: " + this.drugrefUrl + "<br />";
+                        output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "<br />");
                     }
                 }
                 if (flag1 && flag2 && flag3 && flag4)
                     break;
             }
             if (!flag1)
-                output += "Could not detect \"HL7TEXT_LABS\" tag." + "<br />";
+                output.append("Could not detect \"HL7TEXT_LABS\" tag." + "<br />");
             if (!flag2)
-                output += "Could not detect \"SINGLE_PAGE_CHART\" tag." + "<br />";
+                output.append("Could not detect \"SINGLE_PAGE_CHART\" tag." + "<br />");
             if (!flag3)
-                output += "Could not detect \"TMP_DIR\" tag." + "<br />";
+                output.append("Could not detect \"TMP_DIR\" tag." + "<br />");
             if (!flag4)
-                output += "Could not detect \"drugref_url\" tag." + "<br />";
-            return output;
+                output.append("Could not detect \"drugref_url\" tag." + "<br />");
+            return output.toString();
         } catch (Exception e) {
             return "Could not read properties file to verify Oscar tags. " + e.getMessage();
         }
@@ -526,6 +534,8 @@ public class Audit {
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         }
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
         if (drugrefUrl.equals("")) {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
@@ -537,20 +547,20 @@ public class Audit {
         Pattern patternDrugrefUrl = Pattern.compile(".*://.*/(drugref.*)/.*");
         Matcher matcherDrugrefUrl = patternDrugrefUrl.matcher(drugrefUrl);
         if (matcherDrugrefUrl.matches()) {
-            String output = "";
+            StringBuilder output = new StringBuilder();
             // Tomcat 7
             if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-                output += "<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />";
-                output += verifyDrugrefProperties(catalinaHome.getPath() + "/" + matcherDrugrefUrl.group(1) + ".properties");
+                output.append("<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />");
+                output.append(verifyDrugrefProperties(catalinaHome.getPath() + "/" + matcherDrugrefUrl.group(1) + ".properties"));
             // Tomcat 8
             } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-                output += "<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />";
-                output += verifyDrugrefProperties(System.getProperty("user.home") + "/" + matcherDrugrefUrl.group(1) + ".properties");
+                output.append("<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />");
+                output.append(verifyDrugrefProperties(System.getProperty("user.home") + "/" + matcherDrugrefUrl.group(1) + ".properties"));
             // No Tomcat version found
             } else {
-                output += "Could not detect Tomcat version number to determine audit check for Drugref properties.";
+                output.append("Could not detect Tomcat version number to determine audit check for Drugref properties.");
             }
-            return output;
+            return output.toString();
         } else {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
@@ -564,8 +574,11 @@ public class Audit {
     */
     protected String verifyDrugrefProperties(String fileName) {
         try {
-            String output = "";
+            if (fileName == null || fileName.equals(""))
+                return "Could not detect filename for properties file.";
+
             String line = "";
+            StringBuilder output = new StringBuilder();
             ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternDb_user = Pattern.compile("^(db_user\\s?(=|:)).*");
@@ -587,7 +600,7 @@ public class Audit {
                         String dbUser = line.substring(matcherDb_user.group(1).length());
                         this.dbUser = dbUser;
                         flag1 = true;
-                        output += "\"db_user\" tag is configured as: " + this.dbUser + "<br />";
+                        output.append("\"db_user\" tag is configured as: " + this.dbUser + "<br />");
                     }
                 }
                 if (!flag2) {
@@ -595,7 +608,7 @@ public class Audit {
                         String dbUrl = line.substring(matcherDb_url.group(1).length());
                         this.dbUrl = dbUrl;
                         flag2 = true;
-                        output += "\"db_url\" tag is configured as: " + this.dbUrl + "<br />";
+                        output.append("\"db_url\" tag is configured as: " + this.dbUrl + "<br />");
                     }
                 }
                 if (!flag3) {
@@ -603,7 +616,7 @@ public class Audit {
                         String dbDriver = line.substring(matcherDb_driver.group(1).length());
                         this.dbDriver = dbDriver; 
                         flag3 = true;
-                        output += "\"db_driver\" tag is configured as: " + this.dbDriver + "<br />";
+                        output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "<br />");
                     }
                 }
                 if (flag1 && flag2 && flag3)
@@ -611,12 +624,12 @@ public class Audit {
             }
 
             if (!flag1)
-                output += "Could not detect \"db_user\" tag." + "<br />";
+                output.append("Could not detect \"db_user\" tag." + "<br />");
             if (!flag2)
-                output += "Could not detect \"db_url\" tag." + "<br />";
+                output.append("Could not detect \"db_url\" tag." + "<br />");
             if (!flag3)
-                output += "Could not detect \"db_driver\" tag." + "<br />";
-            return output;
+                output.append("Could not detect \"db_driver\" tag." + "<br />");
+            return output.toString();
         } catch (Exception e) {
             return "Could not read properties file to verify Drugref tags.";
         }
@@ -645,14 +658,14 @@ public class Audit {
             if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
                 return "Could not detect Tomcat settings file."; 
 
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
-            String output = "";
             String line = "";
-            boolean flag1 = false;
-            boolean flag2 = false;
+            StringBuilder output = new StringBuilder();
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternXmx = Pattern.compile(".*(Xmx[0-9]+m).*");
             Pattern patternXms = Pattern.compile(".*(Xms[0-9]+m).*");
+            boolean flag1 = false;
+            boolean flag2 = false;
 
             while ((line = rf.readLine()) != null) {
                 Matcher matcherComment = patternComment.matcher(line);
@@ -665,7 +678,7 @@ public class Audit {
                         String xmx = matcherXmx.group(1).substring(3);
                         this.xmx = xmx;
                         flag1 = true;
-                        output += "Xmx value: " + this.xmx + "<br />";
+                        output.append("Xmx value: " + this.xmx + "<br />");
                     }
                 }
                 if (!flag2) {
@@ -673,7 +686,7 @@ public class Audit {
                         String xms = matcherXms.group(1).substring(3);
                         this.xms = xms;
                         flag2 = true;
-                        output += "Xms value: " + this.xms + "<br />";
+                        output.append("Xms value: " + this.xms + "<br />");
                     }
                 }
                 if (flag1 && flag2)
@@ -681,12 +694,12 @@ public class Audit {
             }
 
             if (!flag1) {
-                output += "Could not detect Xmx value." + "<br />";
+                output.append("Could not detect Xmx value." + "<br />");
             }
             if (!flag2) {
-                output += "Could not detect Xms value." + "<br />";
+                output.append("Could not detect Xms value." + "<br />");
             }
-            return output;
+            return output.toString();
         } catch (Exception e) {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
