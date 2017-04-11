@@ -74,8 +74,6 @@ public class Audit {
         lsbRelease = getLsbRelease();
         tomcatSettings = getTomcatSettings(7);
         jvmVersion = systemGetJvmVersion();
-        drugrefUrl = "";
-        connection = null;
     }
 
     public String getServerVersion() {
@@ -268,9 +266,11 @@ public class Audit {
     *  @return output: Database type and version.
     */
     protected String databaseInfo() {
-        String output = "";
         try {
             connection = DbConnectionFilter.getThreadLocalDbConnection();
+            if (connection == null) throw new NullPointerException();
+
+            StringBuilder output = new StringBuilder();
             DatabaseMetaData metaData = connection.getMetaData();
             String dbType = metaData.getDatabaseProductName();
             String dbVersion = metaData.getDatabaseProductVersion();
@@ -278,8 +278,9 @@ public class Audit {
             this.dbType = dbType;
             this.dbVersion = dbVersion;
 
-            output += "Type: " + this.dbType + "<br />";
-            output += "Version: " + this.dbVersion + "<br />";
+            output.append("Type: " + this.dbType + "<br />");
+            output.append("Version: " + this.dbVersion);
+            return output.toString();
         } catch (Exception e) {
             return "Cannot determine database type and version.";
         } finally {
@@ -290,7 +291,6 @@ public class Audit {
                     return "Cannot close connection to database.";
                 }
             }
-            return output;
         }
     }
     
@@ -326,6 +326,7 @@ public class Audit {
     private int extractTomcatVersionNumber(String tomcatVersion) {
         Pattern tomcatVersionPattern = Pattern.compile(".*Tomcat/([0-9]).*");
         Matcher tomcatMatch = tomcatVersionPattern.matcher(tomcatVersion);
+
         if (tomcatMatch.matches()) {
             String version = tomcatMatch.group(1);
             return Integer.parseInt(version);
