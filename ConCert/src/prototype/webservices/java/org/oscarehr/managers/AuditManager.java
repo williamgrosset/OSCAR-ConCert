@@ -27,11 +27,11 @@ package org.oscarehr.managers;
 import oscar.util.Audit;
 import org.oscarehr.ws.rest.to.model.AuditTo1;
 import org.apache.log4j.Logger;
-import org.oscarehr.util.MiscUtils;
+import org.oscarehr.util.MiscUtilsOld;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.TimeStamp;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -46,16 +46,16 @@ public class AuditManager {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
 
-    private static Logger logger = MiscUtils.getLogger();
+    private static Logger logger = MiscUtilsOld.getLogger();
 
     @Autowired
     protected SecurityInfoManager securityInfoManager;
-
 
     public AuditTo1 auditServer() {
         Date date = new Date();
         // String timestamp = new String(new TimeStap(date.getTime()).toString())
         Audit audit = new Audit();
+        AuditTo1 model = new AuditTo1();
 
         try {} catch (Exception e) {
             logger.error(e.getStackTrace());
@@ -69,6 +69,7 @@ public class AuditManager {
         Date date = new Date();
         // String timestamp = new String(new TimeStap(date.getTime()).toString())
         Audit audit = new Audit();
+        AuditTo1 model = new AuditTo1();
 
         try {} catch (Exception e) {
             logger.error(e.getStackTrace());
@@ -82,6 +83,7 @@ public class AuditManager {
         Date date = new Date();
         // String timestamp = new String(new TimeStap(date.getTime()).toString())
         Audit audit = new Audit();
+        AuditTo1 model = new AuditTo1();
 
         try {} catch (Exception e) {
             logger.error(e.getStackTrace());
@@ -95,6 +97,7 @@ public class AuditManager {
         Date date = new Date();
         // String timestamp = new String(new TimeStap(date.getTime()).toString())
         Audit audit = new Audit();
+        AuditTo1 model = new AuditTo1();
         // call both verifyOscar and verifyDrugref
 
         try {
