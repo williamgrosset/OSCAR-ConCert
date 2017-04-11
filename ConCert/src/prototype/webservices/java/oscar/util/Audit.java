@@ -55,6 +55,7 @@ public class Audit {
     private String dbVersion;
     private String jvmVersion;
     private String tomcatVersion;
+    private String webAppName;
     private String xmx;
     private String xms;
     private String build;
@@ -95,6 +96,10 @@ public class Audit {
 
     public String getTomcatVersion() {
         return tomcatVersion;
+    }
+
+    public String getWebAppName() {
+        return webAppName;
     }
 
     public String getXmx() {
@@ -247,7 +252,7 @@ public class Audit {
                 if (matcherDIST_DESC.matches()) {
                     String serverVersion = line.substring(matcherDIST_DESC.group(1).length()); 
                     this.serverVersion = serverVersion;
-                    return "Version: " + serverVersion;
+                    return "Version: " + this.serverVersion;
                 }
             }
             return "Could not detect Linux server version.";
@@ -267,9 +272,13 @@ public class Audit {
         try {
             connection = DbConnectionFilter.getThreadLocalDbConnection();
             DatabaseMetaData metaData = connection.getMetaData();
+            String dbType = metaData.getDatabaseProductName();
+            String dbVersion = metaData.getDatabaseProductVersion();
 
-            output += "Type: " + metaData.getDatabaseProductName() + "<br />";
-            output += "Version: " + metaData.getDatabaseProductVersion() + "<br />";
+            this.dbType = dbType;
+            this.dbVersion = dbVersion;
+            output += "Type: " + this.dbType + "<br />";
+            output += "Version: " + this.dbVersion + "<br />";
         } catch (Exception e) {
             return "Cannot determine database type and version.";
         } finally {
@@ -297,6 +306,8 @@ public class Audit {
             return "Could not detect Tomcat version.";
         if (jvmVersion == null || jvmVersion.equals(""))
             return "Could not detect JVM version from system properties.";
+
+        this.tomcatVersion = tomcatVersion;
 
         String output = "";
         output += "JVM Version: " + jvmVersion + "<br />";
@@ -337,6 +348,9 @@ public class Audit {
         }
         if (webAppName == null || webAppName.equals(""))
             return "Could not detect the Oscar webapps directory name.";
+
+        this.tomcatVersion = tomcatVersion;
+        this.webAppName = webAppName;
 
         String output = "";
         // Tomcat 7
@@ -502,6 +516,9 @@ public class Audit {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
 
+        this.tomcatVersion = tomcatVersion;
+        this.webAppName = webAppName;
+
         // Grab deployed Drugref folder name and use as the file name for the properties file
         Pattern patternDrugrefUrl = Pattern.compile(".*://.*/(drugref.*)/.*");
         Matcher matcherDrugrefUrl = patternDrugrefUrl.matcher(drugrefUrl);
@@ -598,6 +615,8 @@ public class Audit {
             return "Could not detect Tomcat version.";
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
             return "Please verify that your \"catalina.base\" directory is setup correctly.";
+
+        this.tomcatVersion = tomcatVersion;
 
         try {
             // Determine which version of Tomcat settings file to check
