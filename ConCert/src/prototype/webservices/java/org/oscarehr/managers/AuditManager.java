@@ -35,6 +35,12 @@ import java.sql.TimeStamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/*
+*  Class that handles direct retrieval of the auditing information from the Audit
+*  object and returning serializable AuditTo1 objects for AuditWebService.
+*
+*  github.com/williamgrosset
+*/
 @Service
 public class AuditManager {
 
