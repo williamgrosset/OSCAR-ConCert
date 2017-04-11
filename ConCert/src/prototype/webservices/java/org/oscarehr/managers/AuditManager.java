@@ -74,22 +74,20 @@ public class AuditManager {
         return null;
     }
 
-    // Maybe combine auditOscar + auditDrugref = auditProperties?
-    public AuditTo1 auditOscar() {
+    public AuditTo1 auditProperties(String name) {
         Audit audit = new Audit();
+        // call both verifyOscar and verifyDrugref
 
-        try {} catch (Exception e) {
-            logger.error(e.getStackTrace());
-            return null;
-        }
+        try {
+            if (name.equals("oscar")) {
 
-        return null;
-    }
+            } else if (name.equals("drugref")) {
 
-    public AuditTo1 auditDrugref() {
-        Audit audit = new Audit();
 
-        try {} catch (Exception e) {
+            } else {
+
+            }
+        } catch (Exception e) {
             logger.error(e.getStackTrace());
             return null;
         }
