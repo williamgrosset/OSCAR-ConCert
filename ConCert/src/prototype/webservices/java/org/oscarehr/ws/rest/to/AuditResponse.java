@@ -27,6 +27,12 @@ import org.oscarehr.ws.rest.to.model.AuditTo1;
 
 import java.io.Serializable;
 
+/*
+*  Class that represents the wrapper for the JSON object, which will be returned 
+*  by AuditWebService function calls.
+*
+*  github.com/williamgrosset
+*/
 public class AuditResponse extends GenericRESTResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;

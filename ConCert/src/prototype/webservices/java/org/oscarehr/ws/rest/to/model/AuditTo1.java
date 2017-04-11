@@ -26,6 +26,12 @@ package org.oscarehr.ws.rest.to.model;
 
 import java.io.Serializable;
 
+/*
+*  Class that represents the JSON object fields, which will be returned by 
+*  AuditManager function calls.
+*
+*  github.com/williamgrosset
+*/
 public class AuditTo1 implements Serializable {
 
     private static final long serialVersionUID = 1L;

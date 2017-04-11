@@ -36,9 +36,9 @@ import java.util.regex.Pattern;
 
 /*
 *  Class that audits a live OSCAR application and contains information
-*  regarding OSCAR's deployment environment.
+*  regarding OSCAR's application environment.
 *  
-*  https://github.com/williamgrosset
+*  github.com/williamgrosset
 */
 public class Audit {
 

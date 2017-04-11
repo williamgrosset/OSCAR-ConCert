@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 *  Action class that contains auditing information for the view (oscarAudit.jsp)
 *  of the OSCAR Administration page.
 *  
-*  https://github.com/williamgrosset
+*  github.com/williamgrosset
 */
 public class AuditAction extends Action {
 

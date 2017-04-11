@@ -40,7 +40,9 @@ import javax.ws.rs.*;
 import javax.servlet.http.HttpServletRequest;
 
 /*
-* Class that handles access to auditing information via the REST API.
+*  Class that handles access to auditing information via the REST API.
+*
+*  github.com/williamgrosset
 */
 @Path("/audit")
 @Component("auditService")
