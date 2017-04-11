@@ -36,6 +36,7 @@ public class AuditTo1 implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    private String timestamp;
     private String serverVersion;
     private String dbType;
     private String dbVersion;
@@ -52,6 +53,10 @@ public class AuditTo1 implements Serializable {
     private String dbUser;
     private String dbUrl;
     private String dbDriver;
+
+    public String getTimestamp() {
+        return timeStamp;
+    }
 
     public String getServerVersion() {
         return serverVersion;
@@ -115,6 +120,10 @@ public class AuditTo1 implements Serializable {
 
     public String getDbDriver() {
         return dbDriver;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public void setServerVersion(String serverVersion) {
