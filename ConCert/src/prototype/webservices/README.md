@@ -22,6 +22,32 @@ The goal of the REST API is to provide authorized access to the auditing informa
 
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK) - all information below is subject to change.
++ #### ```GET /audit```
+
+  Returns all auditing information of the current OSCAR instance.
+
+  **Example Response**:
+  ```
+  {
+    "timestamp": "2017-04-21 04:10.632",
+    "serverVersion": "Ubuntu 14.04",
+    "dbType": "MySQL",
+    "dbVersion": "5.5.53",
+    "jvmVersion": "1.7.0_111",
+    "tomcatVersion": "Apache Tomcat/7.0.52",
+    "xmx": "1024m",
+    "xms": "1024m",
+    "build": "Gerrit_OSCAR-697",
+    "buildDate": "2017-05-01 1:20AM",
+    "hl7TextLabs": "no",
+    "singlePageChart": "false",
+    "tmpDir": "/etc/tmp/",
+    "drugrefUrl": "http://<ip_address>:<port_number>,
+    "dbUser": "oscar",
+    "dbUrl": "jdbc:mysql://127.0.0.1:drugref2",
+    "dbDriver": "com.mysql.jdbc.Driver"
+  }
+  ```
 + #### ```GET /audit/serverInfo```
 
   Returns the Linux distribution version.  
@@ -29,6 +55,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
+    "timestamp": "2017-04-21 04:10.632",
     "serverVersion": "Ubuntu 14.04"
   }
   ```
@@ -39,6 +66,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
+    "timestamp": "2017-04-21 04:10.632",
     "dbType": "MySQL",
     "dbVersion": "5.5.53"
   }
@@ -50,6 +78,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
+    "timestamp": "2017-04-21 04:10.632",
     "jvmVersion": "1.7.0_111",
     "tomcatVersion": "Apache Tomcat/7.0.52",
     "xmx": "1024m",
@@ -63,6 +92,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
+    "timestamp": "2017-04-21 04:10.632",
     "build": "Gerrit_OSCAR-697",
     "buildDate": "2017-05-01 1:20AM",
     "hl7TextLabs": "no",
@@ -78,6 +108,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   **Example Response**:
   ```
   {
+    "timestamp": "2017-04-21 04:10.632",
     "dbUser": "oscar",
     "dbUrl": "jdbc:mysql://127.0.0.1:drugref2",
     "dbDriver": "com.mysql.jdbc.Driver"
