@@ -49,7 +49,7 @@ public class Audit {
     private File tomcatSettings;
     private Connection connection;
 
-    // Variables for Audit object
+    // Property tags for Audit state
     private String serverVersion;
     private String dbType;
     private String dbVersion;
@@ -244,8 +244,11 @@ public class Audit {
                 if (matcherComment.matches()) continue;
                 Matcher matcherDIST_DESC = patternDIST_DESC.matcher(line);
 
-                if (matcherDIST_DESC.matches())
-                    return "Version: " + line.substring(matcherDIST_DESC.group(1).length());
+                if (matcherDIST_DESC.matches()) {
+                    String serverVersion = line.substring(matcherDIST_DESC.group(1).length()); 
+                    this.serverVersion = serverVersion;
+                    return "Version: " + serverVersion;
+                }
             }
             return "Could not detect Linux server version.";
         } catch (Exception e) {
@@ -645,75 +648,4 @@ public class Audit {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
     }
-    
-    /****************************************************
-     *                                                  *
-     *     METHODS USED FOR OSCAR REST WEB SERVICE      *
-     *                                                  *
-     ***************************************************/
-
-    /*
-    *  Public method for retrieving server version.
-    *
-    *  @return output: Linux server version.
-    */
-    public String getServerInfo() {
-        return serverVersion();
-    }
-
-    /*
-    *  Public method for retrieving database type and version.
-    *
-    *  @return output: Database type and version.
-    */
-    public String getDatabaseInfo() {
-        return databaseInfo();
-    }
-
-    /*
-    *  Public method for retrieving JVM version, Tomcat version from servlet 
-    *  context, and maximum/minimum heap size allocated for Tomcat.
-    *
-    *  @param tomcatVersion: Tomcat version from HTTP session. 
-    *  @return output: JVM version, Tomcat version, and max/min heap size.
-    */
-    /*
-    public String getTomcatInfo(String tomcatVersion) {
-        this.tomcatVersion = tomcatVersion;
-        return verifyTomcat() + "\n" + tomcatReinforcement();
-    }
-    */
-
-    /*
-    *  Public method for retrieving Oscar build tag and date. Also, property
-    *  values of "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and "drugref_url" 
-    *  tags.
-    *
-    *  @param tomcatVersion: Tomcat version from HTTP session. 
-    *  @param webAppName: Oscar web application name from HTTP session.
-    *  @return output: Output of tags in Oscar properties file.
-    */
-    /*
-    public String getOscarInfo(String tomcatVersion, String webAppName) {
-        this.tomcatVersion = tomcatVersion;
-        this.webAppName = webAppName;
-        return verifyOscar();
-    }
-    */
-
-    /*
-    *  Public method for retrieving Drugref property values of "db_user,"
-    *  "db_user", and "db_driver" tags.
-    *
-    *  @param tomcatVersion: Tomcat version from HTTP session. 
-    *  @param webAppName: Oscar web application name from HTTP session.
-    *  @return output: Output of tags in Drugref properties file.
-    */
-    /*
-    public String getDrugrefInfo(String tomcatVersion, String webAppName) {
-        this.tomcatVersion = tomcatVersion;
-        this.webAppName = webAppName;
-        return verifyDrugref();
-    }
-    */
 }
