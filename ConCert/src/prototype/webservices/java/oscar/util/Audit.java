@@ -277,6 +277,7 @@ public class Audit {
 
             this.dbType = dbType;
             this.dbVersion = dbVersion;
+
             output += "Type: " + this.dbType + "<br />";
             output += "Version: " + this.dbVersion + "<br />";
         } catch (Exception e) {
@@ -307,11 +308,12 @@ public class Audit {
         if (jvmVersion == null || jvmVersion.equals(""))
             return "Could not detect JVM version from system properties.";
 
+        this.jvmVersion = jvmVersion;
         this.tomcatVersion = tomcatVersion;
 
         String output = "";
-        output += "JVM Version: " + jvmVersion + "<br />";
-        output += "Tomcat version: " + tomcatVersion + "<br />";
+        output += "JVM Version: " + this.jvmVersion + "<br />";
+        output += "Tomcat version: " + this.tomcatVersion + "<br />";
         return output;
     }
 
@@ -403,14 +405,18 @@ public class Audit {
 
                 if (!flag1) {
                     if (matcherBuildtag.matches()) { // buildtag=
+                        String build = line.substring(matcherBuildtag.group(1).length());
+                        this.build = build;
                         flag1 = true;
-                        output += "Oscar build and version: " + line.substring(matcherBuildtag.group(1).length()) + "<br />";
+                        output += "Oscar build and version: " + this.build + "<br />";
                     }
                 }
                 if (!flag2) {
                     if (matcherBuildDateTime.matches()) { // buildDateTime=
+                        String buildDate = line.substring(matcherBuildDateTime.group(1).length());
+                        this.buildDate = buildDate;
                         flag2 = true;
-                        output += "Oscar build date and time: " + line.substring(matcherBuildDateTime.group(1).length()) + "<br />";
+                        output += "Oscar build date and time: " + this.buildDate + "<br />";
                     }
                 }
                 if (flag1 && flag2)
@@ -459,27 +465,34 @@ public class Audit {
 
                 if (!flag1) {
                     if (matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
+                        String hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length());
+                        this.hl7TextLabs = hl7TextLabs;
                         flag1 = true;
-                        output += "\"HL7TEXT_LABS\" tag is configured as: " + line.substring(matcherHL7TEXT_LABS.group(1).length()) + "<br />";
+                        output += "\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "<br />";
                     }
                 }
                 if (!flag2) {
                     if (matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
+                        String singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length());
+                        this.singlePageChart = singlePageChart;
                         flag2 = true;
-                        output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + line.substring(matcherSINGLE_PAGE_CHART.group(1).length()) + "<br />";
+                        output += "\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "<br />";
                     }
                 }
                 if (!flag3) {
                     if (matcherTMP_DIR.matches()) { // TMP_DIR=
+                        String tmpDir = line.substring(matcherTMP_DIR.group(1).length());
+                        this.tmpDir = tmpDir;
                         flag3 = true;
-                        output += "\"TMP_DIR\" tag is configured as: " + line.substring(matcherTMP_DIR.group(1).length()) + "<br />";
+                        output += "\"TMP_DIR\" tag is configured as: " + this.tmpDir + "<br />";
                     }
                 }
                 if (!flag4) {
                     if (matcherDrugrefUrl.matches()) { // drugref_url=
+                        String drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length());
+                        this.drugrefUrl = drugrefUrl;
                         flag4 = true;
-                        output += "\"drugref_url\" tag is configured as: " + line.substring(matcherDrugrefUrl.group(1).length()) + "<br />";
-                        drugrefUrl = line.substring(12);
+                        output += "\"drugref_url\" tag is configured as: " + this.drugrefUrl + "<br />";
                     }
                 }
                 if (flag1 && flag2 && flag3 && flag4)
@@ -570,20 +583,26 @@ public class Audit {
 
                 if (!flag1) {
                     if (matcherDb_user.matches()) { // db_user=
+                        String dbUser = line.substring(matcherDb_user.group(1).length());
+                        this.dbUser = dbUser;
                         flag1 = true;
-                        output += "\"db_user\" tag is configured as: " + line.substring(matcherDb_user.group(1).length()) + "<br />";
+                        output += "\"db_user\" tag is configured as: " + this.dbUser + "<br />";
                     }
                 }
                 if (!flag2) {
                     if (matcherDb_url.matches()) { // db_url=
+                        String dbUrl = line.substring(matcherDb_url.group(1).length());
+                        this.dbUrl = dbUrl;
                         flag2 = true;
-                        output += "\"db_url\" tag is configured as: " + line.substring(matcherDb_url.group(1).length()) + "<br />";
+                        output += "\"db_url\" tag is configured as: " + this.dbUrl + "<br />";
                     }
                 }
                 if (!flag3) {
                     if (matcherDb_driver.matches()) { // db_driver=
+                        String dbDriver = line.substring(matcherDb_driver.group(1).length());
+                        this.dbDriver = dbDriver; 
                         flag3 = true;
-                        output += "\"db_driver\" tag is configured as: " + line.substring(matcherDb_driver.group(1).length()) + "<br />";
+                        output += "\"db_driver\" tag is configured as: " + this.dbDriver + "<br />";
                     }
                 }
                 if (flag1 && flag2 && flag3)
@@ -642,14 +661,18 @@ public class Audit {
 
                 if (!flag1) {
                     if (matcherXmx.matches()) { // e.g. Xmx2056m
+                        String xmx = matcherXmx.group(1).substring(3);
+                        this.xmx = xmx;
                         flag1 = true;
-                        output += "Xmx value: " + matcherXmx.group(1).substring(3) + "<br />";
+                        output += "Xmx value: " + this.xmx + "<br />";
                     }
                 }
                 if (!flag2) {
                     if (matcherXms.matches()) { // e.g. Xms1024m
+                        String xms = matcherXms.group(1).substring(3);
+                        this.xms = xms;
                         flag2 = true;
-                        output += "Xms value: " + matcherXms.group(1).substring(3) + "<br />";
+                        output += "Xms value: " + this.xms + "<br />";
                     }
                 }
                 if (flag1 && flag2)
