@@ -26,11 +26,15 @@ package org.oscarehr.ws.rest;
 
 import org.oscarehr.util.MiscUtilsOld;
 import org.oscarehr.ws.rest.to.AuditResponse;
+import org.oscarehr.ws.rest.to.model.AuditTo1;
+import org.oscarehr.managers.AuditManager;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import javax.ws.rs.*;
 import javax.servlet.http.HttpServletRequest;
+
+// import autowire
 
 /*
 * Class that handles access to auditing information via the REST API.
@@ -41,22 +45,35 @@ public class AuditService extends AbstractServiceImpl {
 
     private static Logger logger = MiscUtilsOld.getLogger();
 
+    // @Autowired
+    protected AuditManager auditManager;
+
     @GET
     @Path("/test")
     @Produces("application/json")
     public AuditResponse getTestInfo() {
         AuditResponse response = new AuditResponse();
-        HttpServletRequest request = this.getHttpServletRequest();
-        // Testing purposes
-        //String output = request.getSession().getServletContext().getContextPath().replace("/", "");
+        AuditTo1 model;
 
-        String output = "AuditManager function call here";
+        //HttpServletRequest request = this.getHttpServletRequest();
+
+        // Testing purposes:
+        // String output = request.getSession().getServletContext().getContextPath().replace("/", "");
+
         try {
-            response.setMessage("Test response successful :) " + output);
-            response.setSuccess(true);
+            //model = auditManager.auditServer();
+            model = new AuditTo1();
+
+            if (model != null) {
+                response.setAudit(model);
+                response.setSuccess(true);
+            } else {
+                response.setMessage("Failed to retrieve server version.");
+                response.setSuccess(false);
+            }
         } catch (Exception e) {
-            System.out.println(e.getStackTrace());
-            response.setMessage("Test response failed");
+            logger.error(e.getStackTrace());
+            response.setMessage("An error has occured.");
             response.setSuccess(false);
         }
         return response;
