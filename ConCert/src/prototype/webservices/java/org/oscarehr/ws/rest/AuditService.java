@@ -30,6 +30,7 @@ import org.oscarehr.ws.rest.to.model.AuditTo1;
 import org.oscarehr.managers.AuditManager;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.ws.rs.*;
 import javax.servlet.http.HttpServletRequest;
@@ -45,7 +46,7 @@ public class AuditService extends AbstractServiceImpl {
 
     private static Logger logger = MiscUtilsOld.getLogger();
 
-    // @Autowired
+    @Autowired
     protected AuditManager auditManager;
 
     @GET
@@ -61,20 +62,20 @@ public class AuditService extends AbstractServiceImpl {
         // String output = request.getSession().getServletContext().getContextPath().replace("/", "");
 
         try {
-            //model = auditManager.auditServer();
-            model = new AuditTo1();
+            model = this.auditManager.auditServer();
 
             if (model != null) {
-                response.setAudit(model);
                 response.setSuccess(true);
+                response.setMessage("Successfuly retrieved server version.");
+                response.setAudit(model);
             } else {
-                response.setMessage("Failed to retrieve server version.");
                 response.setSuccess(false);
+                response.setMessage("Failed to retrieve server version.");
             }
         } catch (Exception e) {
             logger.error(e.getStackTrace());
-            response.setMessage("An error has occured.");
             response.setSuccess(false);
+            response.setMessage("An error has occured.");
         }
         return response;
     }
