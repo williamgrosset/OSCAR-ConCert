@@ -35,6 +35,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "dbVersion": "5.5.53",
     "jvmVersion": "1.7.0_111",
     "tomcatVersion": "Apache Tomcat/7.0.52",
+    "webAppName": "oscar14",
     "xmx": "1024m",
     "xms": "1024m",
     "build": "Gerrit_OSCAR-697",
@@ -73,7 +74,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
 + #### ```GET /audit/tomcatInfo```
 
-  Returns the JVM version, Tomcat version, and maximum/minimum (xmx/xms) heap size for Tomcat memory allocation.  
+  Returns the JVM version, Tomcat version, OSCAR web application name, and maximum/minimum (xmx/xms) heap size for Tomcat memory allocation.  
   
   **Example Response**:
   ```
@@ -81,6 +82,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "timestamp": "2017-04-21 04:10.632",
     "jvmVersion": "1.7.0_111",
     "tomcatVersion": "Apache Tomcat/7.0.52",
+    "webAppName": "oscar14",
     "xmx": "1024m",
     "xms": "1024m"
   }
