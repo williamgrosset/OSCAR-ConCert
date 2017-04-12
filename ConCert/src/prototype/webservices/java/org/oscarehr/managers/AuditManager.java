@@ -29,7 +29,6 @@ import org.oscarehr.ws.rest.to.model.AuditTo1;
 import org.apache.log4j.Logger;
 import org.oscarehr.util.MiscUtilsOld;
 import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
@@ -48,58 +47,40 @@ public class AuditManager {
 
     private static Logger logger = MiscUtilsOld.getLogger();
 
-    @Autowired
-    protected SecurityInfoManager securityInfoManager;
-
     public AuditTo1 auditServer() {
         Date date = new Date();
-        // String timestamp = new String(new TimeStap(date.getTime()).toString())
         Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
+        AuditTo1 model;
 
-        try {} catch (Exception e) {
+        try {
+            String timestamp = new String(new Timestamp(date.getTime()).toString());
+            model = new AuditTo1();
+            audit.serverVersion();
+
+            model.setTimestamp(timestamp);
+            model.setServerVersion(audit.getServerVersion());
+        } catch (Exception e) {
             logger.error(e.getStackTrace());
             return null;
         }
-
-        return null;
+        return model;
     }
 
+    /******************************************************
+     *                                                    *
+     *    CURRENTLY TESTING REST API W/ FUNCTION ABOVE    *
+     *                                                    *
+     ******************************************************/
+
     public AuditTo1 auditDatabase() {
-        Date date = new Date();
-        // String timestamp = new String(new TimeStap(date.getTime()).toString())
-        Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
-
-        try {} catch (Exception e) {
-            logger.error(e.getStackTrace());
-            return null;
-        }
-
-        return null;
+        return new AuditTo1();
     }
 
     public AuditTo1 auditTomcat() {
-        Date date = new Date();
-        // String timestamp = new String(new TimeStap(date.getTime()).toString())
-        Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
-
-        try {} catch (Exception e) {
-            logger.error(e.getStackTrace());
-            return null;
-        }
-
-        return null;
+        return new AuditTo1();
     }
 
     public AuditTo1 auditProperties(String name) {
-        Date date = new Date();
-        // String timestamp = new String(new TimeStap(date.getTime()).toString())
-        Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
-        // call both verifyOscar and verifyDrugref
-
         try {
             if (name.equals("oscar")) {
 
@@ -109,11 +90,9 @@ public class AuditManager {
             } else {
 
             }
+            return new AuditTo1();
         } catch (Exception e) {
-            logger.error(e.getStackTrace());
             return null;
         }
-
-        return null;
     }
 }
