@@ -42,9 +42,9 @@ public class AuditTo1 implements Serializable {
     private String dbVersion;
     private String jvmVersion;
     private String tomcatVersion;
-    private String webAppName;
     private String xmx;
     private String xms;
+    private String webAppName;
     private String build;
     private String buildDate;
     private String hl7TextLabs;
@@ -79,16 +79,16 @@ public class AuditTo1 implements Serializable {
         return this.tomcatVersion;
     }
 
-    public String getWebAppName() {
-        return this.webAppName;
-    }
-
     public String getXmx() {
         return this.xmx;
     }
 
     public String getXms() {
         return this.xms;
+    }
+
+    public String getWebAppName() {
+        return this.webAppName;
     }
 
     public String getBuild() {
@@ -151,16 +151,16 @@ public class AuditTo1 implements Serializable {
         this.tomcatVersion = tomcatVersion;
     }
 
-    public void setWebAppName(String webAppName) {
-        this.webAppName = webAppName;
-    }
-
     public void setXmx(String xmx) {
         this.xmx = xmx;
     }
 
     public void setXms(String xms) {
         this.xms = xms;
+    }
+
+    public void setWebAppName(String webAppName) {
+        this.webAppName = webAppName;
     }
 
     public void setBuild(String build) {

@@ -58,9 +58,9 @@ public class Audit {
     private String dbVersion;
     private String jvmVersion;
     private String tomcatVersion;
-    private String webAppName;
     private String xmx;
     private String xms;
+    private String webAppName;
     private String build;
     private String buildDate;
     private String hl7TextLabs;
@@ -99,16 +99,16 @@ public class Audit {
         return this.tomcatVersion;
     }
 
-    public String getWebAppName() {
-        return this.webAppName;
-    }
-
     public String getXmx() {
         return this.xmx;
     }
 
     public String getXms() {
         return this.xms;
+    }
+
+    public String getWebAppName() {
+        return this.webAppName;
     }
 
     public String getBuild() {

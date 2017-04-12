@@ -47,6 +47,43 @@ public class AuditManager {
 
     private static Logger logger = MiscUtilsOld.getLogger();
 
+    public AuditTo1 audit(String tomcatVersion, String webAppName) {
+        Date date = new Date();
+        Audit audit = new Audit();
+        AuditTo1 model = new AuditTo1();
+
+        try {
+            audit.serverVersion();
+            audit.databaseInfo();
+            audit.verifyTomcat(tomcatVersion);
+            audit.verifyOscar(tomcatVersion, webAppName);
+            audit.verifyDrugref(tomcatVersion, webAppName);
+
+            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
+            model.setServerVersion(audit.getServerVersion());
+            model.setDbType(audit.getDbType());
+            model.setDbVersion(audit.getDbVersion());
+            model.setJvmVersion(audit.getJvmVersion());
+            model.setTomcatVersion(audit.getTomcatVersion());
+            model.setXmx(audit.getXmx());
+            model.setXms(audit.getXms());
+            model.setWebAppName(audit.getWebAppName());
+            model.setBuild(audit.getBuild());
+            model.setBuildDate(audit.getBuildDate());
+            model.setHl7TextLabs(audit.getHl7TextLabs());
+            model.setSinglePageChart(audit.getSinglePageChart());
+            model.setTmpDir(audit.getTmpDir());
+            model.setDrugrefUrl(audit.getDrugrefUrl());
+            model.setDbUser(audit.getDbUser());
+            model.setDbUrl(audit.getDbUrl());
+            model.setDbDriver(audit.getDbDriver());
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+        return model;
+    }
+
     public AuditTo1 auditServer() {
         Date date = new Date();
         Audit audit = new Audit();
@@ -54,6 +91,7 @@ public class AuditManager {
 
         try {
             audit.serverVersion();
+
             model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setServerVersion(audit.getServerVersion());
         } catch (Exception e) {
@@ -70,6 +108,7 @@ public class AuditManager {
 
         try {
             audit.databaseInfo();
+
             model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setDbType(audit.getDbType());
             model.setDbVersion(audit.getDbVersion());
@@ -87,6 +126,7 @@ public class AuditManager {
 
         try {
             audit.verifyTomcat(tomcatVersion);
+
             model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setJvmVersion(audit.getJvmVersion());
             model.setTomcatVersion(audit.getTomcatVersion());
@@ -107,6 +147,7 @@ public class AuditManager {
         try {
             audit.verifyOscar(tomcatVersion, webAppName);
             audit.verifyDrugref(tomcatVersion, webAppName);
+
             model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setTomcatVersion(audit.getTomcatVersion());
             model.setWebAppName(audit.getWebAppName());
