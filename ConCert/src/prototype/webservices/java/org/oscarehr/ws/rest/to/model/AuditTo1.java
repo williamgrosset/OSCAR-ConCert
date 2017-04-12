@@ -55,7 +55,7 @@ public class AuditTo1 implements Serializable {
     private String dbDriver;
 
     public String getTimestamp() {
-        return timeStamp;
+        return timestamp;
     }
 
     public String getServerVersion() {
