@@ -53,6 +53,10 @@ public class AuditAction extends Action {
             String webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
             securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
 
+            if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(servletRequest), "_admin", "r", null)) {
+                throw new SecurityException("Missing required security object (_admin)");
+            }
+
             servletRequest.setAttribute("serverVersion", audit.serverVersion());
             servletRequest.setAttribute("databaseInfo", audit.databaseInfo());
             servletRequest.setAttribute("verifyTomcat", audit.verifyTomcat(tomcatVersion));
@@ -66,10 +70,6 @@ public class AuditAction extends Action {
         String roleName = (String)servletRequest.getSession().getAttribute("userrole") + "," + (String)servletRequest.getAttribute("user");
         if (!roleName.contains("admin") || securityInfoManager == null) {
             return actionMapping.findForward("unauthorized");
-        }
-
-        if (!securityInfoManager.hasPrivilege(LoggedInInfo.getLoggedInInfoFromSession(servletRequest), "_admin", "r", null)) {
-            throw new SecurityException("Missing required security object (_admin)");
         }
 
         return actionMapping.findForward("success");

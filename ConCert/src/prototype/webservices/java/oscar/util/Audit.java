@@ -37,6 +37,9 @@ import java.util.regex.Pattern;
 /*
 *  Class that audits a live OSCAR application and contains information
 *  regarding OSCAR's application environment.
+*
+*  NOTE: Permission checks using SecurityInfoManager.class with an HTTP 
+*  session should be done before accessing auditing information.
 *  
 *  github.com/williamgrosset
 */
@@ -233,7 +236,7 @@ public class Audit {
     *
     *  @return output: Linux server version.
     */
-    protected String serverVersion() {
+    public String serverVersion() {
         try {
             if (lsbRelease == null || lsbRelease.getPath().equals(""))
                 throw new FileNotFoundException();
@@ -266,7 +269,7 @@ public class Audit {
     *
     *  @return output: Database type and version.
     */
-    protected String databaseInfo() {
+    public String databaseInfo() {
         try {
             connection = DbConnectionFilter.getThreadLocalDbConnection();
             if (connection == null) throw new NullPointerException();
@@ -303,7 +306,7 @@ public class Audit {
     *  @param tomcatVersion: Tomcat version.
     *  @return output: JVM and Tomcat version information.
     */
-    protected String verifyTomcat(String tomcatVersion) {
+    public String verifyTomcat(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
         if (jvmVersion == null || jvmVersion.equals(""))
@@ -345,7 +348,7 @@ public class Audit {
     *  @param webAppName: Web application name for OSCAR.
     *  @return output: Combined output of Oscar build and properties information.
     */
-    protected String verifyOscar(String tomcatVersion, String webAppName) {
+    public String verifyOscar(String tomcatVersion, String webAppName) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -390,7 +393,7 @@ public class Audit {
     *  @param fileName: Path to properties file.
     *  @return output: Current Oscar build, version, and date of build.
     */
-    protected String oscarBuild(String fileName) {
+    private String oscarBuild(String fileName) {
         try {
             if (fileName == null || fileName.equals(""))
                 return "Could not detect filename for properties file.";
@@ -447,7 +450,7 @@ public class Audit {
     *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Oscar properties file.
     */
-    protected String verifyOscarProperties(String fileName) {
+    private String verifyOscarProperties(String fileName) {
         try {
             if (fileName == null || fileName.equals(""))
                 return "Could not detect filename for properties file.";
@@ -530,7 +533,7 @@ public class Audit {
     *  @param webAppName: Web application name for OSCAR.
     *  @return output: Output of Drugref properties information.
     */
-    protected String verifyDrugref(String tomcatVersion, String webAppName) {
+    public String verifyDrugref(String tomcatVersion, String webAppName) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -573,7 +576,7 @@ public class Audit {
     *  @param fileName: Path to properties file.
     *  @return output: Output of the required tags in the Drugref properties file.
     */
-    protected String verifyDrugrefProperties(String fileName) {
+    private String verifyDrugrefProperties(String fileName) {
         try {
             if (fileName == null || fileName.equals(""))
                 return "Could not detect filename for properties file.";
@@ -644,7 +647,7 @@ public class Audit {
     *  @return output: Xmx value (maximum memory allocation) and Xms value (minimum 
     *  memory allocation) for JVM heap size.
     */
-    protected String tomcatReinforcement(String tomcatVersion) {
+    public String tomcatReinforcement(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
         if (catalinaBase == null || catalinaBase.getPath().equals(""))
