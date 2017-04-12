@@ -126,13 +126,11 @@ The following JSON responses for each API call assume that the HTTP status code 
 ### Java classes
 + **AuditService.class**: This class will handle all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
     - This class will use **SecurityInfoManager.class** to control access to the audited information.
-    - The response object (**AuditResponse.class**) will ```... extends GenericRESTReponse implements Serializable```.
+    - The response object: **AuditResponse.class** will ```... extends GenericRESTReponse implements Serializable```.
 + **AuditManager.class**: This class will provide access to relevant data and business logic classes that are required by the AuditWebService route handlers. A web service class may use several manager classes to access the required data.
-+ **AuditConverter.class**: This class will handle converting the objects returned by the business logic classes to a transfer object.
 + **AuditTo1.class**: This class will represent the transfer object. Transfer objects implement the Serializable interface and can be wrapped by a response object (i.e. JSON) to be sent back to the client.
-+ **TODO**: Each class should have a header comment.
 
-An authorized client will make an API request using an available route handler. **AuditWebService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will handle the request and retrieve the relevent data and business logic. Once this data is received, **AuditConverter** will transform this data into a response object (**AuditResponse**) that can be returned as JSON back to the client.
+An authorized client will make an API request using an available route handler. **AuditWebService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will handle the request and retrieve the relevent data and business logic. Once this data is received, a **AuditTo1** object will be created to represent the transfer object and contain the relevant data for the request. AuditWebService will return a wrapper object (**AuditResponse**) that will sent back to the client as JSON.
 
 ### UML Diagrams
 ...

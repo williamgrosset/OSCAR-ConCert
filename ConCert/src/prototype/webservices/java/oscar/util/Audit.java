@@ -77,71 +77,71 @@ public class Audit {
     }
 
     public String getServerVersion() {
-        return serverVersion;
+        return this.serverVersion;
     }
 
     public String getDbType() {
-        return dbType;
+        return this.dbType;
     }
 
     public String getDbVersion() {
-        return dbVersion;
+        return this.dbVersion;
     }
 
     public String getJvmVersion() {
-        return jvmVersion;
+        return this.jvmVersion;
     }
 
     public String getTomcatVersion() {
-        return tomcatVersion;
+        return this.tomcatVersion;
     }
 
     public String getWebAppName() {
-        return webAppName;
+        return this.webAppName;
     }
 
     public String getXmx() {
-        return xmx;
+        return this.xmx;
     }
 
     public String getXms() {
-        return xms;
+        return this.xms;
     }
 
     public String getBuild() {
-        return build;
+        return this.build;
     }
 
     public String getBuildDate() {
-        return buildDate;
+        return this.buildDate;
     }
 
     public String getHl7TextLabs() {
-        return hl7TextLabs;
+        return this.hl7TextLabs;
     }
 
     public String getSinglePageChart() {
-        return singlePageChart;
+        return this.singlePageChart;
     }
 
     public String getTmpDir() {
-        return tmpDir;
+        return this.tmpDir;
     }
     
     public String getDrugrefUrl() {
-        return drugrefUrl;
+        return this.drugrefUrl;
     }
 
     public String getDbUser() {
-        return dbUser;
+        return this.dbUser;
     }
 
     public String getDbUrl() {
-        return dbUrl; 
+        return this.dbUrl; 
     }
 
     public String getDbDriver() {
-        return dbDriver;
+        return this.dbDriver;
     }
 
     /*
@@ -202,6 +202,7 @@ public class Audit {
                 return new File("/etc/default/" + tomcatMatch.group(1));
             } else if (version == 8) {
                 return new File(catalinaBase.getPath() + "/bin/setenv.sh");
+            // Version not supported
             } else {
                 return new File("");
             }

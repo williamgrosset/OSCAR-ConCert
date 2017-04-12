@@ -24,25 +24,16 @@
 
 package org.oscarehr.ws.rest;
 
+import org.oscarehr.util.MiscUtilsOld;
+import org.oscarehr.ws.rest.to.AuditResponse;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
-import org.oscarehr.util.MiscUtilsOld;
-
-// This will be replaced by an actual Response object
-// (i.e. AuditResponse.class)
-import org.oscarehr.ws.rest.to.GenericRESTResponse;
-
-// This import won't exist here, will eventually be handled by
-// AuditManager.class
-import oscar.util.AuditAction;
 
 import javax.ws.rs.*;
 import javax.servlet.http.HttpServletRequest;
 
 /*
-*  Class that handles access to auditing information via the REST API.
-*
-*  github.com/williamgrosset
+* Class that handles access to auditing information via the REST API.
 */
 @Path("/audit")
 @Component("auditService")
@@ -53,13 +44,13 @@ public class AuditService extends AbstractServiceImpl {
     @GET
     @Path("/test")
     @Produces("application/json")
-    public GenericRESTResponse getTestInfo() {
-        GenericRESTResponse response = new GenericRESTResponse();
+    public AuditResponse getTestInfo() {
+        AuditResponse response = new AuditResponse();
         HttpServletRequest request = this.getHttpServletRequest();
-        AuditAction audit = new AuditAction();
-
         // Testing purposes
-        String output = request.getSession().getServletContext().getContextPath().replace("/", "");
+        //String output = request.getSession().getServletContext().getContextPath().replace("/", "");
+
+        String output = "AuditManager function call here";
         try {
             response.setMessage("Test response successful :) " + output);
             response.setSuccess(true);
