@@ -9,16 +9,16 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 + OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services) (Java API for creating RESTful web services)
     - pairs well with Struts framework (OSCAR runs on Struts 1.2.7)
     - allows annotations of methods to indicate their roles in the REST API
-+ see ```OSCAR-ConCert/src/main/resources/applicationContextREST.xml``` for web services
-+ see **RESTful Web Service** section in ```resources/architectural_notes.pdf```
++ see ```OSCAR-ConCert/src/main/resources/applicationContextREST.xml``` for all Java web services
 
 ### Using web services
 OSCAR web services can be accessed in two different ways:
 + **OAuth**: Can use endpoint ```/ws/services/<path>?<query>```
 + **User session**: Can use endpoint ```/ws/rs/<path>?<query>```
++ see **RESTful Web Service** section in ```resources/architectural_notes.pdf```
 
 ## OSCAR Audit Web Service
-The goal of the REST API is to provide authorized access to the auditing information found in ```../../main/audit/```.
+The goal of the REST API is to provide authorized access to OSCAR auditing information.
 
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK). If a fieldname returns `null`, the property could not be detected. Currently, all information below is subject to change.
@@ -37,7 +37,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
 + #### ```GET /audit/databaseInfo```
 
-  Returns the connected database type and version.  
+  Returns the connected OSCAR database type and version.  
   
   **Example Response**:
   ```
@@ -98,12 +98,14 @@ The following JSON responses for each API call assume that the HTTP status code 
 ### Java classes
 + **AuditService.class**: Handles all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
 + **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. A web service class may use several manager classes to access the required data.  
+ 
   The following model classes implement the Serializable interface and are wrapped by an **AuditResponse** object to be sent back to the client as JSON. Model classes contain the fieldnames for the JSON object:
 + **AuditSystemResponseTo1**: Wrapper object for `auditService.getAuditSystemInfo()` API request. 
 + **AuditDatabaseResponseTo1**: Wrapper object for `auditService.getAuditDatabaseInfo()` API request. 
 + **AuditTomcatResponseTo1**: Wrapper object for `auditService.getAuditTomcatInfo()` API request. 
 + **AuditOscarResponseTo1**: Wrapper object for `auditService.getAuditOscarInfo()` API request. 
 + **AuditDrugrefResponseTo1**: Wrapper object for `auditService.getAuditDrugrefInfo()` API request.  
+ 
   The following model classes implement the Serializable interface and are wrapped by an **AuditResponse** object to be sent back to the client as JSON. Model classes contain the fieldnames for the JSON object:
 + **AuditSystemTo1**: Represents the model object for `auditMananger.auditSystem()` request.
 + **AuditDatabaseTo1**: Represents the model object for `auditMananger.auditDatabase()` request.
@@ -114,7 +116,8 @@ The following JSON responses for each API call assume that the HTTP status code 
 An authorized client will make an API request using an available route handler. **AuditService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will retrieve the data for the request by directly accessing the **Audit.class**. Once this data is received, a **Audit<System|Database|Tomcat|Oscar|Drugref>To1** object will be created to represent the model object and will contain the relevant data for the request. AuditService will return a wrapper object (**Audit<System|Database|Tomcat|Oscar|Drugref>Response**) that will sent back to the client as JSON.
 
 ### Design Decisions
-1. Why have multiple **AuditFooTo1.class** objects? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br> 
+1. Why have multiple **AuditFooTo1.class** objects? (see `java/org/oscarehr/ws/rest/to/model/\*`)  
+
 As the OSCAR Audit Web Service functionality extends, the auditing information that is provided to OSCAR uses will also extend. Instead of using a single model JSON object (i.e. AuditTo1.class), I decided to modularize the model objects into their own individual objects (**AuditSystemTo1.class**, **AuditDatabaseTo1**, ...) for future development and additions to the REST API.
 
 ### UML Diagrams
@@ -131,4 +134,4 @@ Author of the OSCAR Audit REST API can be contacted at williamhgrosset@gmail.com
 + Examples and notes in ```resources/``` (credits to [Simon Diemert](https://github.com/sdiemert))
 + OAUTH and REST documentation in ```OSCAR-ConCert/docs/webservices```
 + [Etsy API documentation](https://etsy.com/developers/documentation/getting_started/api_basics)
-+ [RESTful Objects URIs and HTTP Methods](https://youtube.com/watch?v=grXnAMIQ_1Q)
++ [Best Practices For a Pragmatic Restful API](http://vinaysahni.com/best-practices-for-a-pragmatic-restful-api)
