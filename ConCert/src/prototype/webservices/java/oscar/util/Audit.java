@@ -53,7 +53,7 @@ public class Audit {
     private Connection connection;
 
     // Property tags for Audit state
-    private String serverVersion;
+    private String systemVersion;
     private String dbType;
     private String dbVersion;
     private String jvmVersion;
@@ -79,8 +79,8 @@ public class Audit {
         jvmVersion = systemGetJvmVersion();
     }
 
-    public String getServerVersion() {
-        return this.serverVersion;
+    public String getSystemVersion() {
+        return this.systemVersion;
     }
 
     public String getDbType() {
@@ -236,7 +236,7 @@ public class Audit {
     *
     *  @return output: Linux server version.
     */
-    public String serverVersion() {
+    public String systemInfo() {
         try {
             if (lsbRelease == null || lsbRelease.getPath().equals(""))
                 throw new FileNotFoundException();
@@ -252,8 +252,8 @@ public class Audit {
                 Matcher matcherDIST_DESC = patternDIST_DESC.matcher(line);
 
                 if (matcherDIST_DESC.matches()) {
-                    this.serverVersion = line.substring(matcherDIST_DESC.group(1).length()); 
-                    return "Version: " + this.serverVersion;
+                    this.systemVersion = line.substring(matcherDIST_DESC.group(1).length()); 
+                    return "Version: " + this.systemVersion;
                 }
             }
             return "Could not detect Linux server version.";

@@ -57,7 +57,7 @@ public class AuditAction extends Action {
                 throw new SecurityException("Missing required security object (_admin)");
             }
 
-            servletRequest.setAttribute("serverVersion", audit.serverVersion());
+            servletRequest.setAttribute("serverVersion", audit.systemInfo());
             servletRequest.setAttribute("databaseInfo", audit.databaseInfo());
             servletRequest.setAttribute("verifyTomcat", audit.verifyTomcat(tomcatVersion));
             servletRequest.setAttribute("verifyOscar", audit.verifyOscar(tomcatVersion, webAppName));
