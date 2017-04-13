@@ -50,16 +50,45 @@ public class AuditService extends AbstractServiceImpl {
     protected AuditManager auditManager;
 
     @GET
+    @Path("/")
+    @Produces("application/json")
+    public AuditResponse getAuditInfo() {
+        AuditResponse response = new AuditResponse();
+        AuditTo1 model;
+
+        HttpServletRequest request = this.getHttpServletRequest();
+        String tomcatVersion = request.getSession().getServletContext().getServerInfo();
+        String webAppName = request.getSession().getServletContext().getContextPath().replace("/", "");
+
+        try {
+            model = this.auditManager.audit(tomcatVersion, webAppName);
+
+            if (model != null) {
+                response.setSuccess(true);
+                response.setMessage("Successfuly retrieved server version.");
+                response.setAudit(model);
+            } else {
+                response.setSuccess(false);
+                response.setMessage("Failed to retrieve server version.");
+            }
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            response.setSuccess(false);
+            response.setMessage("An error has occured.");
+        }
+        return response;
+    }
+
+    @GET
     @Path("/test")
     @Produces("application/json")
     public AuditResponse getTestInfo() {
         AuditResponse response = new AuditResponse();
         AuditTo1 model;
 
-        //HttpServletRequest request = this.getHttpServletRequest();
-
-        // Testing purposes:
-        // String output = request.getSession().getServletContext().getContextPath().replace("/", "");
+        HttpServletRequest request = this.getHttpServletRequest();
+        String tomcatVersion = request.getSession().getServletContext().getServerInfo();
+        String webAppName = request.getSession().getServletContext().getContextPath().replace("/", "");
 
         try {
             model = this.auditManager.auditServer();
