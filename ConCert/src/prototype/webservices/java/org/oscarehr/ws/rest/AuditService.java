@@ -35,8 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.ws.rs.*;
 import javax.servlet.http.HttpServletRequest;
 
-// import autowire
-
 /*
 * Class that handles access to auditing information via the REST API.
 */
@@ -65,11 +63,11 @@ public class AuditService extends AbstractServiceImpl {
 
             if (model != null) {
                 response.setSuccess(true);
-                response.setMessage("Successfuly retrieved server version.");
+                response.setMessage("Successfuly retrieved all auditing information.");
                 response.setAudit(model);
             } else {
                 response.setSuccess(false);
-                response.setMessage("Failed to retrieve server version.");
+                response.setMessage("Failed to retrieve all auditing information.");
             }
         } catch (Exception e) {
             logger.error(e.getStackTrace());
@@ -80,9 +78,90 @@ public class AuditService extends AbstractServiceImpl {
     }
 
     @GET
-    @Path("/test")
+    @Path("/serverInfo")
     @Produces("application/json")
-    public AuditResponse getTestInfo() {
+    public AuditResponse getAuditServerInfo() {
+        AuditResponse response = new AuditResponse();
+        AuditTo1 model;
+
+        try {
+            model = this.auditManager.auditServer();
+
+            if (model != null) {
+                response.setSuccess(true);
+                response.setMessage("Successfuly retrieved server auditing information.");
+                response.setAudit(model);
+            } else {
+                response.setSuccess(false);
+                response.setMessage("Failed to retrieve server auditing information.");
+            }
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            response.setSuccess(false);
+            response.setMessage("An error has occured.");
+        }
+        return response;
+    }
+
+    @GET
+    @Path("/databaseInfo")
+    @Produces("application/json")
+    public AuditResponse getAuditDatabaseInfo() {
+        AuditResponse response = new AuditResponse();
+        AuditTo1 model;
+
+        try {
+            model = this.auditManager.auditDatabase();
+
+            if (model != null) {
+                response.setSuccess(true);
+                response.setMessage("Successfuly retrieved database auditing information.");
+                response.setAudit(model);
+            } else {
+                response.setSuccess(false);
+                response.setMessage("Failed to retrieve database auditing information.");
+            }
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            response.setSuccess(false);
+            response.setMessage("An error has occured.");
+        }
+        return response;
+    }
+
+    @GET
+    @Path("/tomcatInfo")
+    @Produces("application/json")
+    public AuditResponse getAuditTomcatInfo() {
+        AuditResponse response = new AuditResponse();
+        AuditTo1 model;
+
+        HttpServletRequest request = this.getHttpServletRequest();
+        String tomcatVersion = request.getSession().getServletContext().getServerInfo();
+
+        try {
+            model = this.auditManager.auditTomcat(tomcatVersion);
+
+            if (model != null) {
+                response.setSuccess(true);
+                response.setMessage("Successfuly retrieved Tomcat auditing information.");
+                response.setAudit(model);
+            } else {
+                response.setSuccess(false);
+                response.setMessage("Failed to retrieve Tomcat auditing information.");
+            }
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            response.setSuccess(false);
+            response.setMessage("An error has occured.");
+        }
+        return response;
+    }
+
+    @GET
+    @Path("/oscarInfo")
+    @Produces("application/json")
+    public AuditResponse getAuditOscarInfo() {
         AuditResponse response = new AuditResponse();
         AuditTo1 model;
 
@@ -91,15 +170,45 @@ public class AuditService extends AbstractServiceImpl {
         String webAppName = request.getSession().getServletContext().getContextPath().replace("/", "");
 
         try {
-            model = this.auditManager.auditServer();
+            model = this.auditManager.auditProperties(tomcatVersion, webAppName, "oscar");
 
             if (model != null) {
                 response.setSuccess(true);
-                response.setMessage("Successfuly retrieved server version.");
+                response.setMessage("Successfuly retrieved OSCAR auditing information.");
                 response.setAudit(model);
             } else {
                 response.setSuccess(false);
-                response.setMessage("Failed to retrieve server version.");
+                response.setMessage("Failed to retrieve OSCAR auditing information.");
+            }
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            response.setSuccess(false);
+            response.setMessage("An error has occured.");
+        }
+        return response;
+    }
+
+    @GET
+    @Path("/drugrefInfo")
+    @Produces("application/json")
+    public AuditResponse getAuditDrugrefInfo() {
+        AuditResponse response = new AuditResponse();
+        AuditTo1 model;
+
+        HttpServletRequest request = this.getHttpServletRequest();
+        String tomcatVersion = request.getSession().getServletContext().getServerInfo();
+        String webAppName = request.getSession().getServletContext().getContextPath().replace("/", "");
+
+        try {
+            model = this.auditManager.auditProperties(tomcatVersion, webAppName, "drugref");
+
+            if (model != null) {
+                response.setSuccess(true);
+                response.setMessage("Successfuly retrieved Drugref auditing information.");
+                response.setAudit(model);
+            } else {
+                response.setSuccess(false);
+                response.setMessage("Failed to retrieve Drugref auditing information.");
             }
         } catch (Exception e) {
             logger.error(e.getStackTrace());
