@@ -23,7 +23,7 @@
  */
 package org.oscarehr.ws.rest.to;
 
-import org.oscarehr.ws.rest.to.model.AuditTo1;
+import org.oscarehr.ws.rest.to.model.AuditSystemTo1;
 
 import java.io.Serializable;
 
@@ -33,17 +33,17 @@ import java.io.Serializable;
 *
 *  github.com/williamgrosset
 */
-public class AuditResponse extends GenericRESTResponse implements Serializable {
+public class AuditSystemResponse extends GenericRESTResponse implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private AuditTo1 audit;
+    private AuditSystemTo1 audit;
 
-    public AuditTo1 getAudit() {
+    public AuditSystemTo1 getAudit() {
         return this.audit;
     }
 
-    public void setAudit(AuditTo1 audit) {
+    public void setAudit(AuditSystemTo1 audit) {
         this.audit = audit;
     }
 }
