@@ -21,43 +21,18 @@ OSCAR web services can be accessed in two different ways:
 The goal of the REST API is to provide authorized access to the auditing information found in ```../../main/audit/```.
 
 ### API requests
-The following JSON responses for each API call assume that the HTTP status code returns 200 (OK) - all information below is subject to change.
-+ #### ```GET /audit```
+The following JSON responses for each API call assume that the HTTP status code returns 200 (OK). If a fieldname returns `null`, the property could not be detected. Currently, all information below is subject to change.
++ #### ```GET /audit/systemInfo```
 
-  Returns all auditing information of the current OSCAR instance.
+  Returns the system (Linux distribution) and JVM version that the OSCAR application is active on.
 
   **Example Response**:
   ```
-  {
+  ...
+  "audit": {
     "timestamp": "2017-04-21 04:10.632",
-    "serverVersion": "Ubuntu 14.04",
-    "dbType": "MySQL",
-    "dbVersion": "5.5.53",
-    "jvmVersion": "1.7.0_111",
-    "tomcatVersion": "Apache Tomcat/7.0.52",
-    "xmx": "1024m",
-    "xms": "1024m",
-    "webAppName": "oscar14",
-    "build": "Gerrit_OSCAR-697",
-    "buildDate": "2017-05-01 1:20AM",
-    "hl7TextLabs": "no",
-    "singlePageChart": "false",
-    "tmpDir": "/etc/tmp/",
-    "drugrefUrl": "http://<ip_address>:<port_number>,
-    "dbUser": "oscar",
-    "dbUrl": "jdbc:mysql://127.0.0.1:drugref2",
-    "dbDriver": "com.mysql.jdbc.Driver"
-  }
-  ```
-+ #### ```GET /audit/serverInfo```
-
-  Returns the Linux distribution version.  
-  
-  **Example Response**:
-  ```
-  {
-    "timestamp": "2017-04-21 04:10.632",
-    "serverVersion": "Ubuntu 14.04"
+    "systemVersion": "Ubuntu 14.04",
+    "jvmVersion": "1.7.0_111"
   }
   ```
 + #### ```GET /audit/databaseInfo```
@@ -66,7 +41,8 @@ The following JSON responses for each API call assume that the HTTP status code 
   
   **Example Response**:
   ```
-  {
+  ...
+  "audit": {
     "timestamp": "2017-04-21 04:10.632",
     "dbType": "MySQL",
     "dbVersion": "5.5.53"
@@ -74,13 +50,13 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
 + #### ```GET /audit/tomcatInfo```
 
-  Returns the JVM version, Tomcat version, and maximum/minimum (xmx/xms) heap size for Tomcat memory allocation.  
+  Returns the Tomcat version, and maximum/minimum (xmx/xms) heap size for Tomcat memory allocation.  
   
   **Example Response**:
   ```
-  {
+  ...
+  "audit": {
     "timestamp": "2017-04-21 04:10.632",
-    "jvmVersion": "1.7.0_111",
     "tomcatVersion": "Apache Tomcat/7.0.52",
     "xmx": "1024m",
     "xms": "1024m"
@@ -92,7 +68,8 @@ The following JSON responses for each API call assume that the HTTP status code 
   
   **Example Response**:
   ```
-  {
+  ...
+  "audit": {
     "timestamp": "2017-04-21 04:10.632",
     "webAppName": "oscar14",
     "build": "Gerrit_OSCAR-697",
@@ -109,7 +86,8 @@ The following JSON responses for each API call assume that the HTTP status code 
   
   **Example Response**:
   ```
-  {
+  ...
+  "audit": {
     "timestamp": "2017-04-21 04:10.632",
     "dbUser": "oscar",
     "dbUrl": "jdbc:mysql://127.0.0.1:drugref2",
@@ -117,22 +95,21 @@ The following JSON responses for each API call assume that the HTTP status code 
   }
   ```
 
-### HTTP status codes
-| HTTP Code | Message            | Meaning                                         | Response Body                         |
-| --------- | ------------------ | ----------------------------------------------- | ------------------------------------- |
-| 200       | OK                 | Success!                                        | JSON response                         |
-| 400       | Bad Request        | You've made an error in your request.           | Error message                         |
-| 403       | Forbidden          | You've exceeded rate limits or data is private. | Error message                         |
-| 404       | Not Found          | The request resource could not be found.        | Error message                         |
-
 ### Java classes
-+ **AuditService.class**: This class will handle all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
-    - This class will use **SecurityInfoManager.class** to control access to the audited information.
-    - The response object: **AuditResponse.class** will ```... extends GenericRESTReponse implements Serializable```.
-+ **AuditManager.class**: This class will provide access to relevant data and business logic classes that are required by the AuditService route handlers. A web service class may use several manager classes to access the required data.
-+ **AuditTo1.class**: This class will represent the transfer object. Transfer objects implement the Serializable interface and can be wrapped by a response object (i.e. JSON) to be sent back to the client.
++ **AuditService.class**: Handles all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
++ **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. A web service class may use several manager classes to access the required data.
+  The following model classes implement the Serializable interface and are wrapped by an **AuditResponse** object to be sent back to the client as JSON. Model classes contain the fieldnames for the JSON object:
++ **AuditSystemTo1**: Represents the model object for `auditMananger.auditSystem()` API request.
++ **AuditDatabaseTo1**: Represents the model object for `auditMananger.auditDatabase()` API request.
++ **AuditTomcatTo1**: Represents the model object for `auditMananger.auditTomcat()` API request.
++ **AuditOscarTo1**: Represents the model object for `auditMananger.auditOscar()` API request.
++ **AuditDrugrefTo1**: Represents the model object for `auditMananger.auditDrugref()` API request.
 
-An authorized client will make an API request using an available route handler. **AuditService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will handle the request and retrieve the relevent data and business logic. Once this data is received, a **AuditTo1** object will be created to represent the transfer object and contain the relevant data for the request. AuditService will return a wrapper object (**AuditResponse**) that will sent back to the client as JSON.
+An authorized client will make an API request using an available route handler. **AuditService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will retrieve the data for the request by directly accessing the **Audit.class**. Once this data is received, a **Audit<System|Database|Tomcat|Oscar|Drugref>To1** object will be created to represent the model object and will contain the relevant data for the request. AuditService will return a wrapper object (**AuditResponse**) that will sent back to the client as JSON.
+
+### Design Decisions
+1. Why have multiple **AuditFooTo1.class** objects? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br> 
+As the OSCAR Audit Web Service functionality extends, the auditing information that is provided to OSCAR uses will also extend. Instead of using a single model JSON object (i.e. AuditTo1.class), I decided to modularize the model objects into their own individual objects (**AuditSystemTo1.class**, **AuditDatabaseTo1**, ...) for future development and additions to the REST API.
 
 ### UML Diagrams
 ...
