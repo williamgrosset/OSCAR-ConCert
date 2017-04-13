@@ -56,6 +56,7 @@ public class AuditManager {
             audit.serverVersion();
             audit.databaseInfo();
             audit.verifyTomcat(tomcatVersion);
+            audit.tomcatReinforcement(tomcatVersion);
             audit.verifyOscar(tomcatVersion, webAppName);
             audit.verifyDrugref(tomcatVersion, webAppName);
 
@@ -126,6 +127,7 @@ public class AuditManager {
 
         try {
             audit.verifyTomcat(tomcatVersion);
+            audit.tomcatReinforcement(tomcatVersion);
 
             model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setJvmVersion(audit.getJvmVersion());
