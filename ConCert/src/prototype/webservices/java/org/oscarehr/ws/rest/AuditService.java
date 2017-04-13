@@ -51,164 +51,69 @@ public class AuditService extends AbstractServiceImpl {
     @Path("/")
     @Produces("application/json")
     public AuditResponse getAuditInfo() {
-        AuditResponse response = new AuditResponse();
-        AuditTo1 model;
-
         HttpServletRequest request = this.getHttpServletRequest();
         String tomcatVersion = request.getSession().getServletContext().getServerInfo();
         String webAppName = request.getSession().getServletContext().getContextPath().replace("/", "");
 
-        try {
-            model = this.auditManager.audit(tomcatVersion, webAppName);
-
-            if (model != null) {
-                response.setSuccess(true);
-                response.setMessage("Successfuly retrieved all auditing information.");
-                response.setAudit(model);
-            } else {
-                response.setSuccess(false);
-                response.setMessage("Failed to retrieve all auditing information.");
-            }
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            response.setSuccess(false);
-            response.setMessage("An error has occured.");
-        }
-        return response;
+        return this.getInfo(this.auditManager.audit(tomcatVersion, webAppName), "all");
     }
 
     @GET
     @Path("/serverInfo")
     @Produces("application/json")
     public AuditResponse getAuditServerInfo() {
-        AuditResponse response = new AuditResponse();
-        AuditTo1 model;
-
-        try {
-            model = this.auditManager.auditServer();
-
-            if (model != null) {
-                response.setSuccess(true);
-                response.setMessage("Successfuly retrieved server auditing information.");
-                response.setAudit(model);
-            } else {
-                response.setSuccess(false);
-                response.setMessage("Failed to retrieve server auditing information.");
-            }
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            response.setSuccess(false);
-            response.setMessage("An error has occured.");
-        }
-        return response;
+        return this.getInfo(this.auditManager.auditServer(), "server");
     }
 
     @GET
     @Path("/databaseInfo")
     @Produces("application/json")
     public AuditResponse getAuditDatabaseInfo() {
-        AuditResponse response = new AuditResponse();
-        AuditTo1 model;
-
-        try {
-            model = this.auditManager.auditDatabase();
-
-            if (model != null) {
-                response.setSuccess(true);
-                response.setMessage("Successfuly retrieved database auditing information.");
-                response.setAudit(model);
-            } else {
-                response.setSuccess(false);
-                response.setMessage("Failed to retrieve database auditing information.");
-            }
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            response.setSuccess(false);
-            response.setMessage("An error has occured.");
-        }
-        return response;
+        return this.getInfo(this.auditManager.auditDatabase(), "database");
     }
 
     @GET
     @Path("/tomcatInfo")
     @Produces("application/json")
     public AuditResponse getAuditTomcatInfo() {
-        AuditResponse response = new AuditResponse();
-        AuditTo1 model;
-
         HttpServletRequest request = this.getHttpServletRequest();
         String tomcatVersion = request.getSession().getServletContext().getServerInfo();
 
-        try {
-            model = this.auditManager.auditTomcat(tomcatVersion);
-
-            if (model != null) {
-                response.setSuccess(true);
-                response.setMessage("Successfuly retrieved Tomcat auditing information.");
-                response.setAudit(model);
-            } else {
-                response.setSuccess(false);
-                response.setMessage("Failed to retrieve Tomcat auditing information.");
-            }
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            response.setSuccess(false);
-            response.setMessage("An error has occured.");
-        }
-        return response;
+        return this.getInfo(this.auditManager.auditTomcat(tomcatVersion), "Tomcat");
     }
 
     @GET
     @Path("/oscarInfo")
     @Produces("application/json")
     public AuditResponse getAuditOscarInfo() {
-        AuditResponse response = new AuditResponse();
-        AuditTo1 model;
-
         HttpServletRequest request = this.getHttpServletRequest();
         String tomcatVersion = request.getSession().getServletContext().getServerInfo();
         String webAppName = request.getSession().getServletContext().getContextPath().replace("/", "");
 
-        try {
-            model = this.auditManager.auditProperties(tomcatVersion, webAppName, "oscar");
-
-            if (model != null) {
-                response.setSuccess(true);
-                response.setMessage("Successfuly retrieved OSCAR auditing information.");
-                response.setAudit(model);
-            } else {
-                response.setSuccess(false);
-                response.setMessage("Failed to retrieve OSCAR auditing information.");
-            }
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            response.setSuccess(false);
-            response.setMessage("An error has occured.");
-        }
-        return response;
+        return this.getInfo(this.auditManager.auditProperties(tomcatVersion, webAppName, "oscar"), "Oscar");
     }
 
     @GET
     @Path("/drugrefInfo")
     @Produces("application/json")
     public AuditResponse getAuditDrugrefInfo() {
-        AuditResponse response = new AuditResponse();
-        AuditTo1 model;
-
         HttpServletRequest request = this.getHttpServletRequest();
         String tomcatVersion = request.getSession().getServletContext().getServerInfo();
         String webAppName = request.getSession().getServletContext().getContextPath().replace("/", "");
 
-        try {
-            model = this.auditManager.auditProperties(tomcatVersion, webAppName, "drugref");
+        return this.getInfo(this.auditManager.auditProperties(tomcatVersion, webAppName, "drugref"), "Drugref");
+    }
 
+    private AuditResponse getInfo(AuditTo1 model, String message) {
+        AuditResponse response = new AuditResponse();
+        try {
             if (model != null) {
                 response.setSuccess(true);
-                response.setMessage("Successfuly retrieved Drugref auditing information.");
+                response.setMessage("Successfuly retrieved " + message + " auditing information.");
                 response.setAudit(model);
             } else {
                 response.setSuccess(false);
-                response.setMessage("Failed to retrieve Drugref auditing information.");
+                response.setMessage("Failed to retrieve " + message + " auditing information.");
             }
         } catch (Exception e) {
             logger.error(e.getStackTrace());
