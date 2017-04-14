@@ -25,7 +25,11 @@
 package org.oscarehr.managers;
 
 import oscar.util.Audit;
-import org.oscarehr.ws.rest.to.model.AuditTo1;
+import org.oscarehr.ws.rest.to.model.AuditSystemTo1;
+import org.oscarehr.ws.rest.to.model.AuditDatabaseTo1;
+import org.oscarehr.ws.rest.to.model.AuditTomcatTo1;
+import org.oscarehr.ws.rest.to.model.AuditOscarTo1;
+import org.oscarehr.ws.rest.to.model.AuditDrugrefTo1;
 import org.apache.log4j.Logger;
 import org.oscarehr.util.MiscUtilsOld;
 import org.springframework.stereotype.Service;
@@ -36,38 +40,83 @@ import java.util.Date;
 
 /*
 *  Class that handles direct retrieval of the auditing information from the Audit
-*  object and returning serializable AuditTo1 objects for AuditWebService.
+*  object and returning serializable Audit<System|Database|Tomcat|Oscar|Drugref>To1 
+*  objects for AuditWebService.
 *
 *  github.com/williamgrosset
 */
 @Service
 public class AuditManager {
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm");
 
     private static Logger logger = MiscUtilsOld.getLogger();
 
-    public AuditTo1 audit(String tomcatVersion, String webAppName) {
+    public AuditSystemTo1 auditSystem() {
         Date date = new Date();
         Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
+        AuditSystemTo1 model = new AuditSystemTo1();
 
         try {
-            audit.serverVersion();
-            audit.databaseInfo();
-            audit.verifyTomcat(tomcatVersion);
-            audit.tomcatReinforcement(tomcatVersion);
-            audit.verifyOscar(tomcatVersion, webAppName);
-            audit.verifyDrugref(tomcatVersion, webAppName);
+            audit.systemInfo();
 
             model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
-            model.setServerVersion(audit.getServerVersion());
+            model.setSystemVersion(audit.getSystemVersion());
+            model.setJvmVersion(audit.getJvmVersion());
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+        return model;
+    }
+
+    public AuditDatabaseTo1 auditDatabase() {
+        Date date = new Date();
+        Audit audit = new Audit();
+        AuditDatabaseTo1 model = new AuditDatabaseTo1();
+
+        try {
+            audit.databaseInfo();
+
+            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setDbType(audit.getDbType());
             model.setDbVersion(audit.getDbVersion());
-            model.setJvmVersion(audit.getJvmVersion());
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+        return model;
+    }
+
+    public AuditTomcatTo1 auditTomcat(String tomcatVersion) {
+        Date date = new Date();
+        Audit audit = new Audit();
+        AuditTomcatTo1 model = new AuditTomcatTo1();
+
+        try {
+            audit.verifyTomcat(tomcatVersion);
+            audit.tomcatReinforcement(tomcatVersion);
+
+            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setTomcatVersion(audit.getTomcatVersion());
             model.setXmx(audit.getXmx());
             model.setXms(audit.getXms());
+        } catch (Exception e) {
+            logger.error(e.getStackTrace());
+            return null;
+        }
+        return model;
+    }
+
+    public AuditOscarTo1 auditOscar(String tomcatVersion, String webAppName) {
+        Date date = new Date();
+        Audit audit = new Audit();
+        AuditOscarTo1 model = new AuditOscarTo1();
+
+        try {
+            audit.verifyOscar(tomcatVersion, webAppName);
+
+            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
             model.setWebAppName(audit.getWebAppName());
             model.setBuild(audit.getBuild());
             model.setBuildDate(audit.getBuildDate());
@@ -75,9 +124,6 @@ public class AuditManager {
             model.setSinglePageChart(audit.getSinglePageChart());
             model.setTmpDir(audit.getTmpDir());
             model.setDrugrefUrl(audit.getDrugrefUrl());
-            model.setDbUser(audit.getDbUser());
-            model.setDbUrl(audit.getDbUrl());
-            model.setDbDriver(audit.getDbDriver());
         } catch (Exception e) {
             logger.error(e.getStackTrace());
             return null;
@@ -85,89 +131,19 @@ public class AuditManager {
         return model;
     }
 
-    public AuditTo1 auditServer() {
+    public AuditDrugrefTo1 auditDrugref(String tomcatVersion, String webAppName) {
         Date date = new Date();
         Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
-
-        try {
-            audit.serverVersion();
-
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
-            model.setServerVersion(audit.getServerVersion());
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            return null;
-        }
-        return model;
-    }
-
-    public AuditTo1 auditDatabase() {
-        Date date = new Date();
-        Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
-
-        try {
-            audit.databaseInfo();
-
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
-            model.setDbType(audit.getDbType());
-            model.setDbVersion(audit.getDbVersion());
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            return null;
-        }
-        return model;
-    }
-
-    public AuditTo1 auditTomcat(String tomcatVersion) {
-        Date date = new Date();
-        Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
-
-        try {
-            audit.verifyTomcat(tomcatVersion);
-            audit.tomcatReinforcement(tomcatVersion);
-
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
-            model.setJvmVersion(audit.getJvmVersion());
-            model.setTomcatVersion(audit.getTomcatVersion());
-            model.setXmx(audit.getXmx());
-            model.setXms(audit.getXms());
-        } catch (Exception e) {
-            logger.error(e.getStackTrace());
-            return null;
-        }
-        return model;
-    }
-
-    public AuditTo1 auditProperties(String tomcatVersion, String webAppName, String type) {
-        Date date = new Date();
-        Audit audit = new Audit();
-        AuditTo1 model = new AuditTo1();
+        AuditDrugrefTo1 model = new AuditDrugrefTo1();
 
         try {
             audit.verifyOscar(tomcatVersion, webAppName);
-            audit.verifyDrugref(tomcatVersion, webAppName);
+            audit.verifyDrugref(tomcatVersion);
 
             model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
-            model.setTomcatVersion(audit.getTomcatVersion());
-            model.setWebAppName(audit.getWebAppName());
-
-            if (type.equals("oscar")) {
-                model.setBuild(audit.getBuild());
-                model.setBuildDate(audit.getBuildDate());
-                model.setHl7TextLabs(audit.getHl7TextLabs());
-                model.setSinglePageChart(audit.getSinglePageChart());
-                model.setTmpDir(audit.getTmpDir());
-                model.setDrugrefUrl(audit.getDrugrefUrl());
-            } else if (type.equals("drugref")) {
-                model.setDbUser(audit.getDbUser());
-                model.setDbUrl(audit.getDbUrl());
-                model.setDbDriver(audit.getDbDriver());
-            } else {
-                return null;
-            }
+            model.setDbUser(audit.getDbUser());
+            model.setDbUrl(audit.getDbUrl());
+            model.setDbDriver(audit.getDbDriver());
         } catch (Exception e) {
             logger.error(e.getStackTrace());
             return null;

@@ -76,6 +76,10 @@ public class AuditOscarTo1 implements Serializable {
     public String getDrugrefUrl() {
         return this.drugrefUrl;
     }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
     
     public void setWebAppName(String webAppName) {
         this.webAppName = webAppName;
