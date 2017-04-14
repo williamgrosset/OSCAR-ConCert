@@ -3,7 +3,7 @@
 The purpose of this project is to provide a web service for live auditing of an OSCAR application. The services will be accessible through a REST API. Authorized clients will be able to make a request to a specific resource on the server over an HTTP protocol. OAUTH will require clients to provide credentials (client id and secret) in exchange for an access token, which will authorize the request.
 
 ## OSCAR RESTful Web Services
-OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/) or user session with admin access). OSCAR's source code uses both JSON and XML (legacy services).
+OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/) or user session with privileges). OSCAR's source code uses both JSON and XML (legacy services).
 
 ### Implementation
 + OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services) (Java API for creating RESTful web services)
@@ -18,7 +18,7 @@ OSCAR web services can be accessed in two different ways:
 + see **RESTful Web Service** section in ```resources/architectural_notes.pdf```
 
 ## OSCAR Audit Web Service
-The goal of the REST API is to provide authorized access to OSCAR auditing information.
+The goal of the REST API is to provide authorized access to auditing information of the OSCAR application and its connected components (i.e. Drugref).
 
 ### API requests
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK). If a fieldname returns `null`, the property could not be detected. Currently, all information below is subject to change.
@@ -98,7 +98,7 @@ The following JSON responses for each API call assume that the HTTP status code 
 ### Java classes
 + **AuditService.class**: Handles all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
 + **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. A web service class may use several manager classes to access the required data.<br><br>
-  The following model classes implement the Serializable interface and are wrapped by an **AuditResponse** object to be sent back to the client as JSON. Model classes contain the fieldnames for the JSON object:
+  The following response classes implement the Serializable interface, and inherit properties and behaviour of the GenericRESTResponse class. These response objects act as the JSON wrapper for their respective model object:
 + **AuditSystemResponseTo1**: Wrapper object for `auditService.getAuditSystemInfo()` API request.
 + **AuditDatabaseResponseTo1**: Wrapper object for `auditService.getAuditDatabaseInfo()` API request. 
 + **AuditTomcatResponseTo1**: Wrapper object for `auditService.getAuditTomcatInfo()` API request. 
