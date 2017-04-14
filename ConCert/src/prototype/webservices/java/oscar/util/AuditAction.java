@@ -61,7 +61,7 @@ public class AuditAction extends Action {
             servletRequest.setAttribute("databaseInfo", audit.databaseInfo());
             servletRequest.setAttribute("verifyTomcat", audit.verifyTomcat(tomcatVersion));
             servletRequest.setAttribute("verifyOscar", audit.verifyOscar(tomcatVersion, webAppName));
-            servletRequest.setAttribute("verifyDrugref", audit.verifyDrugref(tomcatVersion, webAppName));
+            servletRequest.setAttribute("verifyDrugref", audit.verifyDrugref(tomcatVersion));
             servletRequest.setAttribute("tomcatReinforcement", audit.tomcatReinforcement(tomcatVersion));
         } catch (Exception e) {
             return actionMapping.findForward("failure");

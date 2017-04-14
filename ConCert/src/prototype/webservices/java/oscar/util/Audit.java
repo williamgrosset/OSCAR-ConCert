@@ -351,7 +351,6 @@ public class Audit {
         if (webAppName == null || webAppName.equals(""))
             return "Could not detect the Oscar webapps directory name.";
 
-        this.tomcatVersion = tomcatVersion;
         this.webAppName = webAppName;
 
         StringBuilder output = new StringBuilder();
@@ -520,7 +519,7 @@ public class Audit {
     *  @param webAppName: Web application name for OSCAR.
     *  @return output: Output of Drugref properties information.
     */
-    public String verifyDrugref(String tomcatVersion, String webAppName) {
+    public String verifyDrugref(String tomcatVersion) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
                 || catalinaHome.getPath().equals("")) {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -530,9 +529,6 @@ public class Audit {
         if (drugrefUrl.equals("")) {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
-
-        this.tomcatVersion = tomcatVersion;
-        this.webAppName = webAppName;
 
         // Grab deployed Drugref folder name and use as the file name for the properties file
         Pattern patternDrugrefUrl = Pattern.compile(".*://.*/(drugref.*)/.*");

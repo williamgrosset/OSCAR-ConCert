@@ -57,6 +57,10 @@ public class AuditTomcatTo1 implements Serializable {
         return this.xms;
     }
 
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
+    }
+
     public void setTomcatVersion(String tomcatVersion) {
         this.tomcatVersion = tomcatVersion;
     }

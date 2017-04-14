@@ -97,15 +97,13 @@ The following JSON responses for each API call assume that the HTTP status code 
 
 ### Java classes
 + **AuditService.class**: Handles all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
-+ **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. A web service class may use several manager classes to access the required data.  
- 
++ **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. A web service class may use several manager classes to access the required data.<br><br>
   The following model classes implement the Serializable interface and are wrapped by an **AuditResponse** object to be sent back to the client as JSON. Model classes contain the fieldnames for the JSON object:
-+ **AuditSystemResponseTo1**: Wrapper object for `auditService.getAuditSystemInfo()` API request. 
++ **AuditSystemResponseTo1**: Wrapper object for `auditService.getAuditSystemInfo()` API request.
 + **AuditDatabaseResponseTo1**: Wrapper object for `auditService.getAuditDatabaseInfo()` API request. 
 + **AuditTomcatResponseTo1**: Wrapper object for `auditService.getAuditTomcatInfo()` API request. 
 + **AuditOscarResponseTo1**: Wrapper object for `auditService.getAuditOscarInfo()` API request. 
-+ **AuditDrugrefResponseTo1**: Wrapper object for `auditService.getAuditDrugrefInfo()` API request.  
- 
++ **AuditDrugrefResponseTo1**: Wrapper object for `auditService.getAuditDrugrefInfo()` API request.<br><br>
   The following model classes implement the Serializable interface and are wrapped by an **AuditResponse** object to be sent back to the client as JSON. Model classes contain the fieldnames for the JSON object:
 + **AuditSystemTo1**: Represents the model object for `auditMananger.auditSystem()` request.
 + **AuditDatabaseTo1**: Represents the model object for `auditMananger.auditDatabase()` request.
@@ -116,8 +114,7 @@ The following JSON responses for each API call assume that the HTTP status code 
 An authorized client will make an API request using an available route handler. **AuditService** will check admin permissions using **SecurityInfoManager**. If permission is granted, **AuditManager** will retrieve the data for the request by directly accessing the **Audit.class**. Once this data is received, a **Audit<System|Database|Tomcat|Oscar|Drugref>To1** object will be created to represent the model object and will contain the relevant data for the request. AuditService will return a wrapper object (**Audit<System|Database|Tomcat|Oscar|Drugref>Response**) that will sent back to the client as JSON.
 
 ### Design Decisions
-1. Why have multiple **AuditFooTo1.class** objects? (see `java/org/oscarehr/ws/rest/to/model/\*`)  
-
+1. Why have multiple **AuditFooTo1.class** objects? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br>
 As the OSCAR Audit Web Service functionality extends, the auditing information that is provided to OSCAR uses will also extend. Instead of using a single model JSON object (i.e. AuditTo1.class), I decided to modularize the model objects into their own individual objects (**AuditSystemTo1.class**, **AuditDatabaseTo1**, ...) for future development and additions to the REST API.
 
 ### UML Diagrams
