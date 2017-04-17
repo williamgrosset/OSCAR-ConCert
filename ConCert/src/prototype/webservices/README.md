@@ -1,9 +1,9 @@
-# OSCAR Web Services - Audit REST
+# ConCert - Audit REST API
 ## Overview
 The purpose of this project is to provide a web service for live auditing of an OSCAR application. The services will be accessible through a REST API. Authorized clients will be able to make a request to a specific resource on the server over an HTTP protocol. OAUTH will require clients to provide credentials (client id and secret) in exchange for an access token, which will authorize the request.
 
 ## OSCAR RESTful Web Services
-OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/) or user session with privileges). OSCAR's source code uses both JSON and XML (legacy services).
+OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/) or user session with privileges). OSCAR supports both JSON and XML (legacy services) data formats.
 
 ### Implementation
 + OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services) (Java API for creating RESTful web services)
@@ -11,7 +11,7 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
     - allows annotations of methods to indicate their roles in the REST API
 + see ```OSCAR-ConCert/src/main/resources/applicationContextREST.xml``` for all Java web services
 
-### Using web services
+### Using OSCAR Web Services
 OSCAR web services can be accessed in two different ways:
 + **OAuth**: Can use endpoint ```/ws/services/<path>?<query>```
 + **User session**: Can use endpoint ```/ws/rs/<path>?<query>```
@@ -20,9 +20,9 @@ OSCAR web services can be accessed in two different ways:
 ## OSCAR Audit Web Service
 The goal of the REST API is to provide authorized access to auditing information of the OSCAR application and its connected components (i.e. Drugref).
 
-### API requests
+### Available API Endpoints
 The following JSON responses for each API call assume that the HTTP status code returns 200 (OK). If a fieldname returns `null`, the property could not be detected. Currently, all information below is subject to change.
-+ #### ```GET /audit/systemInfo```
++ ### ```GET /audit/systemInfo```
 
   Returns the system (Linux distribution) and JVM version that the OSCAR application is active on.
 
@@ -35,7 +35,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "jvmVersion": "1.7.0_111"
   }
   ```
-+ #### ```GET /audit/databaseInfo```
++ ### ```GET /audit/databaseInfo```
 
   Returns the connected OSCAR database type and version.  
   
@@ -48,7 +48,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "dbVersion": "5.5.53"
   }
   ```
-+ #### ```GET /audit/tomcatInfo```
++ ### ```GET /audit/tomcatInfo```
 
   Returns the Tomcat version, and maximum/minimum (xmx/xms) heap size for Tomcat memory allocation.  
   
@@ -62,7 +62,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "xms": "1024m"
   }
   ```
-+ #### ```GET /audit/oscarInfo```
++ ### ```GET /audit/oscarInfo```
 
   Returns OSCAR web application name, build tag, build date, and property values for HL7TEXT_LABS, SINGLE_PAGE_CHART, TMP_DIR, and drugref_url. 
   
@@ -80,7 +80,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "drugrefUrl": "http://<ip_address>:<port_number>
   }
   ```
-+ #### ```GET /audit/drugrefInfo```
++ ### ```GET /audit/drugrefInfo```
 
   Returns Drugref property values for db_user, db_url, and db_driver.
   
@@ -95,7 +95,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   }
   ```
 
-### Java classes
+### Java Classes
 + **AuditService.class**: Handles all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
 + **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. A web service class may use several manager classes to access the required data.<br><br>
   The following response classes implement the Serializable interface, and inherit properties and behaviour of the GenericRESTResponse class. These response objects act as the JSON wrapper for their respective model object:
