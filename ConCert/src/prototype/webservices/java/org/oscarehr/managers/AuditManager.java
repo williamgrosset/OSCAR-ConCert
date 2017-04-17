@@ -48,7 +48,7 @@ import java.util.Date;
 @Service
 public class AuditManager {
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd.HH.mm");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     private static Logger logger = MiscUtilsOld.getLogger();
 
@@ -60,10 +60,11 @@ public class AuditManager {
         try {
             audit.systemInfo();
 
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
+            model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setSystemVersion(audit.getSystemVersion());
             model.setJvmVersion(audit.getJvmVersion());
         } catch (Exception e) {
+            System.out.println("WE ARE IN AUDITMANAGEEEEER: " + e.getMessage());
             logger.error(e.getStackTrace());
             return null;
         }
@@ -78,7 +79,7 @@ public class AuditManager {
         try {
             audit.databaseInfo();
 
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
+            model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setDbType(audit.getDbType());
             model.setDbVersion(audit.getDbVersion());
         } catch (Exception e) {
@@ -97,7 +98,7 @@ public class AuditManager {
             audit.verifyTomcat(tomcatVersion);
             audit.tomcatReinforcement(tomcatVersion);
 
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
+            model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setTomcatVersion(audit.getTomcatVersion());
             model.setXmx(audit.getXmx());
             model.setXms(audit.getXms());
@@ -116,7 +117,7 @@ public class AuditManager {
         try {
             audit.verifyOscar(tomcatVersion, webAppName);
 
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
+            model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setWebAppName(audit.getWebAppName());
             model.setBuild(audit.getBuild());
             model.setBuildDate(audit.getBuildDate());
@@ -140,7 +141,7 @@ public class AuditManager {
             audit.verifyOscar(tomcatVersion, webAppName);
             audit.verifyDrugref(tomcatVersion);
 
-            model.setTimestamp(new String(new Timestamp(date.getTime()).toString()));
+            model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setDbUser(audit.getDbUser());
             model.setDbUrl(audit.getDbUrl());
             model.setDbDriver(audit.getDbDriver());

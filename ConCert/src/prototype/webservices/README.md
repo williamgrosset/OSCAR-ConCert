@@ -21,8 +21,9 @@ OSCAR web services can be accessed in two different ways:
 The goal of the REST API is to provide authorized access to auditing information of the OSCAR application and its connected components (i.e. Drugref).
 
 ### Available API Endpoints
-The following JSON responses for each API call assume that the HTTP status code returns 200 (OK). If a fieldname returns `null`, the property could not be detected. Currently, all information below is subject to change.
-+ ### ```GET /audit/systemInfo```
+The following JSON responses for each API call assume that the HTTP status code returns 200 (OK). If a fieldname returns `null`, the property could not be detected. Currently, all information below is subject to change:
+
++ #### ```GET /audit/systemInfo```
 
   Returns the system (Linux distribution) and JVM version that the OSCAR application is active on.
 
@@ -30,12 +31,12 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
   ...
   "audit": {
-    "timestamp": "2017-04-21 04:10.632",
+    "timestamp": "<yyyy/MM/dd HH:mm:ss>",
     "systemVersion": "Ubuntu 14.04",
     "jvmVersion": "1.7.0_111"
   }
   ```
-+ ### ```GET /audit/databaseInfo```
++ #### ```GET /audit/databaseInfo```
 
   Returns the connected OSCAR database type and version.  
   
@@ -43,12 +44,12 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
   ...
   "audit": {
-    "timestamp": "2017-04-21 04:10.632",
+    "timestamp": "<yyyy/MM/dd HH:mm:ss>",
     "dbType": "MySQL",
     "dbVersion": "5.5.53"
   }
   ```
-+ ### ```GET /audit/tomcatInfo```
++ #### ```GET /audit/tomcatInfo```
 
   Returns the Tomcat version, and maximum/minimum (xmx/xms) heap size for Tomcat memory allocation.  
   
@@ -56,13 +57,13 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
   ...
   "audit": {
-    "timestamp": "2017-04-21 04:10.632",
+    "timestamp": "<yyyy/MM/dd HH:mm:ss>",
     "tomcatVersion": "Apache Tomcat/7.0.52",
     "xmx": "1024m",
     "xms": "1024m"
   }
   ```
-+ ### ```GET /audit/oscarInfo```
++ #### ```GET /audit/oscarInfo```
 
   Returns OSCAR web application name, build tag, build date, and property values for HL7TEXT_LABS, SINGLE_PAGE_CHART, TMP_DIR, and drugref_url. 
   
@@ -70,7 +71,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
   ...
   "audit": {
-    "timestamp": "2017-04-21 04:10.632",
+    "timestamp": "<yyyy/MM/dd HH:mm:ss>",
     "webAppName": "oscar14",
     "build": "Gerrit_OSCAR-697",
     "buildDate": "2017-05-01 1:20AM",
@@ -80,7 +81,7 @@ The following JSON responses for each API call assume that the HTTP status code 
     "drugrefUrl": "http://<ip_address>:<port_number>
   }
   ```
-+ ### ```GET /audit/drugrefInfo```
++ #### ```GET /audit/drugrefInfo```
 
   Returns Drugref property values for db_user, db_url, and db_driver.
   
@@ -88,7 +89,7 @@ The following JSON responses for each API call assume that the HTTP status code 
   ```
   ...
   "audit": {
-    "timestamp": "2017-04-21 04:10.632",
+    "timestamp": "<yyyy/MM/dd HH:mm:ss>",
     "dbUser": "oscar",
     "dbUrl": "jdbc:mysql://127.0.0.1:drugref2",
     "dbDriver": "com.mysql.jdbc.Driver"
