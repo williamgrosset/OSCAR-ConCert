@@ -57,6 +57,13 @@ public class AuditService extends AbstractServiceImpl {
     @Autowired
     protected AuditManager auditManager;
 
+    /*
+    *  Performs an audit check using AuditManager to access the required
+    *  system auditing information and returns a JSON object to the client. 
+    *  
+    *  @return response: An AuditSystemResponse object that represents the
+    *  data for the request.
+    */
     @GET
     @Path("/systemInfo")
     @Produces("application/json")
@@ -83,6 +90,13 @@ public class AuditService extends AbstractServiceImpl {
         return response;
     }
 
+    /*
+    *  Performs an audit check using AuditManager to access the required
+    *  database auditing information and returns a JSON object to the client. 
+    *  
+    *  @return response: An AuditDatabaseResponse object that represents the
+    *  data for the request.
+    */
     @GET
     @Path("/databaseInfo")
     @Produces("application/json")
@@ -109,6 +123,13 @@ public class AuditService extends AbstractServiceImpl {
         return response;
     }
 
+    /*
+    *  Performs an audit check using AuditManager to access the required
+    *  Tomcat auditing information and returns a JSON object to the client. 
+    *  
+    *  @return response: An AuditTomcatResponse object that represents the
+    *  data for the request.
+    */
     @GET
     @Path("/tomcatInfo")
     @Produces("application/json")
@@ -138,6 +159,13 @@ public class AuditService extends AbstractServiceImpl {
         return response;
     }
 
+    /*
+    *  Performs an audit check using AuditManager to access the required
+    *  OSCAR auditing information and returns a JSON object to the client. 
+    *  
+    *  @return response: An AuditOscarResponse object that represents the
+    *  data for the request.
+    */
     @GET
     @Path("/oscarInfo")
     @Produces("application/json")
@@ -168,6 +196,13 @@ public class AuditService extends AbstractServiceImpl {
         return response;
     }
 
+    /*
+    *  Performs an audit check using AuditManager to access the required
+    *  Drugref auditing information and returns a JSON object to the client. 
+    *  
+    *  @return response: An AuditDrugrefResponse object that represents the
+    *  data for the request.
+    */
     @GET
     @Path("/drugrefInfo")
     @Produces("application/json")
