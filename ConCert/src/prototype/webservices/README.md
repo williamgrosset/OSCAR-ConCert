@@ -12,10 +12,11 @@ OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://
 + see ```OSCAR-ConCert/src/main/resources/applicationContextREST.xml``` for all Java web services
 
 ### Using OSCAR Web Services
-OSCAR web services can be accessed in two different ways:
+OSCAR web services can be accessed through **two** different methods:
 + **OAuth**: Can use endpoint ```/ws/services/<path>?<query>```
 + **User session**: Can use endpoint ```/ws/rs/<path>?<query>```
-+ see **RESTful Web Service** section in ```resources/architectural_notes.pdf```
+
+See **RESTful Web Service** section in ```resources/architectural_notes.pdf``` for more information.
 
 ## OSCAR Audit Web Service
 The goal of the REST API is to provide authorized access to auditing information of the OSCAR application and its connected components (i.e. Drugref).
@@ -25,7 +26,7 @@ The following JSON responses for each API call assume that the HTTP status code 
 
 + #### ```GET /audit/systemInfo```
 
-  Returns the system (Linux distribution) and JVM version that the OSCAR application is active on.
+  Returns the system (Linux distribution) and JVM version that the OSCAR application is live on.
 
   **Example Response**:
   ```
@@ -119,7 +120,7 @@ An authorized client will make an API request using an available route handler. 
 As the OSCAR Audit Web Service functionality extends, the auditing information that is provided to OSCAR uses will also extend. Instead of using a single model JSON object (i.e. AuditTo1.class), I decided to modularize the model objects into their own individual objects (**AuditSystemTo1.class**, **AuditDatabaseTo1**, ...) for future development and additions to the REST API.
 
 2. What is the purpose of `private static final serialVersionUID = 1L`? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br>
-When an object is deserialized, the **serialVersionUID** value is used to check that receiver and sender of the serialized object contain the same value. If not, an `InvalidClassException` will be thrown. If left default, a serialVersionUID value will be generated for the class; however, different compilter implementations may create different values, resulting in an `InvalidClassException`. The docs for `java.io.Serializable` highly recommend that all serializable classes declare their own serialVersionUID values. 
+When an object is deserialized, the **serialVersionUID** value is used to check that receiver and sender of the serialized object contain the same value. If not, an `InvalidClassException` will be thrown. If left default, a serialVersionUID value will be generated for the class; however, different compiler implementations may create different values, resulting in an `InvalidClassException`. The docs for `java.io.Serializable` highly recommend that all serializable classes declare their own serialVersionUID values. 
 
 ### UML Diagrams
 ...

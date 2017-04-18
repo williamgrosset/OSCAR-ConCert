@@ -190,7 +190,8 @@ public class Audit {
     *  Retrieve settings file from appropriate Tomcat directory
     *  (currently supports version 7 and 8 of Tomcat).
     *
-    *  @param version: Version of Tomcat.
+    *  @param version:         Version of Tomcat.
+    *
     *  @return tomcatSettings: Settings file for Tomcat.
     */
     private File getTomcatSettings(int version) {
@@ -300,7 +301,8 @@ public class Audit {
     *  from servlet.
     *
     *  @param tomcatVersion: Tomcat version.
-    *  @return output: JVM and Tomcat version information.
+    *
+    *  @return output:       JVM and Tomcat version information.
     */
     public String verifyTomcat(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
@@ -338,8 +340,9 @@ public class Audit {
     *  Tomcat directory.
     *
     *  @param tomcatVersion: Tomcat version.
-    *  @param webAppName: Web application name for OSCAR.
-    *  @return output: Combined output of Oscar build and properties information.
+    *  @param webAppName:    Web application name for OSCAR.
+    *
+    *  @return output:       Combined output of Oscar build and properties information.
     */
     public String verifyOscar(String tomcatVersion, String webAppName) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
@@ -383,7 +386,8 @@ public class Audit {
     *  Read Oscar "buildtag" and "buildDateTime" of properties file.
     *
     *  @param fileName: Path to properties file.
-    *  @return output: Current Oscar build, version, and date of build.
+    *
+    *  @return output:  Current Oscar build, version, and date of build.
     */
     private String oscarBuild(String fileName) {
         try {
@@ -438,7 +442,8 @@ public class Audit {
     *  of Oscar properties file.
     *
     *  @param fileName: Path to properties file.
-    *  @return output: Output of the required tags in the Oscar properties file.
+    *
+    *  @return output:  Output of the required tags in the Oscar properties file.
     */
     private String verifyOscarProperties(String fileName) {
         try {
@@ -516,8 +521,9 @@ public class Audit {
     *  in the appropriate Tomcat directory.
     *
     *  @param tomcatVersion: Tomcat version.
-    *  @param webAppName: Web application name for OSCAR.
-    *  @return output: Output of Drugref properties information.
+    *  @param webAppName:    Web application name for OSCAR.
+    *
+    *  @return output:       Output of Drugref properties information.
     */
     public String verifyDrugref(String tomcatVersion) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
@@ -558,7 +564,7 @@ public class Audit {
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
     *
     *  @param fileName: Path to properties file.
-    *  @return output: Output of the required tags in the Drugref properties file.
+    *  @return output:  Output of the required tags in the Drugref properties file.
     */
     private String verifyDrugrefProperties(String fileName) {
         try {
@@ -625,8 +631,9 @@ public class Audit {
     *  the user.
     *
     *  @param tomcatVersion: Tomcat version.
-    *  @return output: Xmx value (maximum memory allocation) and Xms value (minimum 
-    *  memory allocation) for JVM heap size.
+    *
+    *  @return output:       Xmx value (maximum memory allocation) and Xms value 
+    *                        (minimum memory allocation) for JVM heap size.
     */
     public String tomcatReinforcement(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
