@@ -38,9 +38,6 @@ import java.util.regex.Pattern;
 *  Class that audits a live OSCAR application and contains information
 *  regarding OSCAR's application environment.
 *
-*  NOTE: Permission checks using SecurityInfoManager.class with an HTTP 
-*  session should be completed before accessing auditing information.
-*  
 *  github.com/williamgrosset
 */
 public class Audit {

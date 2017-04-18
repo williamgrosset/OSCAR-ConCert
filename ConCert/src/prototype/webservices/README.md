@@ -3,7 +3,7 @@
 The purpose of this project is to provide a web service for live auditing of an OSCAR application. The services will be accessible through a REST API. Authorized clients will be able to make a request to a specific resource on the server over an HTTP protocol. OAUTH will require clients to provide credentials (client id and secret) in exchange for an access token, which will authorize the request.
 
 ## OSCAR RESTful Web Services
-OSCAR provides it's web services to only authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/) or user session with privileges). OSCAR supports both JSON and XML (legacy services) data formats.
+OSCAR provides web services to authorized users ([OAUTH 1.0a](https://oauth.net/core/1.0a/) or user session with privileges). OSCAR supports both JSON and XML (legacy services) data formats.
 
 ### Implementation
 + OSCAR uses [Apache's CXF](https://en.wikipedia.org/wiki/Apache_CXF) implementation for [JAX-RS](https://en.wikipedia.org/wiki/Java_API_for_XML_Web_Services) (Java API for creating RESTful web services)
@@ -99,7 +99,7 @@ The following JSON responses for each API call assume that the HTTP status code 
 
 ### Java Classes
 + **AuditService.class**: Handles all related web service requests. Request handlers will take in arguments that match the HTTP request parameters and return a response object.
-+ **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. A web service class may use several manager classes to access the required data.<br><br>
++ **AuditManager.class**: Provide access to relevant data and business logic classes that are required by the **AuditService** route handlers. \*A web service class may use several manager classes to access the required data.<br><br>
   The following response classes implement the Serializable interface, and inherit properties and behaviour of the GenericRESTResponse class. These response objects act as the JSON wrapper for their respective model object:
 + **AuditSystemResponseTo1**: Wrapper object for `auditService.getAuditSystemInfo()` API request.
 + **AuditDatabaseResponseTo1**: Wrapper object for `auditService.getAuditDatabaseInfo()` API request. 
@@ -117,10 +117,10 @@ An authorized client will make an API request using an available route handler. 
 
 ### Design Decisions
 1. Why have multiple **AuditFooTo1.class** objects? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br>
-As the OSCAR Audit Web Service functionality extends, the auditing information that is provided to OSCAR uses will also extend. Instead of using a single model JSON object (i.e. AuditTo1.class), I decided to modularize the model objects into their own individual objects (**AuditSystemTo1.class**, **AuditDatabaseTo1**, ...) for future development and additions to the REST API.
+As the OSCAR Audit Web Service functionality extends, the auditing information that is provided to OSCAR uses will also extend. Instead of using a single model JSON object (i.e. AuditTo1.class), I decided to modularize the auditing information into their own individual model objects (**AuditSystemTo1.class**, **AuditDatabaseTo1**, ...) for future development and additions to the REST API.
 
 2. What is the purpose of `private static final serialVersionUID = 1L`? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br>
-When an object is deserialized, the **serialVersionUID** value is used to check that receiver and sender of the serialized object contain the same value. If not, an `InvalidClassException` will be thrown. If left default, a serialVersionUID value will be generated for the class; however, different compiler implementations may create different values, resulting in an `InvalidClassException`. The docs for `java.io.Serializable` highly recommend that all serializable classes declare their own serialVersionUID values. 
+When an object is deserialized, the **serialVersionUID** value is used to check that receiver and sender of the serialized object contain the same value. If not, an `InvalidClassException` will be thrown. If serialVersionUID is not declared, a serialVersionUID value will be generated for the class; however, different compiler implementations may create different values, resulting in an `InvalidClassException`. The docs for [`java.io.Serializable`](https://docs.oracle.com/javase/8/docs/api/java/io/Serializable.html) highly recommend that all serializable classes declare their own serialVersionUID values. 
 
 ### UML Diagrams
 ...
