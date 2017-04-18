@@ -322,7 +322,7 @@ public class Audit {
     *  Extract Tomcat version number from server version information (via servlet).
     *
     *  @return value: Version number (7 or 8) of Tomcat. Return -1 if no match
-    *  exists.
+    *                 exists.
     */
     private int extractTomcatVersionNumber(String tomcatVersion) {
         Pattern tomcatVersionPattern = Pattern.compile(".*Tomcat/([0-9]).*");
@@ -564,6 +564,7 @@ public class Audit {
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
     *
     *  @param fileName: Path to properties file.
+    *
     *  @return output:  Output of the required tags in the Drugref properties file.
     */
     private String verifyDrugrefProperties(String fileName) {

@@ -71,7 +71,6 @@ public class AuditManager {
             model.setSystemVersion(audit.getSystemVersion());
             model.setJvmVersion(audit.getJvmVersion());
         } catch (Exception e) {
-            System.out.println("WE ARE IN AUDITMANAGEEEEER: " + e.getMessage());
             logger.error(e.getStackTrace());
             return null;
         }

@@ -42,7 +42,9 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
 import javax.servlet.http.HttpServletRequest;
 
 /*
