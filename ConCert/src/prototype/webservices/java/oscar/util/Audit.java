@@ -253,7 +253,8 @@ public class Audit {
                 Matcher matcherDIST_DESC = patternDIST_DESC.matcher(line);
 
                 if (matcherDIST_DESC.matches()) {
-                    this.systemVersion = line.substring(matcherDIST_DESC.group(1).length()); 
+                    String match = line.substring(matcherDIST_DESC.group(1).length());
+                    this.systemVersion = match.replaceAll("^\\\"", "").replaceAll("\\\"$", "");
                     return "Version: " + this.systemVersion;
                 }
             }
@@ -276,8 +277,8 @@ public class Audit {
 
             StringBuilder output = new StringBuilder();
             DatabaseMetaData metaData = connection.getMetaData();
-            this.dbType = metaData.getDatabaseProductName();
-            this.dbVersion = metaData.getDatabaseProductVersion();
+            this.dbType = metaData.getDatabaseProductName().trim();
+            this.dbVersion = metaData.getDatabaseProductVersion().trim();
 
             output.append("Type: " + this.dbType + "<br />");
             output.append("Version: " + this.dbVersion);
@@ -310,7 +311,7 @@ public class Audit {
         if (jvmVersion == null || jvmVersion.equals(""))
             return "Could not detect JVM version from system properties.";
 
-        this.tomcatVersion = tomcatVersion;
+        this.tomcatVersion = tomcatVersion.trim();
 
         StringBuilder output = new StringBuilder();
         output.append("JVM Version: " + this.jvmVersion + "<br />");
@@ -412,14 +413,14 @@ public class Audit {
                 if (!flag1) {
                     if (matcherBuildtag.matches()) { // buildtag=
                         flag1 = true;
-                        this.build = line.substring(matcherBuildtag.group(1).length());
+                        this.build = line.substring(matcherBuildtag.group(1).length()).trim();
                         output.append("Oscar build and version: " + this.build + "<br />");
                     }
                 }
                 if (!flag2) {
                     if (matcherBuildDateTime.matches()) { // buildDateTime=
                         flag2 = true;
-                        this.buildDate = line.substring(matcherBuildDateTime.group(1).length());
+                        this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
                         output.append("Oscar build date and time: " + this.buildDate + "<br />");
                     }
                 }
@@ -474,28 +475,28 @@ public class Audit {
                 if (!flag1) {
                     if (matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
                         flag1 = true;
-                        this.hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length());
+                        this.hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length()).trim();
                         output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "<br />");
                     }
                 }
                 if (!flag2) {
                     if (matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
                         flag2 = true;
-                        this.singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length());
+                        this.singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length()).trim();
                         output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "<br />");
                     }
                 }
                 if (!flag3) {
                     if (matcherTMP_DIR.matches()) { // TMP_DIR=
                         flag3 = true;
-                        this.tmpDir = line.substring(matcherTMP_DIR.group(1).length());
+                        this.tmpDir = line.substring(matcherTMP_DIR.group(1).length()).trim();
                         output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "<br />");
                     }
                 }
                 if (!flag4) {
                     if (matcherDrugrefUrl.matches()) { // drugref_url=
                         flag4 = true;
-                        this.drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length());
+                        this.drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length()).trim();
                         output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "<br />");
                     }
                 }
@@ -593,21 +594,21 @@ public class Audit {
                 if (!flag1) {
                     if (matcherDb_user.matches()) { // db_user=
                         flag1 = true;
-                        this.dbUser = line.substring(matcherDb_user.group(1).length());
+                        this.dbUser = line.substring(matcherDb_user.group(1).length()).trim();
                         output.append("\"db_user\" tag is configured as: " + this.dbUser + "<br />");
                     }
                 }
                 if (!flag2) {
                     if (matcherDb_url.matches()) { // db_url=
                         flag2 = true;
-                        this.dbUrl = line.substring(matcherDb_url.group(1).length());
+                        this.dbUrl = line.substring(matcherDb_url.group(1).length()).trim();
                         output.append("\"db_url\" tag is configured as: " + this.dbUrl + "<br />");
                     }
                 }
                 if (!flag3) {
                     if (matcherDb_driver.matches()) { // db_driver=
                         flag3 = true;
-                        this.dbDriver = line.substring(matcherDb_driver.group(1).length());
+                        this.dbDriver = line.substring(matcherDb_driver.group(1).length()).trim();
                         output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "<br />");
                     }
                 }
@@ -694,5 +695,9 @@ public class Audit {
         } catch (Exception e) {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
+    }
+
+    private String formatString(String value) {
+        return value.replaceAll("\\s+(?=\\S)", "");
     }
 }
