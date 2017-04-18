@@ -311,28 +311,12 @@ public class Audit {
         if (jvmVersion == null || jvmVersion.equals(""))
             return "Could not detect JVM version from system properties.";
 
-        this.tomcatVersion = tomcatVersion.trim();
+        this.tomcatVersion = tomcatVersion;
 
         StringBuilder output = new StringBuilder();
         output.append("JVM Version: " + this.jvmVersion + "<br />");
         output.append("Tomcat version: " + this.tomcatVersion);
         return output.toString();
-    }
-
-    /*
-    *  Extract Tomcat version number from server version information (via servlet).
-    *
-    *  @return value: Version number (7 or 8) of Tomcat. Return -1 if no match
-    *                 exists.
-    */
-    private int extractTomcatVersionNumber(String tomcatVersion) {
-        Pattern tomcatVersionPattern = Pattern.compile(".*Tomcat/([0-9]).*");
-        Matcher tomcatMatch = tomcatVersionPattern.matcher(tomcatVersion);
-
-        if (tomcatMatch.matches())
-            return Integer.parseInt(tomcatMatch.group(1));
-        else
-            return -1;
     }
 
     /*
@@ -697,7 +681,19 @@ public class Audit {
         }
     }
 
-    private String formatString(String value) {
-        return value.replaceAll("\\s+(?=\\S)", "");
+    /*
+    *  Extract Tomcat version number from server version information (via servlet).
+    *
+    *  @return value: Version number (7 or 8) of Tomcat. Return -1 if no match
+    *                 exists.
+    */
+    private int extractTomcatVersionNumber(String tomcatVersion) {
+        Pattern tomcatVersionPattern = Pattern.compile(".*Tomcat/([0-9]).*");
+        Matcher tomcatMatch = tomcatVersionPattern.matcher(tomcatVersion);
+
+        if (tomcatMatch.matches())
+            return Integer.parseInt(tomcatMatch.group(1));
+        else
+            return -1;
     }
 }
