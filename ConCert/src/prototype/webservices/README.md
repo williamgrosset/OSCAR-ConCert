@@ -118,6 +118,9 @@ An authorized client will make an API request using an available route handler. 
 1. Why have multiple **AuditFooTo1.class** objects? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br>
 As the OSCAR Audit Web Service functionality extends, the auditing information that is provided to OSCAR uses will also extend. Instead of using a single model JSON object (i.e. AuditTo1.class), I decided to modularize the model objects into their own individual objects (**AuditSystemTo1.class**, **AuditDatabaseTo1**, ...) for future development and additions to the REST API.
 
+2. What is the purpose of ```java private static final serialVersionUID = 1L```? (see `java/org/oscarehr/ws/rest/to/model/\*`)<br><br>
+...
+
 ### UML Diagrams
 ...
 

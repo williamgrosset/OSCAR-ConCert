@@ -24,6 +24,7 @@
 
 package org.oscarehr.ws.rest;
 
+import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.util.MiscUtilsOld;
 import org.oscarehr.ws.rest.to.AuditSystemResponse;
 import org.oscarehr.ws.rest.to.AuditDatabaseResponse;
@@ -36,6 +37,7 @@ import org.oscarehr.ws.rest.to.model.AuditTomcatTo1;
 import org.oscarehr.ws.rest.to.model.AuditOscarTo1;
 import org.oscarehr.ws.rest.to.model.AuditDrugrefTo1;
 import org.oscarehr.managers.AuditManager;
+import org.oscarehr.managers.SecurityInfoManager;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,9 @@ public class AuditService extends AbstractServiceImpl {
     @Autowired
     protected AuditManager auditManager;
 
+    @Autowired
+    protected SecurityInfoManager securityInfoManager;
+
     /*
     *  Performs an audit check using AuditManager to access the required
     *  system auditing information and returns a JSON object to the client. 
@@ -68,6 +73,9 @@ public class AuditService extends AbstractServiceImpl {
     @Path("/systemInfo")
     @Produces("application/json")
     public AuditSystemResponse getAuditSystemInfo() {
+        LoggedInInfo info = getLoggedInInfo();
+        this.checkPrivileges(info); 
+
         AuditSystemResponse response = new AuditSystemResponse();
         AuditSystemTo1 model = new AuditSystemTo1();
 
@@ -101,6 +109,9 @@ public class AuditService extends AbstractServiceImpl {
     @Path("/databaseInfo")
     @Produces("application/json")
     public AuditDatabaseResponse getAuditDatabaseInfo() {
+        LoggedInInfo info = getLoggedInInfo();
+        this.checkPrivileges(info); 
+
         AuditDatabaseResponse response = new AuditDatabaseResponse();
         AuditDatabaseTo1 model = new AuditDatabaseTo1();
 
@@ -134,6 +145,9 @@ public class AuditService extends AbstractServiceImpl {
     @Path("/tomcatInfo")
     @Produces("application/json")
     public AuditTomcatResponse getAuditTomcatInfo() {
+        LoggedInInfo info = getLoggedInInfo();
+        this.checkPrivileges(info); 
+
         AuditTomcatResponse response = new AuditTomcatResponse();
         AuditTomcatTo1 model = new AuditTomcatTo1();
 
@@ -170,6 +184,9 @@ public class AuditService extends AbstractServiceImpl {
     @Path("/oscarInfo")
     @Produces("application/json")
     public AuditOscarResponse getAuditOscarInfo() {
+        LoggedInInfo info = getLoggedInInfo();
+        this.checkPrivileges(info); 
+
         AuditOscarResponse response = new AuditOscarResponse();
         AuditOscarTo1 model = new AuditOscarTo1();
 
@@ -207,6 +224,9 @@ public class AuditService extends AbstractServiceImpl {
     @Path("/drugrefInfo")
     @Produces("application/json")
     public AuditDrugrefResponse getAuditDrugrefInfo() {
+        LoggedInInfo info = getLoggedInInfo();
+        this.checkPrivileges(info); 
+
         AuditDrugrefResponse response = new AuditDrugrefResponse();
         AuditDrugrefTo1 model = new AuditDrugrefTo1();
 
@@ -231,5 +251,15 @@ public class AuditService extends AbstractServiceImpl {
             response.setMessage("An error has occured.");
         }
         return response;
+    }
+
+    /*
+    *  Check privileges for each API request using OSCAR's SecurityInfoManager
+    *  class. Throw SecurityException error if user does not have privileges.
+    */
+    private void checkPrivileges(LoggedInInfo info) {
+        if (!securityInfoManager.hasPrivilege(info, "_admin", "r", null)) {
+            throw new SecurityException("Missing required security object (_admin)");
+        }
     }
 }
