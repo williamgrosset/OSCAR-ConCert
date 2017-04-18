@@ -56,8 +56,8 @@ public class AuditManager {
     *  Retrieves system auditing information from an Audit object and returns
     *  a serializable model object to represent the data.
     *
-    *  @return model: A serializable AuditSystemTo1 object that represents the
-    *  property tags and data for the request.
+    *  @return model: An AuditSystemTo1 object that represents the property 
+    *                 tags and data for the request.
     */
     public AuditSystemTo1 auditSystem() {
         Date date = new Date();
@@ -81,8 +81,8 @@ public class AuditManager {
     *  Retrieves database auditing information from an Audit object and returns
     *  a serializable model object to represent the data.
     *
-    *  @return model: A serializable AuditDatabaseTo1 object that represents the
-    *  property tags and data for the request.
+    *  @return model: An AuditDatabaseTo1 object that represents the property 
+    *                 tags and data for the request.
     */
     public AuditDatabaseTo1 auditDatabase() {
         Date date = new Date();
@@ -108,8 +108,8 @@ public class AuditManager {
     *
     *  @param tomcatVersion: Tomcat version from servlet context.
     *
-    *  @return model:        A serializable AuditTomcatTo1 object that represents 
-    *                        the property tags and data for the request.
+    *  @return model:        An AuditTomcatTo1 object that represents the
+    *                        property tags and data for the request.
     */
     public AuditTomcatTo1 auditTomcat(String tomcatVersion) {
         Date date = new Date();
@@ -138,8 +138,8 @@ public class AuditManager {
     *  @param tomcatVersion: Tomcat version from servlet context.
     *  @param webAppName:    OSCAR web application name from servlet context.
     *
-    *  @return model:        A serializable AuditOscarTo1 object that represents 
-    *                        the property tags and data for the request.
+    *  @return model:        An AuditOscarTo1 object that represents the
+    *                        property tags and data for the request.
     */
     public AuditOscarTo1 auditOscar(String tomcatVersion, String webAppName) {
         Date date = new Date();
@@ -171,8 +171,8 @@ public class AuditManager {
     *  @param tomcatVersion: Tomcat version from servlet context.
     *  @param webAppName:    OSCAR web application name from servlet context.
     *
-    *  @return model:        A serializable AuditDrugrefTo1 object that represents 
-    *                        the property tags and data for the request.
+    *  @return model:        An AuditDrugrefTo1 object that represents the
+    *                        property tags and data for the request.
     */
     public AuditDrugrefTo1 auditDrugref(String tomcatVersion, String webAppName) {
         Date date = new Date();

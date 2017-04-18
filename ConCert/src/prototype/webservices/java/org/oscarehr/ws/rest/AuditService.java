@@ -69,7 +69,7 @@ public class AuditService extends AbstractServiceImpl {
     *  system auditing information and returns a JSON object to the client. 
     *  
     *  @return response: An AuditSystemResponse object that represents the
-    *  data for the request.
+    *                    JSON wrapper for the request.
     */
     @GET
     @Path("/systemInfo")
@@ -105,7 +105,7 @@ public class AuditService extends AbstractServiceImpl {
     *  database auditing information and returns a JSON object to the client. 
     *  
     *  @return response: An AuditDatabaseResponse object that represents the
-    *  data for the request.
+    *                    JSON wrapper for the request.
     */
     @GET
     @Path("/databaseInfo")
@@ -141,7 +141,7 @@ public class AuditService extends AbstractServiceImpl {
     *  Tomcat auditing information and returns a JSON object to the client. 
     *  
     *  @return response: An AuditTomcatResponse object that represents the
-    *  data for the request.
+    *                    JSON wrapper for the request.
     */
     @GET
     @Path("/tomcatInfo")
@@ -180,7 +180,7 @@ public class AuditService extends AbstractServiceImpl {
     *  OSCAR auditing information and returns a JSON object to the client. 
     *  
     *  @return response: An AuditOscarResponse object that represents the
-    *  data for the request.
+    *                    JSON wrapper for the request.
     */
     @GET
     @Path("/oscarInfo")
@@ -220,7 +220,7 @@ public class AuditService extends AbstractServiceImpl {
     *  Drugref auditing information and returns a JSON object to the client. 
     *  
     *  @return response: An AuditDrugrefResponse object that represents the
-    *  data for the request.
+    *                    JSON wrapper for the request.
     */
     @GET
     @Path("/drugrefInfo")
