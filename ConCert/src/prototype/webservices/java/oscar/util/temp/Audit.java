@@ -73,7 +73,7 @@ public class Audit {
         catalinaHome = getCatalinaHome();
         lsbRelease = getLsbRelease();
         tomcatSettings = getTomcatSettings(7);
-        jvmVersion = systemGetJvmVersion();
+        jvmVersion = System.getProperty("java.version");
     }
 
     public String getSystemVersion() {
@@ -209,19 +209,6 @@ public class Audit {
             }
         } catch (Exception e) {
             return new File("");
-        }
-    }
-
-    /*
-    *  Retrieve JVM version from system properties. 
-    *
-    *  @return jvmVersion: String value for JVM version.
-    */
-    private String systemGetJvmVersion() {
-        try {
-            return System.getProperty("java.version");
-        } catch (Exception e) {
-            return "";
         }
     }
 
