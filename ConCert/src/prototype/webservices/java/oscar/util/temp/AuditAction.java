@@ -75,13 +75,136 @@ public class AuditAction extends Action {
         return actionMapping.findForward("success");
     }
 
-    private String displaySystemInfo() {}
+    private String displaySystemInfo() {
+        try {
+            if (lsbRelease == null || lsbRelease.getPath().equals(""))
+                throw new FileNotFoundException();
 
-    private String displayDatabaseInfo() {}
+            String line = "";
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(lsbRelease);
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternDIST_DESC = Pattern.compile("^(DISTRIB_DESCRIPTION\\s?=).*");
 
-    private String displayTomcatInfo(String tomcatVersion) {}
+            while ((line = rf.readLine()) != null) {
+                Matcher matcherComment = patternComment.matcher(line);
+                if (matcherComment.matches()) continue;
+                Matcher matcherDIST_DESC = patternDIST_DESC.matcher(line);
 
-    private String displayOscarInfo(String tomcatVersion, String webAppName) {}
+                if (matcherDIST_DESC.matches()) {
+                    this.systemVersion = line.substring(matcherDIST_DESC.group(1).length()).trim();
+                    return "Version: " + this.systemVersion;
+                }
+            }
+            return "Could not detect Linux server version.";
+        } catch (Exception e) {
+            return "Could not read \"lsb-release\" file to detect Linux server version.";
+        }
+    }
+
+    private String displayDatabaseInfo() {
+        try {
+            connection = DbConnectionFilter.getThreadLocalDbConnection();
+            if (connection == null) throw new NullPointerException();
+
+            StringBuilder output = new StringBuilder();
+            DatabaseMetaData metaData = connection.getMetaData();
+            this.dbType = metaData.getDatabaseProductName().trim();
+            this.dbVersion = metaData.getDatabaseProductVersion().trim();
+
+            output.append("Type: " + this.dbType + "<br />");
+            output.append("Version: " + this.dbVersion);
+            return output.toString();
+        } catch (Exception e) {
+            return "Cannot determine database type and version.";
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (Exception e) {
+                    return "Cannot close connection to database.";
+                }
+            }
+        }
+    }
+
+    private String displayTomcatInfo(String tomcatVersion) {
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
+        if (jvmVersion == null || jvmVersion.equals(""))
+            return "Could not detect JVM version from system properties.";
+
+        this.tomcatVersion = tomcatVersion;
+
+        StringBuilder output = new StringBuilder();
+        output.append("JVM Version: " + this.jvmVersion + "<br />");
+        output.append("Tomcat version: " + this.tomcatVersion);
+        return output.toString();
+    }
+
+    private String displayOscarInfo(String tomcatVersion, String webAppName) {
+        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
+                || catalinaHome.getPath().equals("")) {
+            return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
+        }
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
+        if (webAppName == null || webAppName.equals(""))
+            return "Could not detect the Oscar webapps directory name.";
+
+        this.webAppName = webAppName;
+
+        StringBuilder output = new StringBuilder();
+        // Tomcat 7
+        if (extractTomcatVersionNumber(tomcatVersion) == 7) {
+            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
+            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
+            output.append(verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties"));
+            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
+        // Tomcat 8
+        } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
+            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
+            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
+            output.append(verifyOscarProperties(System.getProperty("user.home") + "/" + webAppName + ".properties"));
+            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
+        // No Tomcat version found
+        } else {
+            output.append("Could not detect Tomcat version number to determine audit check for Oscar properties.");
+        }
+        return output.toString();
+    }
     
-    private String displayDrugrefInfo(String tomcatVersion) {}
+    private String displayDrugrefInfo(String tomcatVersion) {
+        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
+                || catalinaHome.getPath().equals(""))
+            return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
+        if (drugrefUrl == null)
+            return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
+
+        // Grab deployed Drugref folder name and use as the file name for the properties file
+        Pattern patternDrugrefUrl = Pattern.compile(".*://.*/(drugref.*)/.*");
+        Matcher matcherDrugrefUrl = patternDrugrefUrl.matcher(drugrefUrl);
+
+        if (matcherDrugrefUrl.matches()) {
+            StringBuilder output = new StringBuilder();
+            // Tomcat 7
+            if (extractTomcatVersionNumber(tomcatVersion) == 7) {
+                output.append("<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />");
+                output.append(verifyDrugrefProperties(catalinaHome.getPath() + "/" + matcherDrugrefUrl.group(1) + ".properties"));
+            // Tomcat 8
+            } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
+                output.append("<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />");
+                output.append(verifyDrugrefProperties(System.getProperty("user.home") + "/" + matcherDrugrefUrl.group(1) + ".properties"));
+            // No Tomcat version found
+            } else {
+                output.append("Could not detect Tomcat version number to determine audit check for Drugref properties.");
+            }
+            return output.toString();
+        } else {
+            return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
+        }
+    }
 }

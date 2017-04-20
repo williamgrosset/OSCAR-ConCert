@@ -279,7 +279,6 @@ public class AuditNew {
         }
     }
     
-
     /*
     *  Extract JVM version from system properties and server version information 
     *  from servlet.
@@ -288,21 +287,6 @@ public class AuditNew {
     *
     *  @return output:       JVM and Tomcat version information.
     */
-    /* CURRENTLY DISABLED FOR REFACTORING
-    public String verifyTomcat(String tomcatVersion) {
-        if (tomcatVersion == null || tomcatVersion.equals(""))
-            return "Could not detect Tomcat version.";
-        if (jvmVersion == null || jvmVersion.equals(""))
-            return "Could not detect JVM version from system properties.";
-
-        this.tomcatVersion = tomcatVersion;
-
-        StringBuilder output = new StringBuilder();
-        output.append("JVM Version: " + this.jvmVersion + "<br />");
-        output.append("Tomcat version: " + this.tomcatVersion);
-        return output.toString();
-    }*/
-
     private String verifyTomcatVersion(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
@@ -376,51 +360,6 @@ public class AuditNew {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
     }
-
-    /*
-    *  Verify the current Oscar instance. Check build, version, and the default 
-    *  properties file in the WAR and the custom properties file in the appropriate
-    *  Tomcat directory.
-    *
-    *  @param tomcatVersion: Tomcat version.
-    *  @param webAppName:    Web application name for OSCAR.
-    *
-    *  @return output:       Combined output of Oscar build and properties information.
-    */
-    /* CURRENTLY DISABLED FOR REFACTORING
-    public String verifyOscar(String tomcatVersion, String webAppName) {
-        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
-                || catalinaHome.getPath().equals("")) {
-            return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-        }
-        if (tomcatVersion == null || tomcatVersion.equals(""))
-            return "Could not detect Tomcat version.";
-        if (webAppName == null || webAppName.equals(""))
-            return "Could not detect the Oscar webapps directory name.";
-
-        this.webAppName = webAppName;
-
-        StringBuilder output = new StringBuilder();
-        // Tomcat 7
-        if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
-            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
-            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
-            output.append(verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties"));
-            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
-        // Tomcat 8
-        } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
-            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
-            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
-            output.append(verifyOscarProperties(System.getProperty("user.home") + "/" + webAppName + ".properties"));
-            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
-        // No Tomcat version found
-        } else {
-            output.append("Could not detect Tomcat version number to determine audit check for Oscar properties.");
-        }
-        return output.toString();
-    }*/
 
     /*
     *  Verify the current Oscar instance. Check build, version, and the default 
