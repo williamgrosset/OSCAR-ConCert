@@ -289,6 +289,7 @@ public class AuditNew {
     *
     *  @return output:       JVM and Tomcat version information.
     */
+    /* CURRENTLY DISABLED FOR REFACTORING
     public String verifyTomcat(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
@@ -301,6 +302,82 @@ public class AuditNew {
         output.append("JVM Version: " + this.jvmVersion + "<br />");
         output.append("Tomcat version: " + this.tomcatVersion);
         return output.toString();
+    }
+
+    private String verifyTomcatVersion(String tomcatVersion) {
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
+        this.tomcatVersion = tomcatVersion;
+        return this.tomcatVersion;
+    }*/
+
+    /*
+    *  Read through the Tomcat settings file and echo the Xmx and Xms values to 
+    *  the user.
+    *
+    *  @param tomcatVersion: Tomcat version.
+    *
+    *  @return output:       Xmx value (maximum memory allocation) and Xms value 
+    *                        (minimum memory allocation) for JVM heap size.
+    */
+    public String verifyTomcatReinforcement(String tomcatVersion) {
+        if (tomcatVersion == null || tomcatVersion.equals(""))
+            return "Could not detect Tomcat version.";
+        if (catalinaBase == null || catalinaBase.getPath().equals(""))
+            return "Please verify that your \"catalina.base\" directory is setup correctly.";
+
+        this.tomcatVersion = tomcatVersion;
+
+        try {
+            // Determine which version of Tomcat settings file to check
+            int version = extractTomcatVersionNumber(tomcatVersion);
+            tomcatSettings = getTomcatSettings(version);
+            if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
+                return "Could not detect Tomcat settings file."; 
+
+            String line = "";
+            StringBuilder output = new StringBuilder();
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternXmx = Pattern.compile(".*(Xmx[0-9]+m).*");
+            Pattern patternXms = Pattern.compile(".*(Xms[0-9]+m).*");
+            boolean flag1 = false;
+            boolean flag2 = false;
+
+            while ((line = rf.readLine()) != null) {
+                Matcher matcherComment = patternComment.matcher(line);
+                if (matcherComment.matches()) continue;
+                Matcher matcherXmx = patternXmx.matcher(line);
+                Matcher matcherXms = patternXms.matcher(line);
+
+                if (!flag1) {
+                    if (matcherXmx.matches()) { // e.g. Xmx2056m
+                        flag1 = true;
+                        this.xmx = matcherXmx.group(1).substring(3);
+                        output.append("Xmx value: " + this.xmx + "<br />");
+                    }
+                }
+                if (!flag2) {
+                    if (matcherXms.matches()) { // e.g. Xms1024m
+                        flag2 = true;
+                        this.xms = matcherXms.group(1).substring(3);
+                        output.append("Xms value: " + this.xms + "<br />");
+                    }
+                }
+                if (flag1 && flag2)
+                    break;
+            }
+
+            if (!flag1) {
+                output.append("Could not detect Xmx value." + "<br />");
+            }
+            if (!flag2) {
+                output.append("Could not detect Xms value." + "<br />");
+            }
+            return output.toString();
+        } catch (Exception e) {
+            return "Could not detect Tomcat memory allocation in Tomcat settings file.";
+        }
     }
 
     /*
@@ -348,8 +425,61 @@ public class AuditNew {
     }
 
     /*
-    *  ***********************NEEDS UPDATING*************************************
+    *  Read Oscar "buildtag" and "buildDateTime" of properties file.
     *
+    *  @param fileName: Path to properties file.
+    *
+    *  @return output:  Current Oscar build, version, and date of build.
+    */
+    private String oscarBuild(String fileName) {
+        try {
+            if (fileName == null || fileName.equals(""))
+                return "Could not detect filename for properties file.";
+
+            String line = "";
+            StringBuilder output = new StringBuilder();
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternBuildtag = Pattern.compile("^(buildtag\\s?(=|:)).*");
+            Pattern patternBuildDateTime = Pattern.compile("^(buildDateTime\\s?(=|:)).*");
+            boolean flag1 = false;
+            boolean flag2 = false;
+
+            while ((line = rf.readLine()) != null) {
+                Matcher matcherComment = patternComment.matcher(line);
+                Matcher matcherBuildtag = patternBuildtag.matcher(line);
+                Matcher matcherBuildDateTime = patternBuildDateTime.matcher(line);
+                if (matcherComment.matches()) continue;
+
+                if (!flag1) {
+                    if (matcherBuildtag.matches()) { // buildtag=
+                        flag1 = true;
+                        this.build = line.substring(matcherBuildtag.group(1).length()).trim();
+                        output.append("Oscar build and version: " + this.build + "<br />");
+                    }
+                }
+                if (!flag2) {
+                    if (matcherBuildDateTime.matches()) { // buildDateTime=
+                        flag2 = true;
+                        this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
+                        output.append("Oscar build date and time: " + this.buildDate + "<br />");
+                    }
+                }
+                if (flag1 && flag2)
+                    break;
+            }
+
+            if (!flag1)
+                output.append("Could not detect Oscar build tag." + "<br />");
+            if (!flag2)
+                output.append("Could not detect Oscar build date and time." + "<br />");
+            return output.toString();
+        } catch (Exception e) {
+            return "Could not read properties file to detect Oscar build.<br />";
+        }
+    }
+
+    /*
     *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and "drugref_url" tags 
     *  of Oscar properties file.
     *
@@ -560,75 +690,6 @@ public class AuditNew {
             return output.toString();
         } catch (Exception e) {
             return "Could not read properties file to verify Drugref tags.";
-        }
-    }
-
-    /*
-    *  Read through the Tomcat settings file and echo the Xmx and Xms values to 
-    *  the user.
-    *
-    *  @param tomcatVersion: Tomcat version.
-    *
-    *  @return output:       Xmx value (maximum memory allocation) and Xms value 
-    *                        (minimum memory allocation) for JVM heap size.
-    */
-    public String tomcatReinforcement(String tomcatVersion) {
-        if (tomcatVersion == null || tomcatVersion.equals(""))
-            return "Could not detect Tomcat version.";
-        if (catalinaBase == null || catalinaBase.getPath().equals(""))
-            return "Please verify that your \"catalina.base\" directory is setup correctly.";
-
-        this.tomcatVersion = tomcatVersion;
-
-        try {
-            // Determine which version of Tomcat settings file to check
-            int version = extractTomcatVersionNumber(tomcatVersion);
-            tomcatSettings = getTomcatSettings(version);
-            if (tomcatSettings == null || tomcatSettings.getPath().equals(""))
-                return "Could not detect Tomcat settings file."; 
-
-            String line = "";
-            StringBuilder output = new StringBuilder();
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(tomcatSettings);
-            Pattern patternComment = Pattern.compile("^(#).*");
-            Pattern patternXmx = Pattern.compile(".*(Xmx[0-9]+m).*");
-            Pattern patternXms = Pattern.compile(".*(Xms[0-9]+m).*");
-            boolean flag1 = false;
-            boolean flag2 = false;
-
-            while ((line = rf.readLine()) != null) {
-                Matcher matcherComment = patternComment.matcher(line);
-                if (matcherComment.matches()) continue;
-                Matcher matcherXmx = patternXmx.matcher(line);
-                Matcher matcherXms = patternXms.matcher(line);
-
-                if (!flag1) {
-                    if (matcherXmx.matches()) { // e.g. Xmx2056m
-                        flag1 = true;
-                        this.xmx = matcherXmx.group(1).substring(3);
-                        output.append("Xmx value: " + this.xmx + "<br />");
-                    }
-                }
-                if (!flag2) {
-                    if (matcherXms.matches()) { // e.g. Xms1024m
-                        flag2 = true;
-                        this.xms = matcherXms.group(1).substring(3);
-                        output.append("Xms value: " + this.xms + "<br />");
-                    }
-                }
-                if (flag1 && flag2)
-                    break;
-            }
-
-            if (!flag1) {
-                output.append("Could not detect Xmx value." + "<br />");
-            }
-            if (!flag2) {
-                output.append("Could not detect Xms value." + "<br />");
-            }
-            return output.toString();
-        } catch (Exception e) {
-            return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
     }
 
