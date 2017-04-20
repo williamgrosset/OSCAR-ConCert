@@ -302,14 +302,14 @@ public class AuditNew {
         output.append("JVM Version: " + this.jvmVersion + "<br />");
         output.append("Tomcat version: " + this.tomcatVersion);
         return output.toString();
-    }
+    }*/
 
     private String verifyTomcatVersion(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
         this.tomcatVersion = tomcatVersion;
         return this.tomcatVersion;
-    }*/
+    }
 
     /*
     *  Read through the Tomcat settings file and echo the Xmx and Xms values to 
@@ -422,61 +422,6 @@ public class AuditNew {
             output.append("Could not detect Tomcat version number to determine audit check for Oscar properties.");
         }
         return output.toString();
-    }
-
-    /*
-    *  Read Oscar "buildtag" and "buildDateTime" of properties file.
-    *
-    *  @param fileName: Path to properties file.
-    *
-    *  @return output:  Current Oscar build, version, and date of build.
-    */
-    private String oscarBuild(String fileName) {
-        try {
-            if (fileName == null || fileName.equals(""))
-                return "Could not detect filename for properties file.";
-
-            String line = "";
-            StringBuilder output = new StringBuilder();
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
-            Pattern patternComment = Pattern.compile("^(#).*");
-            Pattern patternBuildtag = Pattern.compile("^(buildtag\\s?(=|:)).*");
-            Pattern patternBuildDateTime = Pattern.compile("^(buildDateTime\\s?(=|:)).*");
-            boolean flag1 = false;
-            boolean flag2 = false;
-
-            while ((line = rf.readLine()) != null) {
-                Matcher matcherComment = patternComment.matcher(line);
-                Matcher matcherBuildtag = patternBuildtag.matcher(line);
-                Matcher matcherBuildDateTime = patternBuildDateTime.matcher(line);
-                if (matcherComment.matches()) continue;
-
-                if (!flag1) {
-                    if (matcherBuildtag.matches()) { // buildtag=
-                        flag1 = true;
-                        this.build = line.substring(matcherBuildtag.group(1).length()).trim();
-                        output.append("Oscar build and version: " + this.build + "<br />");
-                    }
-                }
-                if (!flag2) {
-                    if (matcherBuildDateTime.matches()) { // buildDateTime=
-                        flag2 = true;
-                        this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
-                        output.append("Oscar build date and time: " + this.buildDate + "<br />");
-                    }
-                }
-                if (flag1 && flag2)
-                    break;
-            }
-
-            if (!flag1)
-                output.append("Could not detect Oscar build tag." + "<br />");
-            if (!flag2)
-                output.append("Could not detect Oscar build date and time." + "<br />");
-            return output.toString();
-        } catch (Exception e) {
-            return "Could not read properties file to detect Oscar build.<br />";
-        }
     }
 
     /*
