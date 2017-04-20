@@ -221,7 +221,7 @@ public class AuditNew {
     *
     *  @return output: Linux server version.
     */
-    public String systemInfo() {
+    public String verifySystemInfo() {
         try {
             if (lsbRelease == null || lsbRelease.getPath().equals(""))
                 throw new FileNotFoundException();
@@ -254,7 +254,7 @@ public class AuditNew {
     *
     *  @return output: Database type and version.
     */
-    public String databaseInfo() {
+    public String verifyDatabaseInfo() {
         try {
             connection = DbConnectionFilter.getThreadLocalDbConnection();
             if (connection == null) throw new NullPointerException();
