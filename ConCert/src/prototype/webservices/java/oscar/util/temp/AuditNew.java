@@ -237,8 +237,7 @@ public class AuditNew {
                 Matcher matcherDIST_DESC = patternDIST_DESC.matcher(line);
 
                 if (matcherDIST_DESC.matches()) {
-                    String match = line.substring(matcherDIST_DESC.group(1).length());
-                    this.systemVersion = match.replaceAll("^\\\"", "").replaceAll("\\\"$", "");
+                    this.systemVersion = line.substring(matcherDIST_DESC.group(1).length()).trim();
                     return "Version: " + this.systemVersion;
                 }
             }
@@ -368,12 +367,10 @@ public class AuditNew {
                     break;
             }
 
-            if (!flag1) {
+            if (!flag1)
                 output.append("Could not detect Xmx value." + "<br />");
-            }
-            if (!flag2) {
+            if (!flag2)
                 output.append("Could not detect Xms value." + "<br />");
-            }
             return output.toString();
         } catch (Exception e) {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
@@ -538,14 +535,12 @@ public class AuditNew {
     */
     public String verifyDrugref(String tomcatVersion) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("")
-                || catalinaHome.getPath().equals("")) {
+                || catalinaHome.getPath().equals(""))
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-        }
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
-        if (drugrefUrl.equals("")) {
+        if (drugrefUrl.equals(""))
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
-        }
 
         // Grab deployed Drugref folder name and use as the file name for the properties file
         Pattern patternDrugrefUrl = Pattern.compile(".*://.*/(drugref.*)/.*");
