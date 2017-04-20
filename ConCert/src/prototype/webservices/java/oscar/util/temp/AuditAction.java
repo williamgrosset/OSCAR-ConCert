@@ -74,4 +74,14 @@ public class AuditAction extends Action {
 
         return actionMapping.findForward("success");
     }
+
+    private String displaySystemInfo() {}
+
+    private String displayDatabaseInfo() {}
+
+    private String displayTomcatInfo(String tomcatVersion) {}
+
+    private String displayOscarInfo(String tomcatVersion, String webAppName) {}
+    
+    private String displayDrugrefInfo(String tomcatVersion) {}
 }

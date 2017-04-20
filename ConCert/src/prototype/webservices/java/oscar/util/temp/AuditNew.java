@@ -617,7 +617,7 @@ public class AuditNew {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
-        if (drugrefUrl.equals(""))
+        if (drugrefUrl == null)
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
 
         // Grab deployed Drugref folder name and use as the file name for the properties file
