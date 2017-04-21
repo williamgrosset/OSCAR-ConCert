@@ -344,19 +344,15 @@ public class Audit {
                 Matcher matcherXmx = patternXmx.matcher(line);
                 Matcher matcherXms = patternXms.matcher(line);
 
-                if (!flag1) {
-                    if (matcherXmx.matches()) { // e.g. Xmx2056m
-                        flag1 = true;
-                        this.xmx = matcherXmx.group(1).substring(3);
-                        output.append("Xmx value: " + this.xmx + "\n");
-                    }
+                if (!flag1 && matcherXmx.matches()) { // e.g. Xmx2056m
+                    flag1 = true;
+                    this.xmx = matcherXmx.group(1).substring(3);
+                    output.append("Xmx value: " + this.xmx + "\n");
                 }
-                if (!flag2) {
-                    if (matcherXms.matches()) { // e.g. Xms1024m
-                        flag2 = true;
-                        this.xms = matcherXms.group(1).substring(3);
-                        output.append("Xms value: " + this.xms + "\n");
-                    }
+                if (!flag2 && matcherXms.matches()) { // e.g. Xms1024m
+                    flag2 = true;
+                    this.xms = matcherXms.group(1).substring(3);
+                    output.append("Xms value: " + this.xms + "\n");
                 }
                 if (flag1 && flag2)
                     break;
@@ -449,47 +445,35 @@ public class Audit {
                 Matcher matcherTMP_DIR = patternTMP_DIR.matcher(line);
                 Matcher matcherDrugrefUrl = patternDrugrefUrl.matcher(line);
 
-                if (!flag1) {
-                    if (matcherBuildtag.matches()) { // buildtag=
-                        flag1 = true;
-                        this.build = line.substring(matcherBuildtag.group(1).length()).trim();
-                        output.append("Oscar build and version: " + this.build + "\n");
-                    }
+                if (!flag1 && matcherBuildtag.matches()) { // buildtag=
+                    flag1 = true;
+                    this.build = line.substring(matcherBuildtag.group(1).length()).trim();
+                    output.append("Oscar build and version: " + this.build + "\n");
                 }
-                if (!flag2) {
-                    if (matcherBuildDateTime.matches()) { // buildDateTime=
-                        flag2 = true;
-                        this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
-                        output.append("Oscar build date and time: " + this.buildDate + "\n");
-                    }
+                if (!flag2 && matcherBuildDateTime.matches()) { // buildDateTime=
+                    flag2 = true;
+                    this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
+                    output.append("Oscar build date and time: " + this.buildDate + "\n");
                 }
-                if (!flag3) {
-                    if (matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
-                        flag3 = true;
-                        this.hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length()).trim();
-                        output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "\n");
-                    }
+                if (!flag3 && matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
+                    flag3 = true;
+                    this.hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length()).trim();
+                    output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "\n");
                 }
-                if (!flag4) {
-                    if (matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
-                        flag4 = true;
-                        this.singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length()).trim();
-                        output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "\n");
-                    }
+                if (!flag4 && matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
+                    flag4 = true;
+                    this.singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length()).trim();
+                    output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "\n");
                 }
-                if (!flag5) {
-                    if (matcherTMP_DIR.matches()) { // TMP_DIR=
-                        flag5 = true;
-                        this.tmpDir = line.substring(matcherTMP_DIR.group(1).length()).trim();
-                        output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "\n");
-                    }
+                if (!flag5 && matcherTMP_DIR.matches()) { // TMP_DIR=
+                    flag5 = true;
+                    this.tmpDir = line.substring(matcherTMP_DIR.group(1).length()).trim();
+                    output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "\n");
                 }
-                if (!flag4) {
-                    if (matcherDrugrefUrl.matches()) { // drugref_url=
-                        flag6 = true;
-                        this.drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length()).trim();
-                        output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "\n");
-                    }
+                if (!flag6 && matcherDrugrefUrl.matches()) { // drugref_url=
+                    flag6 = true;
+                    this.drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length()).trim();
+                    output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "\n");
                 }
                 if (flag1 && flag2 && flag3 && flag4 && flag5 && flag6)
                     break;
@@ -581,26 +565,20 @@ public class Audit {
                 Matcher matcherDb_url = patternDb_url.matcher(line);
                 Matcher matcherDb_driver = patternDb_driver.matcher(line);
 
-                if (!flag1) {
-                    if (matcherDb_user.matches()) { // db_user=
-                        flag1 = true;
-                        this.dbUser = line.substring(matcherDb_user.group(1).length()).trim();
-                        output.append("\"db_user\" tag is configured as: " + this.dbUser + "\n");
-                    }
+                if (!flag1 && matcherDb_user.matches()) { // db_user=
+                    flag1 = true;
+                    this.dbUser = line.substring(matcherDb_user.group(1).length()).trim();
+                    output.append("\"db_user\" tag is configured as: " + this.dbUser + "\n");
                 }
-                if (!flag2) {
-                    if (matcherDb_url.matches()) { // db_url=
-                        flag2 = true;
-                        this.dbUrl = line.substring(matcherDb_url.group(1).length()).trim();
-                        output.append("\"db_url\" tag is configured as: " + this.dbUrl + "\n");
-                    }
+                if (!flag2 && matcherDb_url.matches()) { // db_url=
+                    flag2 = true;
+                    this.dbUrl = line.substring(matcherDb_url.group(1).length()).trim();
+                    output.append("\"db_url\" tag is configured as: " + this.dbUrl + "\n");
                 }
-                if (!flag3) {
-                    if (matcherDb_driver.matches()) { // db_driver=
-                        flag3 = true;
-                        this.dbDriver = line.substring(matcherDb_driver.group(1).length()).trim();
-                        output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "\n");
-                    }
+                if (!flag3 && matcherDb_driver.matches()) { // db_driver=
+                    flag3 = true;
+                    this.dbDriver = line.substring(matcherDb_driver.group(1).length()).trim();
+                    output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "\n");
                 }
                 if (flag1 && flag2 && flag3)
                     break;
