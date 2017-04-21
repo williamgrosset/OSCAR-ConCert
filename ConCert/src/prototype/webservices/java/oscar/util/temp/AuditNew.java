@@ -263,7 +263,7 @@ public class AuditNew {
             this.dbType = metaData.getDatabaseProductName().trim();
             this.dbVersion = metaData.getDatabaseProductVersion().trim();
 
-            output.append("Type: " + this.dbType + "<br />");
+            output.append("Type: " + this.dbType + "\n");
             output.append("Version: " + this.dbVersion);
             return output.toString();
         } catch (Exception e) {
@@ -290,6 +290,7 @@ public class AuditNew {
     private String verifyTomcatVersion(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
+
         this.tomcatVersion = tomcatVersion;
         return this.tomcatVersion;
     }
@@ -337,14 +338,14 @@ public class AuditNew {
                     if (matcherXmx.matches()) { // e.g. Xmx2056m
                         flag1 = true;
                         this.xmx = matcherXmx.group(1).substring(3);
-                        output.append("Xmx value: " + this.xmx + "<br />");
+                        output.append("Xmx value: " + this.xmx + "\n");
                     }
                 }
                 if (!flag2) {
                     if (matcherXms.matches()) { // e.g. Xms1024m
                         flag2 = true;
                         this.xms = matcherXms.group(1).substring(3);
-                        output.append("Xms value: " + this.xms + "<br />");
+                        output.append("Xms value: " + this.xms + "\n");
                     }
                 }
                 if (flag1 && flag2)
@@ -352,9 +353,9 @@ public class AuditNew {
             }
 
             if (!flag1)
-                output.append("Could not detect Xmx value." + "<br />");
+                output.append("Could not detect Xmx value." + "\n");
             if (!flag2)
-                output.append("Could not detect Xms value." + "<br />");
+                output.append("Could not detect Xms value." + "\n");
             return output.toString();
         } catch (Exception e) {
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
@@ -385,14 +386,10 @@ public class AuditNew {
         StringBuilder output = new StringBuilder();
         // Tomcat 7
         if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
             output.append(verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties"));
-            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
         // Tomcat 8
         } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-            output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
             output.append(verifyOscarProperties(System.getProperty("user.home") + "/" + webAppName + ".properties"));
-            output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
         // No Tomcat version found
         } else {
             output.append("Could not detect Tomcat version number to determine audit check for Oscar properties.");
@@ -424,11 +421,9 @@ public class AuditNew {
         StringBuilder output = new StringBuilder();
         // Tomcat 7
         if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
             output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
         // Tomcat 8
         } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-            output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
             output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
         // No Tomcat version found
         } else {
@@ -482,59 +477,59 @@ public class AuditNew {
                     if (matcherBuildtag.matches()) { // buildtag=
                         flag1 = true;
                         this.build = line.substring(matcherBuildtag.group(1).length()).trim();
-                        output.append("Oscar build and version: " + this.build + "<br />");
+                        output.append("Oscar build and version: " + this.build + "\n");
                     }
                 }
                 if (!flag2) {
                     if (matcherBuildDateTime.matches()) { // buildDateTime=
                         flag2 = true;
                         this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
-                        output.append("Oscar build date and time: " + this.buildDate + "<br />");
+                        output.append("Oscar build date and time: " + this.buildDate + "\n");
                     }
                 }
                 if (!flag3) {
                     if (matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
                         flag3 = true;
                         this.hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length()).trim();
-                        output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "<br />");
+                        output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "\n");
                     }
                 }
                 if (!flag4) {
                     if (matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
                         flag4 = true;
                         this.singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length()).trim();
-                        output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "<br />");
+                        output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "\n");
                     }
                 }
                 if (!flag5) {
                     if (matcherTMP_DIR.matches()) { // TMP_DIR=
                         flag5 = true;
                         this.tmpDir = line.substring(matcherTMP_DIR.group(1).length()).trim();
-                        output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "<br />");
+                        output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "\n");
                     }
                 }
                 if (!flag4) {
                     if (matcherDrugrefUrl.matches()) { // drugref_url=
                         flag6 = true;
                         this.drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length()).trim();
-                        output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "<br />");
+                        output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "\n");
                     }
                 }
                 if (flag1 && flag2 && flag3 && flag4 && flag5 && flag6)
                     break;
             }
             if (!flag1)
-                output.append("Could not detect Oscar build tag." + "<br />");
+                output.append("Could not detect Oscar build tag." + "\n");
             if (!flag2)
-                output.append("Could not detect Oscar build date and time." + "<br />");
+                output.append("Could not detect Oscar build date and time." + "\n");
             if (!flag3)
-                output.append("Could not detect \"HL7TEXT_LABS\" tag." + "<br />");
+                output.append("Could not detect \"HL7TEXT_LABS\" tag." + "\n");
             if (!flag4)
-                output.append("Could not detect \"SINGLE_PAGE_CHART\" tag." + "<br />");
+                output.append("Could not detect \"SINGLE_PAGE_CHART\" tag." + "\n");
             if (!flag5)
-                output.append("Could not detect \"TMP_DIR\" tag." + "<br />");
+                output.append("Could not detect \"TMP_DIR\" tag." + "\n");
             if (!flag6)
-                output.append("Could not detect \"drugref_url\" tag." + "<br />");
+                output.append("Could not detect \"drugref_url\" tag." + "\n");
             return output.toString();
         } catch (Exception e) {
             return "Could not read properties file to verify Oscar tags.";
@@ -567,11 +562,9 @@ public class AuditNew {
             StringBuilder output = new StringBuilder();
             // Tomcat 7
             if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-                output.append("<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />");
                 output.append(verifyDrugrefProperties(catalinaHome.getPath() + "/" + matcherDrugrefUrl.group(1) + ".properties"));
             // Tomcat 8
             } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-                output.append("<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />");
                 output.append(verifyDrugrefProperties(System.getProperty("user.home") + "/" + matcherDrugrefUrl.group(1) + ".properties"));
             // No Tomcat version found
             } else {
@@ -617,21 +610,21 @@ public class AuditNew {
                     if (matcherDb_user.matches()) { // db_user=
                         flag1 = true;
                         this.dbUser = line.substring(matcherDb_user.group(1).length()).trim();
-                        output.append("\"db_user\" tag is configured as: " + this.dbUser + "<br />");
+                        output.append("\"db_user\" tag is configured as: " + this.dbUser + "\n");
                     }
                 }
                 if (!flag2) {
                     if (matcherDb_url.matches()) { // db_url=
                         flag2 = true;
                         this.dbUrl = line.substring(matcherDb_url.group(1).length()).trim();
-                        output.append("\"db_url\" tag is configured as: " + this.dbUrl + "<br />");
+                        output.append("\"db_url\" tag is configured as: " + this.dbUrl + "\n");
                     }
                 }
                 if (!flag3) {
                     if (matcherDb_driver.matches()) { // db_driver=
                         flag3 = true;
                         this.dbDriver = line.substring(matcherDb_driver.group(1).length()).trim();
-                        output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "<br />");
+                        output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "\n");
                     }
                 }
                 if (flag1 && flag2 && flag3)
@@ -639,11 +632,11 @@ public class AuditNew {
             }
 
             if (!flag1)
-                output.append("Could not detect \"db_user\" tag." + "<br />");
+                output.append("Could not detect \"db_user\" tag." + "\n");
             if (!flag2)
-                output.append("Could not detect \"db_url\" tag." + "<br />");
+                output.append("Could not detect \"db_url\" tag." + "\n");
             if (!flag3)
-                output.append("Could not detect \"db_driver\" tag." + "<br />");
+                output.append("Could not detect \"db_driver\" tag." + "\n");
             return output.toString();
         } catch (Exception e) {
             return "Could not read properties file to verify Drugref tags.";
