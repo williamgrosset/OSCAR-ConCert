@@ -383,7 +383,7 @@ public class AuditNew {
     *
     *  @return output:       Combined output of Oscar build and properties information.
     */
-    public String verifyOscar(String tomcatVersion, String webAppName) {
+    public String verifyOscar(String tomcatVersion, boolean isMcmaster) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
                 || catalinaHome.getPath().equals(""))
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
@@ -393,56 +393,21 @@ public class AuditNew {
             return "Could not detect the Oscar webapps directory name.";
 
         this.webAppName = webAppName;
-
         StringBuilder output = new StringBuilder();
-        // Tomcat 7
-        if (extractTomcatVersionNumber(tomcatVersion) == 7) {
+
+        if (extractTomcatVersionNumber(tomcatVersion) == 7 && isMcmaster)
+            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+        else if (extractTomcatVersionNumber(tomcatVersion) == 7 && !isMcmaster)
             output.append(verifyOscarProperties(catalinaHome.getPath() + "/" + webAppName + ".properties"));
-        // Tomcat 8
-        } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
+        else if (extractTomcatVersionNumber(tomcatVersion) == 8 && isMcmaster)
+            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
+        else if (extractTomcatVersionNumber(tomcatVersion) == 8 && !isMcmaster)
             output.append(verifyOscarProperties(System.getProperty("user.home") + "/" + webAppName + ".properties"));
-        // No Tomcat version found
-        } else {
+        else
             output.append("Could not detect Tomcat version number to determine audit check for Oscar properties.");
-        }
+
         return output.toString();
     }
-
-    /*
-    *  Verify the current Oscar instance. Check build, version, and the default 
-    *  properties file in the WAR and the custom properties file in the appropriate
-    *  Tomcat directory.
-    *
-    *  @param tomcatVersion: Tomcat version.
-    *  @param webAppName:    Web application name for OSCAR.
-    *
-    *  @return output:       Combined output of Oscar build and properties information.
-    */
-    public String verifyOscarMcmaster(String tomcatVersion, String webAppName) {
-        if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
-                || catalinaHome.getPath().equals(""))
-            return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
-        if (tomcatVersion == null || tomcatVersion.equals(""))
-            return "Could not detect Tomcat version.";
-        if (webAppName == null || webAppName.equals(""))
-            return "Could not detect the Oscar webapps directory name.";
-
-        this.webAppName = webAppName;
-
-        StringBuilder output = new StringBuilder();
-        // Tomcat 7
-        if (extractTomcatVersionNumber(tomcatVersion) == 7) {
-            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
-        // Tomcat 8
-        } else if (extractTomcatVersionNumber(tomcatVersion) == 8) {
-            output.append(verifyOscarProperties(catalinaBase.getPath() + "/webapps/" + webAppName + "/WEB-INF/classes/oscar_mcmaster.properties"));
-        // No Tomcat version found
-        } else {
-            output.append("Could not detect Tomcat version number to determine audit check for Oscar properties.");
-        }
-        return output.toString();
-    }
-
 
     /*
     *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and "drugref_url" tags 
