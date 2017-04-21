@@ -26,6 +26,8 @@ package oscar.util;
 
 import org.oscarehr.util.DbConnectionFilter;
 import org.apache.commons.io.input.ReversedLinesFileReader;
+import org.apache.log4j.Logger;
+import org.oscarehr.util.MiscUtilsOld;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -48,6 +50,7 @@ public class AuditNew {
     private File lsbRelease;
     private File tomcatSettings;
     private Connection connection;
+    private static Logger logger = MiscUtilsOld.getLogger();
 
     // Property tags for Audit state
     private String systemVersion;
@@ -153,6 +156,7 @@ public class AuditNew {
         try {
             return new File(System.getProperty("catalina.base"));
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return new File("");
         }
     }
@@ -166,6 +170,7 @@ public class AuditNew {
         try {
             return new File(System.getProperty("catalina.home"));
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return new File("");
         }
     }
@@ -179,6 +184,7 @@ public class AuditNew {
         try {
             return new File("/etc/lsb-release");
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return new File("");
         }
     }
@@ -208,6 +214,7 @@ public class AuditNew {
                 return new File("");
             }
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return new File("");
         }
     }
@@ -243,6 +250,7 @@ public class AuditNew {
             }
             return "Could not detect Linux server version.";
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return "Could not read \"lsb-release\" file to detect Linux server version.";
         }
     }
@@ -267,12 +275,14 @@ public class AuditNew {
             output.append("Version: " + this.dbVersion);
             return output.toString();
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return "Cannot determine database type and version.";
         } finally {
             if (connection != null) {
                 try {
                     connection.close();
                 } catch (Exception e) {
+                    logger.error(e.getStackTrace());
                     return "Cannot close connection to database.";
                 }
             }
@@ -358,6 +368,7 @@ public class AuditNew {
                 output.append("Could not detect Xms value." + "\n");
             return output.toString();
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return "Could not detect Tomcat memory allocation in Tomcat settings file.";
         }
     }
@@ -532,6 +543,7 @@ public class AuditNew {
                 output.append("Could not detect \"drugref_url\" tag." + "\n");
             return output.toString();
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return "Could not read properties file to verify Oscar tags.";
         }
     }
@@ -639,6 +651,7 @@ public class AuditNew {
                 output.append("Could not detect \"db_driver\" tag." + "\n");
             return output.toString();
         } catch (Exception e) {
+            logger.error(e.getStackTrace());
             return "Could not read properties file to verify Drugref tags.";
         }
     }
