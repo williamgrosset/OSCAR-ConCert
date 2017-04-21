@@ -207,4 +207,176 @@ public class AuditAction extends Action {
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
         }
     }
+
+    // TEMP:
+    
+    /*
+    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and "drugref_url" tags 
+    *  of Oscar properties file.
+    *
+    *  @param fileName: Path to properties file.
+    *
+    *  @return output:  Output of the required tags in the Oscar properties file.
+    */
+    private String verifyOscarProperties(String fileName) {
+        try {
+            if (fileName == null || fileName.equals(""))
+                return "Could not detect filename for properties file.";
+
+            String line = "";
+            StringBuilder output = new StringBuilder();
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternBuildtag = Pattern.compile("^(buildtag\\s?(=|:)).*");
+            Pattern patternBuildDateTime = Pattern.compile("^(buildDateTime\\s?(=|:)).*");
+            Pattern patternHL7TEXT_LABS = Pattern.compile("^(HL7TEXT_LABS\\s?(=|:)).*");
+            Pattern patternSINGLE_PAGE_CHART = Pattern.compile("^(SINGLE_PAGE_CHART\\s?(=|:)).*");
+            Pattern patternTMP_DIR = Pattern.compile("^(TMP_DIR\\s?(=|:)).*");
+            Pattern patternDrugrefUrl = Pattern.compile("^(drugref_url\\s?(=|:)).*");
+            boolean flag1 = false;
+            boolean flag2 = false;
+            boolean flag3 = false;
+            boolean flag4 = false;
+            boolean flag5 = false;
+            boolean flag6 = false;
+
+            while ((line = rf.readLine()) != null) {
+                Matcher matcherComment = patternComment.matcher(line);
+                if (matcherComment.matches()) continue;
+                Matcher matcherBuildtag = patternBuildtag.matcher(line);
+                Matcher matcherBuildDateTime = patternBuildDateTime.matcher(line);
+                Matcher matcherHL7TEXT_LABS = patternHL7TEXT_LABS.matcher(line);
+                Matcher matcherSINGLE_PAGE_CHART = patternSINGLE_PAGE_CHART.matcher(line);
+                Matcher matcherTMP_DIR = patternTMP_DIR.matcher(line);
+                Matcher matcherDrugrefUrl = patternDrugrefUrl.matcher(line);
+
+                if (!flag1) {
+                    if (matcherBuildtag.matches()) { // buildtag=
+                        flag1 = true;
+                        this.build = line.substring(matcherBuildtag.group(1).length()).trim();
+                        output.append("Oscar build and version: " + this.build + "<br />");
+                    }
+                }
+                if (!flag2) {
+                    if (matcherBuildDateTime.matches()) { // buildDateTime=
+                        flag2 = true;
+                        this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
+                        output.append("Oscar build date and time: " + this.buildDate + "<br />");
+                    }
+                }
+                if (!flag3) {
+                    if (matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
+                        flag3 = true;
+                        this.hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length()).trim();
+                        output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "<br />");
+                    }
+                }
+                if (!flag4) {
+                    if (matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
+                        flag4 = true;
+                        this.singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length()).trim();
+                        output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "<br />");
+                    }
+                }
+                if (!flag5) {
+                    if (matcherTMP_DIR.matches()) { // TMP_DIR=
+                        flag5 = true;
+                        this.tmpDir = line.substring(matcherTMP_DIR.group(1).length()).trim();
+                        output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "<br />");
+                    }
+                }
+                if (!flag4) {
+                    if (matcherDrugrefUrl.matches()) { // drugref_url=
+                        flag6 = true;
+                        this.drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length()).trim();
+                        output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "<br />");
+                    }
+                }
+                if (flag1 && flag2 && flag3 && flag4 && flag5 && flag6)
+                    break;
+            }
+            if (!flag1)
+                output.append("Could not detect Oscar build tag." + "<br />");
+            if (!flag2)
+                output.append("Could not detect Oscar build date and time." + "<br />");
+            if (!flag3)
+                output.append("Could not detect \"HL7TEXT_LABS\" tag." + "<br />");
+            if (!flag4)
+                output.append("Could not detect \"SINGLE_PAGE_CHART\" tag." + "<br />");
+            if (!flag5)
+                output.append("Could not detect \"TMP_DIR\" tag." + "<br />");
+            if (!flag6)
+                output.append("Could not detect \"drugref_url\" tag." + "<br />");
+            return output.toString();
+        } catch (Exception e) {
+            return "Could not read properties file to verify Oscar tags.";
+        }
+    }
+
+    /*
+    *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
+    *
+    *  @param fileName: Path to properties file.
+    *
+    *  @return output:  Output of the required tags in the Drugref properties file.
+    */
+    private String verifyDrugrefProperties(String fileName) {
+        try {
+            if (fileName == null || fileName.equals(""))
+                return "Could not detect filename for properties file.";
+
+            String line = "";
+            StringBuilder output = new StringBuilder();
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
+            Pattern patternComment = Pattern.compile("^(#).*");
+            Pattern patternDb_user = Pattern.compile("^(db_user\\s?(=|:)).*");
+            Pattern patternDb_url = Pattern.compile("^(db_url\\s?(=|:)).*");
+            Pattern patternDb_driver = Pattern.compile("^(db_driver\\s?(=|:)).*");
+            boolean flag1 = false;
+            boolean flag2 = false;
+            boolean flag3 = false;
+
+            while ((line = rf.readLine()) != null) {
+                Matcher matcherComment = patternComment.matcher(line);
+                if (Pattern.matches("^(#).*", line)) continue;
+                Matcher matcherDb_user = patternDb_user.matcher(line);
+                Matcher matcherDb_url = patternDb_url.matcher(line);
+                Matcher matcherDb_driver = patternDb_driver.matcher(line);
+
+                if (!flag1) {
+                    if (matcherDb_user.matches()) { // db_user=
+                        flag1 = true;
+                        this.dbUser = line.substring(matcherDb_user.group(1).length()).trim();
+                        output.append("\"db_user\" tag is configured as: " + this.dbUser + "<br />");
+                    }
+                }
+                if (!flag2) {
+                    if (matcherDb_url.matches()) { // db_url=
+                        flag2 = true;
+                        this.dbUrl = line.substring(matcherDb_url.group(1).length()).trim();
+                        output.append("\"db_url\" tag is configured as: " + this.dbUrl + "<br />");
+                    }
+                }
+                if (!flag3) {
+                    if (matcherDb_driver.matches()) { // db_driver=
+                        flag3 = true;
+                        this.dbDriver = line.substring(matcherDb_driver.group(1).length()).trim();
+                        output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "<br />");
+                    }
+                }
+                if (flag1 && flag2 && flag3)
+                    break;
+            }
+
+            if (!flag1)
+                output.append("Could not detect \"db_user\" tag." + "<br />");
+            if (!flag2)
+                output.append("Could not detect \"db_url\" tag." + "<br />");
+            if (!flag3)
+                output.append("Could not detect \"db_driver\" tag." + "<br />");
+            return output.toString();
+        } catch (Exception e) {
+            return "Could not read properties file to verify Drugref tags.";
+        }
+    }
 }
