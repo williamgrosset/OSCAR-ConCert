@@ -27,11 +27,11 @@ package oscar.util;
 import org.oscarehr.util.SpringUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.managers.SecurityInfoManager;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,9 +44,9 @@ import javax.servlet.http.HttpServletResponse;
 */
 public class AuditAction extends Action {
 
-    // Autowired?
-    Audit audit = new Audit();
+    private Audit audit = new Audit();
 
+    @Autowired
     private SecurityInfoManager securityInfoManager;
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
