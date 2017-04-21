@@ -297,7 +297,7 @@ public class Audit {
     *
     *  @return output:       JVM and Tomcat version information.
     */
-    private String verifyTomcatVersion(String tomcatVersion) {
+    public String verifyTomcatVersion(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
 
@@ -383,7 +383,7 @@ public class Audit {
     *
     *  @return output:       Combined output of Oscar build and properties information.
     */
-    public String verifyOscar(String tomcatVersion, boolean isMcmaster) {
+    public String verifyOscar(String tomcatVersion, String webAppName, boolean isMcmaster) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
                 || catalinaHome.getPath().equals(""))
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";

@@ -51,7 +51,6 @@ public class AuditAction extends Action {
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
-            Audit audit = new Audit();
             String tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
             String webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
             securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -60,12 +59,11 @@ public class AuditAction extends Action {
                 throw new SecurityException("Missing required security object (_admin)");
             }
 
-            servletRequest.setAttribute("serverVersion", audit.systemInfo());
-            servletRequest.setAttribute("databaseInfo", audit.databaseInfo());
-            servletRequest.setAttribute("verifyTomcat", audit.verifyTomcat(tomcatVersion));
-            servletRequest.setAttribute("verifyOscar", audit.verifyOscar(tomcatVersion, webAppName));
-            servletRequest.setAttribute("verifyDrugref", audit.verifyDrugref(tomcatVersion));
-            servletRequest.setAttribute("tomcatReinforcement", audit.tomcatReinforcement(tomcatVersion));
+            servletRequest.setAttribute("serverVersion", displaySystemInfo());
+            servletRequest.setAttribute("databaseInfo", displayDatabaseInfo());
+            servletRequest.setAttribute("verifyTomcat", displayTomcatInfo(tomcatVersion));
+            servletRequest.setAttribute("verifyOscar", displayOscarInfo(tomcatVersion, webAppName));
+            servletRequest.setAttribute("verifyDrugref", displayDrugrefInfo(tomcatVersion));
         } catch (Exception e) {
             return actionMapping.findForward("failure");
         }
@@ -92,17 +90,16 @@ public class AuditAction extends Action {
 
     private String displayOscarInfo(String tomcatVersion, String webAppName) {
         StringBuilder output = new StringBuilder();
-        output.append("<b>Currently checking default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
+        output.append("<b>Verifying default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
         output.append(audit.verifyOscar(tomcatVersion, webAppName, true));
-        output.append("<br /><b>Currently checking \"" + webAppName + ".properties\" file in \"catalina.home\" directory..." + "</b><br />");
+        output.append("<br /><b>Verifying custom \"" + webAppName + ".properties\" file..." + "</b><br />");
         output.append(audit.verifyOscar(tomcatVersion, webAppName, false));
-        output.append("<br /><b>NOTE:</b> The properties file found in the \"catalina.home\" directory will overwrite the default properties file in the deployed WAR.<br />");
+        output.append("<br /><b>NOTE:</b> The custom properties file will overwrite the default properties file found in the deployed WAR.<br />");
         return output.toString();
     }
         
     private String displayDrugrefInfo(String tomcatVersion) {
         StringBuilder output = new StringBuilder();
-        output.append("<b>Currently checking \"" + matcherDrugrefUrl.group(1) + ".properties\" file..." + "</b><br />");
         output.append(audit.verifyDrugref(tomcatVersion));
         return output.toString();
     }
