@@ -27,28 +27,30 @@ package oscar.util;
 import org.oscarehr.util.SpringUtils;
 import org.oscarehr.util.LoggedInInfo;
 import org.oscarehr.managers.SecurityInfoManager;
-
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /*
-*  Action class that contains auditing information for the view (oscarAudit.jsp)
-*  of the OSCAR Administration page.
+*  Action class that contains auditing information for the corresponding 
+*  view (oscarAudit.jsp).
 *  
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditAction extends Action {
 
+    private Audit audit = new Audit();
+
+    @Autowired
     private SecurityInfoManager securityInfoManager;
 
     public ActionForward execute(ActionMapping actionMapping, ActionForm actionForm, HttpServletRequest servletRequest, HttpServletResponse servletResponse) {
         try {
-            Audit audit = new Audit();
             String tomcatVersion = servletRequest.getSession().getServletContext().getServerInfo();
             String webAppName = servletRequest.getSession().getServletContext().getContextPath().replace("/", "");
             securityInfoManager = SpringUtils.getBean(SecurityInfoManager.class);
@@ -57,12 +59,11 @@ public class AuditAction extends Action {
                 throw new SecurityException("Missing required security object (_admin)");
             }
 
-            servletRequest.setAttribute("serverVersion", audit.systemInfo());
-            servletRequest.setAttribute("databaseInfo", audit.databaseInfo());
-            servletRequest.setAttribute("verifyTomcat", audit.verifyTomcat(tomcatVersion));
-            servletRequest.setAttribute("verifyOscar", audit.verifyOscar(tomcatVersion, webAppName));
-            servletRequest.setAttribute("verifyDrugref", audit.verifyDrugref(tomcatVersion));
-            servletRequest.setAttribute("tomcatReinforcement", audit.tomcatReinforcement(tomcatVersion));
+            servletRequest.setAttribute("serverVersion", displaySystemInfo());
+            servletRequest.setAttribute("databaseInfo", displayDatabaseInfo());
+            servletRequest.setAttribute("verifyTomcat", displayTomcatInfo(tomcatVersion));
+            servletRequest.setAttribute("verifyOscar", displayOscarInfo(tomcatVersion, webAppName));
+            servletRequest.setAttribute("verifyDrugref", displayDrugrefInfo(tomcatVersion));
         } catch (Exception e) {
             return actionMapping.findForward("failure");
         }
@@ -73,5 +74,68 @@ public class AuditAction extends Action {
         }
 
         return actionMapping.findForward("success");
+    }
+
+    /*
+    *  Audit and display Linux distribution version to user.
+    *
+    *  @return String: Audit function call to retrieve Linux server version.
+    */
+    private String displaySystemInfo() {
+        return audit.verifySystemInfo();
+    }
+
+    /*
+    *  Audit and display database type and version to user.
+    *
+    *  @return String: Audit function call to retrieve database type and version.
+    */
+    private String displayDatabaseInfo() {
+        return audit.verifyDatabaseInfo();
+    }
+
+    /*
+    *  Audit and display Tomcat version, Xmx, and Xms values to user.
+    *
+    *  @param tomcatVersion: Tomcat version from servlet context.
+    *
+    *  @return String:       Audit function call to retrieve Tomcat version, Xmx,
+    *                        and Xms values. 
+    */
+    private String displayTomcatInfo(String tomcatVersion) {
+        return audit.verifyTomcatVersion(tomcatVersion) + "<br />" + audit.verifyTomcatReinforcement(tomcatVersion);
+    }
+
+    /*
+    *  Audit and display OSCAR properties to user.
+    *
+    *  @param tomcatVersion: Tomcat version from servlet context.
+    *  @param webAppName:    Oscar web application name from servlet context.
+    *
+    *  @return String:       Audit function call to retrieve auditing information
+    *                        for OSCAR properties.
+    */
+    private String displayOscarInfo(String tomcatVersion, String webAppName) {
+        StringBuilder output = new StringBuilder();
+        output.append("<b>Verifying default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
+        output.append(audit.verifyOscar(tomcatVersion, webAppName, true));
+        output.append("<br /><b>Verifying custom \"" + webAppName + ".properties\" file..." + "</b><br />");
+        output.append(audit.verifyOscar(tomcatVersion, webAppName, false));
+        output.append("<br /><b>NOTE:</b> The custom properties file will overwrite the default properties file found in the deployed WAR.<br />");
+        return output.toString();
+    }
+        
+    /*
+    *  Audit and display Drugref properties to user.
+    *
+    *  @param tomcatVersion: Tomcat version from servlet context.
+    *
+    *  @return String:       Audit function call to retrieve auditing information
+    *                        for Drugref properties.
+    */
+    private String displayDrugrefInfo(String tomcatVersion) {
+        StringBuilder output = new StringBuilder();
+        output.append(audit.verifyDrugref(tomcatVersion));
+        return output.toString();
     }
 }
