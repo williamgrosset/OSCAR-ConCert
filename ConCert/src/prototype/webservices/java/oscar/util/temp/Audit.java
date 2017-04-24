@@ -222,6 +222,7 @@ public class Audit {
     /*
     *  Read "/etc/lsb-release" file and extract Linux server version. The
     *  file should be available on Ubuntu and Debian distributions.
+    *
     *  NOTE: Majority of my methods require the ReversedLinesFilerReader class.
     *  Since I did not want to require another import for the default file reader,
     *  I went ahead and used ReversedLinesFileReader anyways.
@@ -256,8 +257,8 @@ public class Audit {
     }
 
     /*
-    *  Establish a connection to our database and retrieve the database type and 
-    *  version from our DatabaseMetaData object.
+    *  Establish a connection to configured database and retrieve the database type 
+    *  and version from the DatabaseMetaData object.
     *
     *  @return output: Database type and version.
     */
@@ -306,8 +307,7 @@ public class Audit {
     }
 
     /*
-    *  Read through the Tomcat settings file and echo the Xmx and Xms values to 
-    *  the user.
+    *  Read through the Tomcat settings file and grab both Xmx and Xms values.
     *
     *  @param tomcatVersion: Tomcat version.
     *
@@ -335,8 +335,7 @@ public class Audit {
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternXmx = Pattern.compile(".*(Xmx[0-9]+m).*");
             Pattern patternXms = Pattern.compile(".*(Xms[0-9]+m).*");
-            boolean flag1 = false;
-            boolean flag2 = false;
+            boolean flag1 = false, flag2 = false;
 
             while ((line = rf.readLine()) != null) {
                 Matcher matcherComment = patternComment.matcher(line);
@@ -376,8 +375,9 @@ public class Audit {
     *
     *  @param tomcatVersion: Tomcat version.
     *  @param webAppName:    Web application name for OSCAR.
+    *  @param isMcmaster:    Boolean to check default McMaster properties file.
     *
-    *  @return output:       Combined output of Oscar build and properties information.
+    *  @return output:       Oscar build and properties information.
     */
     public String verifyOscar(String tomcatVersion, String webAppName, boolean isMcmaster) {
         if (catalinaBase == null || catalinaHome == null || catalinaBase.getPath().equals("") 
@@ -428,12 +428,7 @@ public class Audit {
             Pattern patternSINGLE_PAGE_CHART = Pattern.compile("^(SINGLE_PAGE_CHART\\s?(=|:)).*");
             Pattern patternTMP_DIR = Pattern.compile("^(TMP_DIR\\s?(=|:)).*");
             Pattern patternDrugrefUrl = Pattern.compile("^(drugref_url\\s?(=|:)).*");
-            boolean flag1 = false;
-            boolean flag2 = false;
-            boolean flag3 = false;
-            boolean flag4 = false;
-            boolean flag5 = false;
-            boolean flag6 = false;
+            boolean flag1 = false, flag2 = false, flag3 = false, flag4 = false, flag5 = false, flag6 = false;
 
             while ((line = rf.readLine()) != null) {
                 Matcher matcherComment = patternComment.matcher(line);
@@ -449,35 +444,32 @@ public class Audit {
                     flag1 = true;
                     this.build = line.substring(matcherBuildtag.group(1).length()).trim();
                     output.append("Oscar build and version: " + this.build + "\n");
-                }
-                if (!flag2 && matcherBuildDateTime.matches()) { // buildDateTime=
+                } else if (!flag2 && matcherBuildDateTime.matches()) { // buildDateTime=
                     flag2 = true;
                     this.buildDate = line.substring(matcherBuildDateTime.group(1).length()).trim();
                     output.append("Oscar build date and time: " + this.buildDate + "\n");
-                }
-                if (!flag3 && matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
+                } else if (!flag3 && matcherHL7TEXT_LABS.matches()) { // HL7TEXT_LABS=
                     flag3 = true;
                     this.hl7TextLabs = line.substring(matcherHL7TEXT_LABS.group(1).length()).trim();
                     output.append("\"HL7TEXT_LABS\" tag is configured as: " + this.hl7TextLabs + "\n");
-                }
-                if (!flag4 && matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
+                } else if (!flag4 && matcherSINGLE_PAGE_CHART.matches()) { // SINGLE_PAGE_CHART=
                     flag4 = true;
                     this.singlePageChart = line.substring(matcherSINGLE_PAGE_CHART.group(1).length()).trim();
                     output.append("\"SINGLE_PAGE_CHART\" tag is configured as: " + this.singlePageChart + "\n");
-                }
-                if (!flag5 && matcherTMP_DIR.matches()) { // TMP_DIR=
+                } else if (!flag5 && matcherTMP_DIR.matches()) { // TMP_DIR=
                     flag5 = true;
                     this.tmpDir = line.substring(matcherTMP_DIR.group(1).length()).trim();
                     output.append("\"TMP_DIR\" tag is configured as: " + this.tmpDir + "\n");
-                }
-                if (!flag6 && matcherDrugrefUrl.matches()) { // drugref_url=
+                } else if (!flag6 && matcherDrugrefUrl.matches()) { // drugref_url=
                     flag6 = true;
                     this.drugrefUrl = line.substring(matcherDrugrefUrl.group(1).length()).trim();
                     output.append("\"drugref_url\" tag is configured as: " + this.drugrefUrl + "\n");
+                } else {
+                    if (flag1 && flag2 && flag3 && flag4 && flag5 && flag6)
+                        break;
                 }
-                if (flag1 && flag2 && flag3 && flag4 && flag5 && flag6)
-                    break;
             }
+
             if (!flag1)
                 output.append("Could not detect Oscar build tag." + "\n");
             if (!flag2)
@@ -502,7 +494,6 @@ public class Audit {
     *  in the appropriate Tomcat directory.
     *
     *  @param tomcatVersion: Tomcat version.
-    *  @param webAppName:    Web application name for OSCAR.
     *
     *  @return output:       Output of Drugref properties information.
     */
@@ -512,7 +503,7 @@ public class Audit {
             return "Please verify that your \"catalina.base\" and \"catalina.home\" directories are setup correctly.";
         if (tomcatVersion == null || tomcatVersion.equals(""))
             return "Could not detect Tomcat version.";
-        if (drugrefUrl == null)
+        if (drugrefUrl == null || drugrefUrl.equals(""))
             return "Please ensure that your Oscar properties \"drugref_url\" tag is set correctly.";
 
         // Grab deployed Drugref folder name and use as the file name for the properties file
@@ -554,9 +545,7 @@ public class Audit {
             Pattern patternDb_user = Pattern.compile("^(db_user\\s?(=|:)).*");
             Pattern patternDb_url = Pattern.compile("^(db_url\\s?(=|:)).*");
             Pattern patternDb_driver = Pattern.compile("^(db_driver\\s?(=|:)).*");
-            boolean flag1 = false;
-            boolean flag2 = false;
-            boolean flag3 = false;
+            boolean flag1 = false, flag2 = false, flag3 = false;
 
             while ((line = rf.readLine()) != null) {
                 Matcher matcherComment = patternComment.matcher(line);
@@ -569,19 +558,18 @@ public class Audit {
                     flag1 = true;
                     this.dbUser = line.substring(matcherDb_user.group(1).length()).trim();
                     output.append("\"db_user\" tag is configured as: " + this.dbUser + "\n");
-                }
-                if (!flag2 && matcherDb_url.matches()) { // db_url=
+                } else if (!flag2 && matcherDb_url.matches()) { // db_url=
                     flag2 = true;
                     this.dbUrl = line.substring(matcherDb_url.group(1).length()).trim();
                     output.append("\"db_url\" tag is configured as: " + this.dbUrl + "\n");
-                }
-                if (!flag3 && matcherDb_driver.matches()) { // db_driver=
+                } else if (!flag3 && matcherDb_driver.matches()) { // db_driver=
                     flag3 = true;
                     this.dbDriver = line.substring(matcherDb_driver.group(1).length()).trim();
                     output.append("\"db_driver\" tag is configured as: " + this.dbDriver + "\n");
+                } else {
+                    if (flag1 && flag2 && flag3)
+                        break;
                 }
-                if (flag1 && flag2 && flag3)
-                    break;
             }
 
             if (!flag1)
