@@ -37,10 +37,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /*
-*  Class that audits a live OSCAR application and contains information
-*  regarding OSCAR's application environment.
+*  Class for auditing a live OSCAR application.
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class Audit {
 
@@ -220,14 +219,14 @@ public class Audit {
     }
 
     /*
-    *  Read "/etc/lsb-release" file and extract Linux server version. The
+    *  Read "/etc/lsb-release" file and extract Linux distribution version. The
     *  file should be available on Ubuntu and Debian distributions.
     *
     *  NOTE: Majority of my methods require the ReversedLinesFilerReader class.
     *  Since I did not want to require another import for the default file reader,
     *  I went ahead and used ReversedLinesFileReader anyways.
     *
-    *  @return output: Linux server version.
+    *  @return output: Linux distribution version.
     */
     public String verifySystemInfo() {
         try {
@@ -291,12 +290,11 @@ public class Audit {
     }
     
     /*
-    *  Extract JVM version from system properties and server version information 
-    *  from servlet.
+    *  Retrieve Tomcat server version information from servlet.
     *
     *  @param tomcatVersion: Tomcat version.
     *
-    *  @return output:       JVM and Tomcat version information.
+    *  @return output:       Tomcat version information.
     */
     public String verifyTomcatVersion(String tomcatVersion) {
         if (tomcatVersion == null || tomcatVersion.equals(""))
@@ -406,21 +404,21 @@ public class Audit {
     }
 
     /*
-    *  Read "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," and "drugref_url" tags 
-    *  of Oscar properties file.
+    *  Read "buildtag", "buildDateTime", "HL7TEXT_LABS," "SINGLE_PAGE_CHART," "TMP_DIR," 
+    *  and "drugref_url" tags of Oscar properties file.
     *
-    *  @param fileName: Path to properties file.
+    *  @param filename: Path to properties file.
     *
     *  @return output:  Output of the required tags in the Oscar properties file.
     */
-    private String verifyOscarProperties(String fileName) {
+    private String verifyOscarProperties(String filename) {
         try {
-            if (fileName == null || fileName.equals(""))
+            if (filename == null || filename.equals(""))
                 return "Could not detect filename for properties file.";
 
             String line = "";
             StringBuilder output = new StringBuilder();
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(filename));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternBuildtag = Pattern.compile("^(buildtag\\s?(=|:)).*");
             Pattern patternBuildDateTime = Pattern.compile("^(buildDateTime\\s?(=|:)).*");
@@ -529,18 +527,18 @@ public class Audit {
     /*
     *  Read "db_user," "db_url," and "db_driver" tags of Drugref properties file.
     *
-    *  @param fileName: Path to properties file.
+    *  @param filename: Path to properties file.
     *
     *  @return output:  Output of the required tags in the Drugref properties file.
     */
-    private String verifyDrugrefProperties(String fileName) {
+    private String verifyDrugrefProperties(String filename) {
         try {
-            if (fileName == null || fileName.equals(""))
+            if (filename == null || filename.equals(""))
                 return "Could not detect filename for properties file.";
 
             String line = "";
             StringBuilder output = new StringBuilder();
-            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(fileName));
+            ReversedLinesFileReader rf = new ReversedLinesFileReader(new File(filename));
             Pattern patternComment = Pattern.compile("^(#).*");
             Pattern patternDb_user = Pattern.compile("^(db_user\\s?(=|:)).*");
             Pattern patternDb_url = Pattern.compile("^(db_url\\s?(=|:)).*");

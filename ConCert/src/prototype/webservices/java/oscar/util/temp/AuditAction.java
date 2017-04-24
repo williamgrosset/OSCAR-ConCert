@@ -37,10 +37,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /*
-*  Action class that contains auditing information for the view (oscarAudit.jsp)
-*  of the OSCAR Administration page.
+*  Action class that contains auditing information for the corresponding 
+*  view (oscarAudit.jsp).
 *  
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditAction extends Action {
 
@@ -76,18 +76,45 @@ public class AuditAction extends Action {
         return actionMapping.findForward("success");
     }
 
+    /*
+    *  Audit and display Linux distribution version to user.
+    *
+    *  @return String: Audit function call to retrieve Linux server version.
+    */
     private String displaySystemInfo() {
         return audit.verifySystemInfo();
     }
 
+    /*
+    *  Audit and display database type and version to user.
+    *
+    *  @return String: Audit function call to retrieve database type and version.
+    */
     private String displayDatabaseInfo() {
         return audit.verifyDatabaseInfo();
     }
 
+    /*
+    *  Audit and display Tomcat version, Xmx, and Xms values to user.
+    *
+    *  @param tomcatVersion: Tomcat version from servlet context.
+    *
+    *  @return String:       Audit function call to retrieve Tomcat version, Xmx,
+    *                        and Xms values. 
+    */
     private String displayTomcatInfo(String tomcatVersion) {
         return audit.verifyTomcatVersion(tomcatVersion) + "<br />" + audit.verifyTomcatReinforcement(tomcatVersion);
     }
 
+    /*
+    *  Audit and display OSCAR properties to user.
+    *
+    *  @param tomcatVersion: Tomcat version from servlet context.
+    *  @param webAppName:    Oscar web application name from servlet context.
+    *
+    *  @return String:       Audit function call to retrieve auditing information
+    *                        for OSCAR properties.
+    */
     private String displayOscarInfo(String tomcatVersion, String webAppName) {
         StringBuilder output = new StringBuilder();
         output.append("<b>Verifying default \"oscar_mcmaster.properties\" file in the deployed WAR..." + "</b><br />");
@@ -98,6 +125,14 @@ public class AuditAction extends Action {
         return output.toString();
     }
         
+    /*
+    *  Audit and display Drugref properties to user.
+    *
+    *  @param tomcatVersion: Tomcat version from servlet context.
+    *
+    *  @return String:       Audit function call to retrieve auditing information
+    *                        for Drugref properties.
+    */
     private String displayDrugrefInfo(String tomcatVersion) {
         StringBuilder output = new StringBuilder();
         output.append(audit.verifyDrugref(tomcatVersion));
