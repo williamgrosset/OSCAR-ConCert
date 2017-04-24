@@ -50,7 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 /*
 *  Class that handles access to auditing information via the REST API.
 *  
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 @Path("/audit")
 @Component("auditService")

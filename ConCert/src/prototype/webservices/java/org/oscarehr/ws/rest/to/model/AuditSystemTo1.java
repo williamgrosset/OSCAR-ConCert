@@ -30,7 +30,7 @@ import java.io.Serializable;
 *  Class that represents the JSON object fields for the /systemInfo API request,
 *  which will be returned by the AuditManager function call: auditSystem().
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditSystemTo1 implements Serializable {
 

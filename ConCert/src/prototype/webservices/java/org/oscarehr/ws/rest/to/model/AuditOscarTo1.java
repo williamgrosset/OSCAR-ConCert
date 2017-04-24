@@ -30,7 +30,7 @@ import java.io.Serializable;
 *  Class that represents the JSON object fields for the /oscarInfo API request,
 *  which will be returned by the AuditManager function call: auditOscar().
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditOscarTo1 implements Serializable {
 

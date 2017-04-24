@@ -43,7 +43,7 @@ import java.util.Date;
 *  object and returning serializable Audit<System|Database|Tomcat|Oscar|Drugref>To1 
 *  objects for AuditWebService.
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 @Service
 public class AuditManager {
@@ -65,7 +65,7 @@ public class AuditManager {
         AuditSystemTo1 model = new AuditSystemTo1();
 
         try {
-            audit.systemInfo();
+            audit.verifySystemInfo();
 
             model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setSystemVersion(audit.getSystemVersion());
@@ -90,7 +90,7 @@ public class AuditManager {
         AuditDatabaseTo1 model = new AuditDatabaseTo1();
 
         try {
-            audit.databaseInfo();
+            audit.verifyDatabaseInfo();
 
             model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setDbType(audit.getDbType());
@@ -117,8 +117,8 @@ public class AuditManager {
         AuditTomcatTo1 model = new AuditTomcatTo1();
 
         try {
-            audit.verifyTomcat(tomcatVersion);
-            audit.tomcatReinforcement(tomcatVersion);
+            audit.verifyTomcatVersion(tomcatVersion);
+            audit.verifyTomcatReinforcement(tomcatVersion);
 
             model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setTomcatVersion(audit.getTomcatVersion());
@@ -147,7 +147,9 @@ public class AuditManager {
         AuditOscarTo1 model = new AuditOscarTo1();
 
         try {
-            audit.verifyOscar(tomcatVersion, webAppName);
+            // Audit McMaster properties file before custom properties file
+            audit.verifyOscar(tomcatVersion, webAppName, true);
+            audit.verifyOscar(tomcatVersion, webAppName, false);
 
             model.setTimestamp(sdf.format(new Timestamp(date.getTime())));
             model.setWebAppName(audit.getWebAppName());
@@ -180,7 +182,8 @@ public class AuditManager {
         AuditDrugrefTo1 model = new AuditDrugrefTo1();
 
         try {
-            audit.verifyOscar(tomcatVersion, webAppName);
+            audit.verifyOscar(tomcatVersion, webAppName, true);
+            audit.verifyOscar(tomcatVersion, webAppName, false);
             audit.verifyDrugref(tomcatVersion);
 
             model.setTimestamp(sdf.format(new Timestamp(date.getTime())));

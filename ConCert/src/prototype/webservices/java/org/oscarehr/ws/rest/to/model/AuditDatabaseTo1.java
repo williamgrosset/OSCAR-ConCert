@@ -30,7 +30,7 @@ import java.io.Serializable;
 *  Class that represents the JSON object fields for the /databaseInfo API request,
 *  which will be returned by the AuditManager function call: auditDatabase().
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditDatabaseTo1 implements Serializable {
 

@@ -31,7 +31,7 @@ import java.io.Serializable;
 *  Class that represents the wrapper for the JSON object, which will be returned 
 *  by AuditWebService function calls.
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditDrugrefResponse extends GenericRESTResponse implements Serializable {
 

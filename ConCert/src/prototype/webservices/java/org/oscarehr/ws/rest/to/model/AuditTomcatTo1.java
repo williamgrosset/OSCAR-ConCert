@@ -30,7 +30,7 @@ import java.io.Serializable;
 *  Class that represents the JSON object fields for the /tomcatInfo API request,
 *  which will be returned by the AuditManager function call: auditTomcat().
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditTomcatTo1 implements Serializable {
 

@@ -30,7 +30,7 @@ import java.io.Serializable;
 *  Class that represents the JSON object fields for the /drugrefInfo API request,
 *  which will be returned by the AuditManager function call: auditDrugref().
 *
-*  github.com/williamgrosset
+*  Author: github.com/williamgrosset
 */
 public class AuditDrugrefTo1 implements Serializable {
 
