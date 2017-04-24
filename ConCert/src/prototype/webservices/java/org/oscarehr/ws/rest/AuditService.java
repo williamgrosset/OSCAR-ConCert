@@ -258,6 +258,8 @@ public class AuditService extends AbstractServiceImpl {
     /*
     *  Check privileges for each API request using OSCAR's SecurityInfoManager
     *  class. Throw SecurityException error if user does not have privileges.
+    *
+    *  @param info: LoggedInInfo object from HTTP session.
     */
     private void checkPrivileges(LoggedInInfo info) {
         if (!securityInfoManager.hasPrivilege(info, "_admin", "r", null)) {
