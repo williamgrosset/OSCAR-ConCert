@@ -15,11 +15,8 @@ All 33 **JUnit tests** can be found in the `ConCert/src/test/audit/java` directo
 1. Why use a reverse line input stream? *(Audit.java)*<br><br> 
 Since configured parameters in properties files can be overwritten sequentially, we can make an easy optimization to read the executed parameters bottom-up. We begin at the end of the file, find our desired tags and break when we have collected the information needed. Also, this makes the code more maintainable and robust without requiring extra checks if we were to read top-bottom.
 
-2. How are you checking for Tomcat reinforcement? *(AuditAction.java)*<br><br> 
-ConCert focuses on auditing of a live OSCAR application. We can track the process status of the currently running Tomcat. The **"-Xmx"** value is the maximum Java heap size. The **"-Xms"** value is the initial and minimum Java heap size. See ```tomcatReinforcement()``` method for further details.
-
-3. Why use JSTL tags on JSPs? *(main/audit/jsp/admin/oscarAudit.jsp)*<br><br> 
-Keeping code readable, maintainable, and easily understood is crucial for the development of an open source project. JSTL allows us to encapsulate and hide away the details of the main Java work away from the view.
+2. Why use JSTL tags on JSPs? *(main/audit/jsp/admin/oscarAudit.jsp)*<br><br> 
+Keeping code readable, maintainable, and easily understood is necessary for the development of an open source project. JSTL allows us to encapsulate and hide away the details of the main Java work away from the view.
 
 ### Utilizing the Struts framework
 The Struts framework utilizes the Java Servlet API (Java Enterprise Edition) and formulates a model, view, controller (MVC) architecture. This framework is used for flexible and maintainable Java web-based applications. Currently, OSCAR was running on Struts version 1.2.7 during the development of the ConCert project.

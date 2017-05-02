@@ -13,6 +13,7 @@ Below outlines the project structure and where all the sub-directories/files can
 - Prototypes:
     + **PropertyCheck** src in `src/main/propertycheck`
     + **PropertyCheck** tests in `src/test/propertycheck`
-
-### Report
-...
+- Documentation:
+    + `final_report.pdf`
+    + `src/main/audit/java/oscar/util/README.md`
+    + `src/main/audit/java/org/README.md`
