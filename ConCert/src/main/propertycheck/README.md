@@ -4,6 +4,3 @@ The Property Check tool allows OSPs (Oscar Service Providers) to query propertie
 + **True**: redirect user to `jsp/propertyCheckTrue.jsp`
 + **False**: redirect user to `jsp/propertyCheckFalse.jsp`
 + **Invalid**: display invalid input values on `jsp/propertyCheck.jsp`
-
-## What's next
-...
